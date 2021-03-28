@@ -5,8 +5,8 @@
 
 \usepackage{graphicx} 
 \usepackage{array} 
-\usepackage{newtxtext,newtxmath}
-\usepackage[varl]{inconsolata}
+%\usepackage{newtxtext,newtxmath}
+%\usepackage[varl]{inconsolata}
 
 \begin{document}
 \begin{titlepage}
@@ -88,19 +88,27 @@ We have decided to split our project into three parts: image analysis, hardware 
 
 \section{Time Plan}
 \subsection{Subtasks}
-    \begin{itemize}
-        \item Create a Monitor package including classes used by the image analysis and the hardware systems. Implement Observer-Observable and real time behaviour. \textbf{Estimated deadline}: 31/3
-        \item Assemble the robot arm. \textbf{Estimated deadline}: 9/4
-        \item Set up a display in such a way that the cameras and the robot arm have stationary positions. \textbf{Estimated deadline}: 14/4
-        \item Implement communication between arduino and PC. \textbf{Estimated deadline}: 21/4
-        \item Find mathematical model for how the ball trajectory should be estimated. Implement this into the ballTrajectory package. \textbf{Estimated deadline}: 29/4
-        \item Find a model for the arm trajectory. \textbf{Estimated deadline}: 29/4 
-        
-        \item Create a package for how the servos should respond to the given arm trajectory. \textbf{Estimated deadline}: 6/5
-        \item Perform image segmentation to find the ball in the two cameras. \textbf{Estimated deadline}: 13/5
-        \item Make a computer vision system to map the ball segments in the images to a 3D-coordinate. Including calibration and on-line calculations. \textbf{Estimated deadline}: 13/5
-        \item (Optional); Implement feedback control of robot arm position \textbf{Estimated deadline}: N/A
-    \end{itemize}
+	\begin{itemize}
+		\item Search online sources for the equations of motion for the double pendulum and implement it in Python. Compare pendulum behavior to other available simulations in order to make sure that the behavior is accurate. \textbf{Estimated Deadline}: \textbf{To be decided}
+		\item Animate the model using available Python libraries. \textbf{Estimated Deadline}: \textbf{To be decided}
+		\item Train a model that is able to keep the pendulums in the most stable equilibrium point (down) in the presence of disturbances. \textbf{Estimated Deadline}: \textbf{To be decided}
+		\item Train a model that is able to keep both pendulum in upright position without any disturbances. \textbf{Estimated Deadline}: \textbf{To be decided}
+		\item Train a model that is able to keep both pendulums in upright position in the presence of disturbances. \textbf{Estimated Deadline}: \textbf{To be decided}
+		\item Train a model that can transition from downright to upright position (swing-up). \textbf{Estimated Deadline}: \textbf{To be decided}
+	\end{itemize}
+%    \begin{itemize}
+%        \item Create a Monitor package including classes used by the image analysis and the hardware systems. Implement Observer-Observable and real time behaviour. \textbf{Estimated deadline}: 31/3
+%        \item Assemble the robot arm. \textbf{Estimated deadline}: 9/4
+%        \item Set up a display in such a way that the cameras and the robot arm have stationary positions. \textbf{Estimated deadline}: 14/4
+%        \item Implement communication between arduino and PC. \textbf{Estimated deadline}: 21/4
+%        \item Find mathematical model for how the ball trajectory should be estimated. Implement this into the ballTrajectory package. \textbf{Estimated deadline}: 29/4
+%        \item Find a model for the arm trajectory. \textbf{Estimated deadline}: 29/4 
+%        
+%        \item Create a package for how the servos should respond to the given arm trajectory. \textbf{Estimated deadline}: 6/5
+%        \item Perform image segmentation to find the ball in the two cameras. \textbf{Estimated deadline}: 13/5
+%        \item Make a computer vision system to map the ball segments in the images to a 3D-coordinate. Including calibration and on-line calculations. \textbf{Estimated deadline}: 13/5
+%        \item (Optional); Implement feedback control of robot arm position \textbf{Estimated deadline}: N/A
+%    \end{itemize}
     
 \subsection{Important dates}
     \begin{itemize}

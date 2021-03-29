@@ -39,25 +39,6 @@ It will be fully simulated.
 \section{Modelling and System Design}
 Focus of the project is to train a controller for the dobule pendulum and not to model the actual double pendulum on a cart.
 
-%We are proposing the code structure seen in Figure \ref{fig:uml} for our project. Considering a structure using four different packages the project can be split up and developed independently from one another. Furthermore, the packages represent the division of labour proposed in section \ref{sec:division}
-%
-%%\begin{figure}[b] 
-%%	\centering
-%% 	\includegraphics[width=0.85\textwidth]{figures/UML}
-%%    \caption{The structure of the software.}
-%%    \label{fig:uml}
-%%\end{figure}
-%
-%\noindent
-%The hardware setup will include:
-%\begin{itemize}
-%\item The robot arm.
-%\item Two cameras mounted behind the robot.
-%\item An arduino to distribute signals to the servos in the robot arm.
-%\item A PC to run the software on.
-%\end{itemize}
-%The overall software design can be found in Figure \ref{fig:uml}. We have aimed for a design with low coupling between the different modules, the monitor package will be the central connection point of the program. This package will communicate information to the remaining packages. Since most packages will be able to run independently, they will run on different threads. Most software will be written in java, the exception being the software that will run on the arduino, this will be written in the "arduino language".
-
 
 \section{Division of Labour} \label{sec:division}
 We have decided to split our project into three parts: Setting up Environment, Train the Agents, Presentation. 
@@ -72,43 +53,32 @@ Model will be verified by comparing with online models and an attempt will be ma
 This will be the main focus of the project, which is to create models and train them to control the double pendulum.
 The training will utilize reinforcement learning where the agent will learn from experience by trial and error.
 If the agent manages to keep the pendulum upright for a long enough time, the time has not been decided as of yet, it is considered to have solved the problem.
+\subsubsection{Deciding Network Architecture}
+Before we start training the models we need to decide on what type of architecture to use. We need to investigate the advantages and disadvantages of different types of networks such as feed forward, recurrent networks etc.
+\subsubsection{Deciding Simulation Conditions}
+We need to define a reward system for the training process, together with a completion and a failure condition.
 
-
-We have decided to split our project into three parts: image analysis, hardware and servo position implementation, and finding ball trajectory and general code structure.
-	\subsection{Image analysis}
-        The image analysis is a major part of our project. Without it working, we will not have a reference for the ball position. Therefore, if the image analysis is not working, we will not have a working project. We will be using two cameras (see Section \ref{sec:equipment}) to determine the position of the ball. 
-    
-        Olle Flitig and Sara Rask will be in charge of this section. We decided that it was a two person job since it is a quite daunting task.
-    
-    \subsection{Hardware and servo position}
-        We will try to control the position of the servos based on a 3D point (which tells us  where the ball is supposed to land). Most of the hardware implementation and the servo control will be handled by this package. Björn Duktig is in charge of this section.
-    
-    \subsection{Ball trajectory and general code structure}
-        We will try to estimate the final position of the ball based on a few Cartesian points (identified by the image analysis section). Furthermore, the general structure of the code will be handled by this task (e.g. the observer-observable implementation and the semaphores in the monitor). Amanda P. Solver is in charge of this section. It is also planned that she will aid in the "optimal" trajectory estimation for the robot arm (Hardware section).
+\subsection{Demo and Report}
+Create a basic demo showing our results and write a detailed report.
 
 \section{Time Plan}
 \subsection{Subtasks}
 	\begin{itemize}
-		\item Search online sources for the equations of motion for the double pendulum and implement it in Python. Compare pendulum behavior to other available simulations in order to make sure that the behavior is accurate. \textbf{Estimated Deadline}: \textbf{To be decided}
-		\item Animate the model using available Python libraries. \textbf{Estimated Deadline}: \textbf{To be decided}
-		\item Train a model that is able to keep the pendulums in the most stable equilibrium point (down) in the presence of disturbances. \textbf{Estimated Deadline}: \textbf{To be decided}
-		\item Train a model that is able to keep both pendulum in upright position without any disturbances. \textbf{Estimated Deadline}: \textbf{To be decided}
-		\item Train a model that is able to keep both pendulums in upright position in the presence of disturbances. \textbf{Estimated Deadline}: \textbf{To be decided}
-		\item Train a model that can transition from downright to upright position (swing-up). \textbf{Estimated Deadline}: \textbf{To be decided}
+		\item Search online sources for the equations of motion for the double pendulum and implement it in Python. Compare pendulum behavior to other available simulations in order to make sure that the behavior is accurate. \textbf{Estimated Deadline}: \textbf{Apr 5}
+		\item Animate the model using available Python libraries. \textbf{Estimated Deadline}: \textbf{Apr 5}
+		\item Set up Gym Environment and documentation. \textbf{Estimated Deadline}: \textbf{Apr 9}
+		\item Practice Reinforcement Learning on a more basic problem. \textbf{Estimated Deadline}: \textbf{Apr 9}
+		\item Decide on the network architecture for the model. \textbf{Estimated Deadline}: \textbf{Apr 16}
+		\item Decide on a reward system for the model. \textbf{Estimated Deadline}: \textbf{Apr 21}
+		\item Decide on a completion condition. \textbf{Estimated Deadline}: \textbf{Apr 16}
+		\item Decide on a fail condition. \textbf{Estimated Deadline}: \textbf{Apr 16}
+		\item Train a model that is able to keep both pendulum in upright position without any disturbances. \textbf{Estimated Deadline}: \textbf{Apr 23}
+		\item Train a model that is able to keep both pendulums in upright position in the presence of disturbances. \textbf{Estimated Deadline}: \textbf{Apr 27}
+		\item Finalize documentation. \textbf{Estimated Deadline}: \textbf{May 5}
+		\item If there is enough time, train different models to balance the pendulums in the other equilibrium points. 
+		\item If there is enough time, train a model that can utilize swing-up and stay in balance. 
+		\item If there is enough time, write a demo in Jupyter Notebook so that other students can run it easily. 
 	\end{itemize}
-%    \begin{itemize}
-%        \item Create a Monitor package including classes used by the image analysis and the hardware systems. Implement Observer-Observable and real time behaviour. \textbf{Estimated deadline}: 31/3
-%        \item Assemble the robot arm. \textbf{Estimated deadline}: 9/4
-%        \item Set up a display in such a way that the cameras and the robot arm have stationary positions. \textbf{Estimated deadline}: 14/4
-%        \item Implement communication between arduino and PC. \textbf{Estimated deadline}: 21/4
-%        \item Find mathematical model for how the ball trajectory should be estimated. Implement this into the ballTrajectory package. \textbf{Estimated deadline}: 29/4
-%        \item Find a model for the arm trajectory. \textbf{Estimated deadline}: 29/4 
-%        
-%        \item Create a package for how the servos should respond to the given arm trajectory. \textbf{Estimated deadline}: 6/5
-%        \item Perform image segmentation to find the ball in the two cameras. \textbf{Estimated deadline}: 13/5
-%        \item Make a computer vision system to map the ball segments in the images to a 3D-coordinate. Including calibration and on-line calculations. \textbf{Estimated deadline}: 13/5
-%        \item (Optional); Implement feedback control of robot arm position \textbf{Estimated deadline}: N/A
-%    \end{itemize}
     
 \subsection{Important dates}
     \begin{itemize}
@@ -121,6 +91,14 @@ We have decided to split our project into three parts: image analysis, hardware 
         \item May 27 - Demo film upload and peer review of final report done
         \item June 3 - Final presentation and demonstration and revised final report handed in
     \end{itemize}
+    
+    \subsection{Gantt Chart}
+    The project plan can be seen in estimated duration in days, plotted in Figure~\ref{fig:gantt}
+    \begin{figure}
+    		\centering
+    		\includegraphics[width=0.95\textwidth]{figures/Project_plan.png}
+    		\caption{The Gantt chart showing the work flow.} \label{fig:gantt}
+    \end{figure}
 
 %\subsection{Gantt Chart}
 %    We have formalized the time plan as a Gantt chart. The major tasks can be seen plotted in Figure~\ref{fig:gantt}.

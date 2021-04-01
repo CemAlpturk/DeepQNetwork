@@ -167,7 +167,7 @@ class PendulumOnCart():
 
             # Pendulum
             theta = self.sol[i, 2]
-            x_pendulum_bob = self.pendulum_length*np.sin(theta)
+            x_pendulum_bob = cart_xpos + self.pendulum_length*np.sin(theta) # important! bob position is relative to cart xpos
             y_pendulum_bob = self.pendulum_length*np.cos(theta)
             xpos = [cart_xpos, x_pendulum_bob]
             ypos = [0.0, y_pendulum_bob]
@@ -193,14 +193,14 @@ class PendulumOnCart():
 initial_state = [0.0, 0.0, 0.1, 0.0]
 parameters = {
         "cart_mass": 1.0,
-        "pendulum_mass": 0.1,
+        "pendulum_mass": 1.0,
         "pendulum_length" : 1.0,
     }
 problem = PendulumOnCart(initial_state, parameters)
 problem.print()
 
 # Time line
-t = np.linspace(0, 10, 100)
+t = np.linspace(0, 10, 200)
 
 problem.solve(t)
 problem.animate()

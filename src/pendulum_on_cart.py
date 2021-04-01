@@ -129,41 +129,40 @@ class PendulumOnCart():
         TODO: Add description.
         """
         # Solve the equations
-        self.sol = odeint(self.rhs, self.get_initial_state(), t)
+        self.sol = odeint(self.rhs, self.initial_state, t)
         self.time = t
 
     def animate(self):
         """
         """
         # TODO: Add error handling in case someone invokes animate before sovle!!
-        # plt.plot(self.time, self.sol[:, 0])
-        # plt.plot(self.time, self.sol[:, 2])
-        # plt.show()
-
         # Create animation plot.
         fig = plt.figure()
-        ax = fig.add_subplot(111, aspect = 'equal', xlim = (-2, 2), ylim = (-2, 2), title = "Cart")
+        ax = fig.add_subplot(111, aspect = 'equal', xlim = (-2, 2), ylim = (-2, 2), title = "Pendulum on a Cart")
         ax.grid()
 
         origin = [0.0, 0.0]
 
         # Create the cart.
-        cart = patches.Rectangle(origin, 0.5, 0.5, facecolor='none', edgecolor='k')
+        cart_borders = [0.0 - 0.25, 0.0 - 0.25]
+        cart = patches.Rectangle(cart_borders, 0.5, 0.5, facecolor='none', edgecolor='k')
 
         # Pendulum arm
-        # initial_pendulum_bob_location = [self.pendulum_length * np.sin(self.initial_state[2], self.pendulum_length * np.cos(self.initial_state[2]))]
-        initial_pendulum_bob_location = [0.0, 0.0]
-        pendulumArm = lines.Line2D(origin, initial_pendulum_bob_location, color='r') 
+        initial_pendulum_bob_location = [self.pendulum_length * np.sin(self.initial_state[2]), self.pendulum_length * np.cos(self.initial_state[2])]
+        pendulumArm = lines.Line2D(origin, initial_pendulum_bob_location, color='r', marker='o') 
 
+        # Time:
+        time_text = ax.text(-2., 1.6,'', fontsize=15)
         def init():
             ax.add_patch(cart)
             ax.add_line(pendulumArm)
-            return cart, pendulumArm
+            time_text.set_text('Time 0.0')
+            return cart, pendulumArm, time_text
 
         def animate(i):
             # Cart
             cart_xpos = self.sol[i, 0]
-            cart_coordinate = [cart_xpos, 0.0]
+            cart_coordinate = [cart_xpos - 0.25, -0.25]
             cart.set_xy(cart_coordinate)
 
             # Pendulum
@@ -176,21 +175,22 @@ class PendulumOnCart():
             pendulumArm.set_xdata(xpos)
             pendulumArm.set_ydata(ypos)
 
-            return cart, pendulumArm
+            # Update time
+            time_text.set_text(f"Time: {self.time[i]:2.2f}")
+            return cart, pendulumArm, time_text
 
         anim = animation.FuncAnimation(
             fig,
             animate,
+            interval=0.1,                    # TODO: Fix!
+            frames=len(self.sol),
             init_func=init)
         plt.show()
 
 
+# Use the class
 
-
-
-
-
-initial_state = [0.0, 0.0, 0.01, 0.0]
+initial_state = [0.0, 0.0, 0.1, 0.0]
 parameters = {
         "cart_mass": 1.0,
         "pendulum_mass": 0.1,
@@ -204,10 +204,3 @@ t = np.linspace(0, 10, 100)
 
 problem.solve(t)
 problem.animate()
-
-# Solve the equations
-# sol = odeint(problem.rhs, problem.get_initial_state(), t)
-
-# plt.plot(t, sol[:, 0])
-# plt.plot(t, sol[:, 2])
-# plt.show()

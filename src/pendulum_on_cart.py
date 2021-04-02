@@ -6,6 +6,7 @@ import matplotlib.animation as animation
 import matplotlib.patches as patches
 from scipy.integrate import odeint
 import matplotlib.lines as lines
+import random
 
 
 #   * Paramater values
@@ -75,17 +76,21 @@ class PendulumOnCart():
         self.pendulum_length = parameters["pendulum_length"]
 
         self.initial_state = initial_state
+        self.state = initial_state
+        self.sol = [self.initial_state]
 
         if controller == None:
             self.external_force = lambda x, t : 0
         else:
+            print("Assigned Policy")
             self.external_force = controller
     
-    def rhs(self, x, t):
+    def rhs(self, x, t, u):
         """
         """
+        #print(f"Time: {t}")
         # force = self.external_force(x, t)
-        force = 0
+        force = u
 
         xpos, xpos_dot, theta, theta_dot = x
 
@@ -132,6 +137,12 @@ class PendulumOnCart():
         self.sol = odeint(self.rhs, self.initial_state, t)
         self.time = t
 
+    def step(self, step_size, action):
+        #t = np.linspace(0,step_size,10)
+        t = [0, step_size]
+        self.state = odeint(self.rhs, self.state, t, args=(action,))[-1]
+        self.sol.append(self.state)
+
     def animate(self):
         """
         """
@@ -161,12 +172,12 @@ class PendulumOnCart():
 
         def animate(i):
             # Cart
-            cart_xpos = self.sol[i, 0]
+            cart_xpos = self.sol[i][0]
             cart_coordinate = [cart_xpos - 0.25, -0.25]
             cart.set_xy(cart_coordinate)
 
             # Pendulum
-            theta = self.sol[i, 2]
+            theta = self.sol[i][2]
             x_pendulum_bob = cart_xpos + self.pendulum_length*np.sin(theta) # important! bob position is relative to cart xpos
             y_pendulum_bob = self.pendulum_length*np.cos(theta)
             xpos = [cart_xpos, x_pendulum_bob]
@@ -176,8 +187,8 @@ class PendulumOnCart():
             pendulumArm.set_ydata(ypos)
 
             # Update time
-            time_text.set_text(f"Time: {self.time[i]:2.2f}")
-            return cart, pendulumArm, time_text
+            #time_text.set_text(f"Time: {self.time[i]:2.2f}")
+            return cart, pendulumArm  #, time_text
 
         anim = animation.FuncAnimation(
             fig,
@@ -190,17 +201,41 @@ class PendulumOnCart():
 
 # Use the class
 
-initial_state = [0.0, 0.0, 0.1, 0.0]
+initial_state = [0.0, 0.0, 0.05, 0.0]
 parameters = {
         "cart_mass": 1.0,
         "pendulum_mass": 1.0,
         "pendulum_length" : 1.0,
     }
+
+
+def policy():
+
+    # if x[2] > 0.1:
+    #     return 1.0
+    # elif x[2] < -0.1:
+    #     return -1.0
+    # else:
+    #     return 0.0
+    actions = [1,-1,0.0]
+    index = random.randint(0,2)
+    #print(f"Time: {t}, Action: {actions[index]}")
+    return actions[index]
+    #return 0.0
+
+
 problem = PendulumOnCart(initial_state, parameters)
 problem.print()
 
 # Time line
-t = np.linspace(0, 10, 200)
+t = np.linspace(0, 10, 100)
 
-problem.solve(t)
+for i in t:
+    problem.step(0.1, policy())
+
 problem.animate()
+
+
+
+
+

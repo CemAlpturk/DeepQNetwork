@@ -1,10 +1,21 @@
 
+import sys
+
 import numpy as np
 
 from tensorflow.keras.optimizers import Adam
 
 from Environments import PendulumOnCartEnvironment
 from Agents import QAgent
+
+
+warm_start = False
+# Check arguments
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--warm":
+        warm_start = True
+    else:
+        print("usage: Training_Pendulum.py --warm")
 
 
 # Setup the environment (connects the problem to the q-agent).
@@ -26,7 +37,7 @@ network_parameters = {
 agent = QAgent(environment, network_parameters)
 
 # Train agent - produces a controller that can be used to control the system.
-training_episodes = 100
+training_episodes = 1000
 controller = agent.train(max_episodes=training_episodes)
 
 # Simulate problem using the trained controller.

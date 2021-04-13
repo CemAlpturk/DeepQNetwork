@@ -1,5 +1,6 @@
 #from .Connector2 import Connector2
 from .DoublePendulumOnCartSimulator import DoublePendulumOnCartSimulator
+from .DoublePendulumOnCartEnvironment import DoublePendulumOnCartEnvironment
 from .EnvironmentBase import EnvironmentBase
 from .OdeProblemBase import OdeProblemBase
 from .PendulumOnCartSimulator import PendulumOnCartSimulator

@@ -34,7 +34,7 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         super().__init__(problem, action_space, step_size,"PendulumOnCart")
 
         # 12 degrees
-        self.max_angle = 12*np.pi/180
+        self.max_angle = 20*np.pi/180
 
         # TODO: Should this be a model constraint?
         self.max_cart_pos = 2.5
@@ -51,9 +51,10 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         """
         # Calculate reward
         x, xdot, theta, thetadot = state
-        r_angle = (self.max_angle - abs(theta))/self.max_angle - 0.5
-        r_pos = (self.max_cart_pos - abs(x))/self.max_cart_pos - 0.5
-        reward = r_angle + r_pos
+        r_angle = (self.max_angle - abs(theta))/self.max_angle
+        r_pos = (self.max_cart_pos - abs(x))/self.max_cart_pos
+        reward = np.cos(theta*10) # + r_pos
+
         return reward
 
     def terminated(self, state, t=None):

@@ -4,46 +4,52 @@
 Uses the available class structures to train a model
 """
 
+import sys
+
 import numpy as np
-from double_pendulum_inherited import DoublePendulumOnCart
-from Connector2 import Connector2
-from QAgent import QAgent
-from Controller import Controller
 
-if __name__ == "__main__":
-    """
-    Demonstration for training a double pendulum controller
-    """
+from tensorflow.keras.optimizers import Adam
 
-    problem_parameters = {
-        "cart_mass": 1.0,
-        "pendulum_1_mass": 0.1,
-        "pendulum_2_mass": 0.1,
-        "pendulum_1_length": 1.0,
-        "pendulum_2_length": 1.0
-    }
-    initial_state = np.zeros(6)
-    env = DoublePendulumOnCart(problem_parameters, initial_state)
-    env.print()
+from Environments import DoublePendulumOnCartEnvironment
+from Agents import QAgent
 
-    step_size = 0.02
-    connector = Connector2(env, step_size)
 
-    from tensorflow.keras.optimizers import Adam
-    optimizer = Adam(lr=0.01)
-    network_parameters = {
-        "input_shape": (6,),
-        "layers": [(40, 'relu'), (40, 'relu'), (7, 'linear')],
-        "optimizer": optimizer,
-        "loss_function": "mse"
-    }
-    action_space = [-10,-5,-1,0,1,5,10]
-    training_episodes = 1000
-    agent = QAgent2(connector, network_parameters, action_space, training_episodes)
+warm_start = False
+# Check arguments
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--warm":
+        print("Warm start")
+        warm_start = True
+    else:
+        print("usage: Training_Pendulum.py --warm")
 
-    controller = agent.train()
-    state = connector.reset()
 
-    t = np.linspace(0,10,100)
-    env.solve(t, controller=controller.act)
-    env.animate()
+# Setup the environment (connects the problem to the q-agent).
+step_size = 0.01
+environment = DoublePendulumOnCartEnvironment(step_size)
+
+# Setup Neural network parameters.
+
+optimizer = Adam(lr=0.01)
+network_parameters = {
+    "input_shape" : (6,),                                       # Network input shape.
+    "layers" : [(40, 'relu'), (40, 'relu'), (len(environment.get_action_space()), 'linear')],     # [(nodes, activation function)]
+    "optimizer" : optimizer,                                    # optimizer
+    "loss_function" : "mse",                                    # loss function ('mse', etc.)
+}
+
+# Create agent.
+agent = QAgent(environment, network_parameters)
+
+# Train agent - produces a controller that can be used to control the system.
+training_episodes = 3000
+controller = agent.train(max_episodes=training_episodes,warm_start=warm_start)
+
+# Simulate problem using the trained controller.
+max_time_steps = 100
+state = environment.reset()
+
+t = np.linspace(0, 10, 100)
+environment.solve(t, controller=controller.act)
+
+environment.animate()

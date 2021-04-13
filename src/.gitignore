@@ -1,0 +1,6 @@
+# Ignore for for src folder
+__pycache__/
+*.csv
+*.png
+results/
+Models/

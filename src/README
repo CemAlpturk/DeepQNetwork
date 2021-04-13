@@ -1,1 +1,13 @@
-All source code for the project. Consider the use of subfolders if you use multiple programmings languages in your project. The code should be tidy, readable, and rigurously documented.
+
+# pendulum_on_cart.py
+Simulates a pendulum on a cart. Each step returns the current
+state, reward and termination flag. The termination flag is
+raised if the pendulum angle is more than 12 degrees or if the
+cart is further away than 2.5m from the origin.
+
+# agent.py
+Trains a deep neural network using Deep Q-learning method and save_models
+the model regularly.
+
+# play.py
+Loads a trained model and animates the environment

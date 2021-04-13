@@ -1,6 +1,7 @@
 import numpy as np
 import time
 import random
+from os import path
 
 from collections import deque
 from matplotlib import pyplot as plt
@@ -46,7 +47,8 @@ class QAgent:
             exploration_rate=0.9,
             discount=0.9,
             batch_size=32,
-            timesteps_per_episode=200) -> Controller:
+            timesteps_per_episode=200,
+            warm_start=False) -> Controller:
         """
         Trains the network with specified arguments.
 
@@ -62,6 +64,12 @@ class QAgent:
 
         # TODO: Add input validation.
         """
+
+        # Load existing model for warm start
+        if warm_start:
+            check = self._load_model()
+            if not check:
+                print("Using default network") # TODO: temp solution
 
         for e in range(1, max_episodes + 1):
             t1 = time.time()
@@ -103,7 +111,7 @@ class QAgent:
 
             if len(self.experience) > batch_size:
                 self._experience_replay(batch_size, discount)
-                exploration_rate *= 0.99
+                exploration_rate *= 0.999
 
             t2 = time.time()
             print(
@@ -116,9 +124,10 @@ class QAgent:
 
             if e % 100 == 0:
                 self._align_target_model()
+                self.environment.save(e)
 
             if e % 50 == 0:
-                self.environment.save(e)
+
                 self._save_model()
                 self._evaluate(10, max_steps=timesteps_per_episode)
 
@@ -271,6 +280,23 @@ class QAgent:
         print("Saving Model")
         filepath = f"./Models/{self.environment.name}/q_network"
         self.q_network.save(filepath)
+
+    def _load_model(self):
+        """
+        Load pre-trained model for warm start
+        """
+        filepath = f"Models/{self.environment.name}/q_network"
+        # Check if model exists in default directory
+        if path.exists(filepath):
+            self.q_network = NetworkBuilder._load_model(filepath)
+            self.target_network = NetworkBuilder._load_model(filepath)
+            print("Models loaded")
+            return True
+        else:
+            print(f"'{filepath}' not found")
+            return False
+
+
 
 
 

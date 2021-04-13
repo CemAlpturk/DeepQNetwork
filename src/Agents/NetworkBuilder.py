@@ -7,6 +7,7 @@
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras import Input
+from tensorflow.keras.models import load_model
 
 class NetworkBuilder:
     """
@@ -46,6 +47,12 @@ class NetworkBuilder:
         assert 'input_shape' in network_parameters, "Missing key 'input_shape' in network parameters"
         assert 'loss_function' in network_parameters, "Missing key 'loss_function' in network parameters"
         assert 'optimizer' in network_parameters, "Missing key 'optimizer' in network parameters"
+
+    def _load_model(filepath):
+        """
+        Loads preexisting model
+        """
+        return load_model(filepath)
 
 
 if __name__ == "__main__":

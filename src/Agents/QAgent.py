@@ -20,9 +20,14 @@ class QAgent:
     def __init__(
         self,
         environment,
-        network_parameters : dict):
+        network_parameters : dict,
+        memory = 2000):
         """
         Initializes a Q-Agent.
+
+        TODO: Explain all parameters.
+
+        TODO: Add custom parameter for custom .csv scores (that are loaded for the evaluator).
         """
 
         self.environment = environment
@@ -39,7 +44,7 @@ class QAgent:
         file.close()
         self.eval = []
 
-        self.experience = deque(maxlen=2000)
+        self.experience = deque(maxlen=memory)
 
     def train(
             self,
@@ -48,7 +53,12 @@ class QAgent:
             discount=0.9,
             batch_size=32,
             timesteps_per_episode=200,
-            warm_start=False) -> Controller:
+            warm_start=False,
+            model_alignment_period=100,
+            save_animation_period=100,
+            evaluate_model_period=50,
+            evaluation_size=10,
+            exploration_rate_decay=0.99) -> Controller:
         """
         Trains the network with specified arguments.
 
@@ -63,6 +73,13 @@ class QAgent:
                 * This can help avoid overtraining?
 
         # TODO: Add input validation.
+
+            # model_alignment_period (align models once after each period, period = n number of episodes)
+            # save_animation_period (save animation once after each period, period = n number of episodes)
+            # save_model_period = (save model once after each period, period = n number of episodes)
+            # evaluate_model_period = (evaluate model once after each period, period = n number of episodes)
+            # evaluation_size = (number of simulations to run to evaluate the model)
+            # exploration_rate_decay = (how much the exploration rate should change after each episode)
         """
 
         # Load existing model for warm start
@@ -71,11 +88,11 @@ class QAgent:
             if not check:
                 print("Using default network") # TODO: temp solution
 
-        for e in range(1, max_episodes + 1):
+        for episode in range(1, max_episodes + 1):
             t1 = time.time()
             total_reward = 0
             terminated = False
-            t = 0
+            steps = 0
             state = self.environment.reset(random=True) # start from random state
 
             # TODO: Check if possible to avoid reshape!!
@@ -104,7 +121,7 @@ class QAgent:
                 # Update statistics.
                 total_reward += reward
                 state = next_state
-                t = timestep
+                steps = timestep
 
                 # Terminate episode if the system has reached a termination state.
                 if terminated:
@@ -112,24 +129,28 @@ class QAgent:
 
             if len(self.experience) > batch_size:
                 self._experience_replay(batch_size, discount)
-                exploration_rate *= 0.999
+                exploration_rate *= exploration_rate_decay
 
             t2 = time.time()
             print(
-                f"Episode: {e:>5}, "
+                f"Episode: {episode:>5}, "
                 f"Score: {total_reward:>10.1f}, "
-                f"Steps: {t:>4}, "
-                f"Simulation Time: {(t*self.environment.step_size):>6.2f} Seconds, "
+                f"Steps: {steps:>4}, "
+                f"Simulation Time: {(steps * self.environment.step_size):>6.2f} Seconds, "
                 f"Computation Time: {(t2-t1):>6.2f} Seconds, "
                 f"Exploration Rate: {exploration_rate:>0.3f}")
 
-            if e % 100 == 0:
+            if episode % model_alignment_period == 0:
                 self._align_target_model()
-                self.environment.save(e)
+            
+            if episode % save_animation_period == 0:
+                self.environment.save(episode)
 
-            if e % 50 == 0:
+            if episode % save_model_period == 0:
                 self._save_model()
-                self._evaluate(10, max_steps=timesteps_per_episode)
+
+            if episode % evaluate_model_period == 0:
+                self._evaluate(evaluation_size, max_steps=timesteps_per_episode)
 
         # Create Controller object
         controller = Controller(self.environment.get_action_space(), self.q_network)

@@ -115,6 +115,7 @@ class PendulumOnCartSimulator(OdeProblemBase):
         time_interval = self.time[-1] - self.time[0]
         fps = num_frames / time_interval
         interval = 1000/fps
+        
         anim = animation.FuncAnimation(
             fig,
             animate,
@@ -125,8 +126,9 @@ class PendulumOnCartSimulator(OdeProblemBase):
         )
 
         if save:
-            writergif = animation.PillowWriter(fps=30)
+            writergif = animation.PillowWriter(fps=fps)
             anim.save(filename, writer=writergif)
+            plt.close(fig)
 
         if not hide:
             plt.show()

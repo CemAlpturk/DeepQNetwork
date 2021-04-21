@@ -229,9 +229,6 @@ class QAgent:
         total_reward = 0
         #time_step = 0.1
         for play in range(n):
-            # TODO: Discuss - Shouldn't the reset function randomize the initial state
-            # when evaluating? Need independent set to make a reasonable model evaluation.
-            # Otherwise the reward and termination should be pretty much the same for every run?
             state = self.environment.reset(True).reshape(1, self.environment.state_size)
 
             for i in range(max_steps):
@@ -239,7 +236,6 @@ class QAgent:
                 # TODO: Is this correct? The 'act' function actually uses a randomness to predict the action (when exploration rate is high)
                 #       => It's not the network that predicts the action. We wan't to estimate the network here.
                 action = self._act(state, -1)           # TODO: Discuss - using -1 to get around the random part of the '_act' method.
-                #force = self.environmaction_space[action]
 
                 # Take one step in time and apply the force from the action.
                 next_state = self.environment.step(action)
@@ -265,16 +261,17 @@ class QAgent:
 
         # Save to file
         self.eval.append(average_reward)
-        file = open(self.file_name,"a")
+        file = open(self.file_name, "a")
         file.write(str(average_reward) + '\n')
         file.close()
 
         # Generate plot
+        score_figure = plt.figure()
         plt.plot(self.eval)
         plt.xlabel('Evaluations')
         plt.ylabel('Average Reward per Episode')
-        plt.savefig('Scores.png')
-        plt.close()
+        plt.savefig(r'results/Scores.png')
+        plt.close(score_figure)
 
     def _save_model(self):
         print("Saving Model")

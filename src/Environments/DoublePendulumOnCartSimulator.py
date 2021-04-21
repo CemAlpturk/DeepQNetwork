@@ -90,15 +90,17 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
 
         return dxdt
 
-    def animate(self, save=False, filename=None, title="Pendulum on a Cart", hide=False):
-
+    def animate(self, save=False, filename=None, title="Double Pendulum on a Cart", hide=False):
+        """
+        TODO
+        """
         fig = plt.figure()
         ax = fig.add_subplot(
             111,
             aspect='equal',
             xlim = (-5,5),
             ylim = (-2,2),
-            title = "Double Pendulum on a Cart"
+            title = title
         )
 
         ax.grid()
@@ -179,21 +181,23 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
             return cart, pendulumArm1, pendulumArm2, time_text
 
         # TODO: Adjust framerate
-        # num_frames = len(self.time)
-        # time_interval = self.time[-1] - self.time[0]
-        # fps = num_frames / time_interval
-        # interval = 1000/fps
+        num_frames = len(self.time)
+        time_interval = self.time[-1] - self.time[0]
+        fps = num_frames / time_interval
+        interval = 1000/fps
+
         anim = animation.FuncAnimation(
             fig,
             animate,
-            interval=40,
+            interval=interval,
             frames=len(self.states),
             init_func=init,
             blit=True
         )
         if save:
-            writergif = animation.PillowWriter(fps=30)
+            writergif = animation.PillowWriter(fps=fps)
             anim.save(filename, writer=writergif)
+            plt.close(fig)
 
         if not hide:
             plt.show()

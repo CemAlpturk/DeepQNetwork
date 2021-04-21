@@ -56,6 +56,7 @@ class QAgent:
             warm_start=False,
             model_alignment_period=100,
             save_animation_period=100,
+            save_model_period=100,
             evaluate_model_period=50,
             evaluation_size=10,
             exploration_rate_decay=0.99) -> Controller:
@@ -106,11 +107,11 @@ class QAgent:
                 next_state = self.environment.step(action)
 
                 # Compute the actual reward for the new state the system is in.
-                time = timestep * self.environment.step_size
-                reward = self.environment.reward(next_state, time)
+                current_time = timestep * self.environment.step_size
+                reward = self.environment.reward(next_state, current_time)
 
                 # Check whether the system has entered a terminal case.
-                terminated = self.environment.terminated(next_state, time)
+                terminated = self.environment.terminated(next_state, current_time)
 
                 # TODO: Can this be avoided?
                 next_state = next_state.reshape(1, self.environment.state_size)
@@ -262,10 +263,11 @@ class QAgent:
                 next_state = self.environment.step(action)
 
                 # Compute reward for the new state.
-                reward = self.environment.reward(next_state)
+                current_time = i * self.environment.step_size
+                reward = self.environment.reward(next_state, current_time)
 
                 # Check wheter the new state is a termination or not.
-                terminated = self.environment.terminated(next_state)
+                terminated = self.environment.terminated(next_state, current_time)
 
                 # Update the current state variable.
                 state = next_state.reshape(1, self.environment.state_size)
@@ -296,6 +298,8 @@ class QAgent:
 
     def _save_model(self):
         print("Saving Model")
+
+        # TODO: Fix path for windows.
         filepath = f"./Models/{self.environment.name}/q_network"
         self.q_network.save(filepath)
 

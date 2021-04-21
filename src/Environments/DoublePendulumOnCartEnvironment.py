@@ -7,8 +7,8 @@ Handle the communication between the simulator and the agent
 """
 
 import numpy as np
-from EnvironmentBase import EnvironmentBase
-from DoublePendulumOnCartSimulator import DoublePendulumOnCartSimulator
+from .EnvironmentBase import EnvironmentBase
+from .DoublePendulumOnCartSimulator import DoublePendulumOnCartSimulator
 
 
 class DoublePendulumOnCartEnvironment(EnvironmentBase):

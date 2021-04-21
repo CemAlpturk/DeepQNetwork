@@ -5,7 +5,7 @@
 ###############################
 
 
-from OdeProblemBase import OdeProblemBase
+from .OdeProblemBase import OdeProblemBase
 import numpy as np
 
 import matplotlib.pyplot as plt

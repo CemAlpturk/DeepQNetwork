@@ -8,8 +8,8 @@ import os
 
 import numpy as np
 
-from EnvironmentBase import EnvironmentBase
-from PendulumOnCartSimulator import PendulumOnCartSimulator
+from .EnvironmentBase import EnvironmentBase
+from .PendulumOnCartSimulator import PendulumOnCartSimulator
 
 class PendulumOnCartEnvironment(EnvironmentBase):
 

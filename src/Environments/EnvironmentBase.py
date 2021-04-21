@@ -59,14 +59,14 @@ class EnvironmentBase(ABC):
         pass
 
     @abstractmethod
-    def reward(self, state, t=None):
+    def reward(self, state, t):
         """
         Calculates reward for current condition
         """
         pass
 
     @abstractmethod
-    def terminated(self, state, t=None):
+    def terminated(self, state, t):
         """
         Calculates termination for state
         """

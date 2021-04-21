@@ -8,15 +8,18 @@ import os
 
 import numpy as np
 
-from .EnvironmentBase import EnvironmentBase
-from .PendulumOnCartSimulator import PendulumOnCartSimulator
+from EnvironmentBase import EnvironmentBase
+from PendulumOnCartSimulator import PendulumOnCartSimulator
 
 class PendulumOnCartEnvironment(EnvironmentBase):
 
     def __init__(
             self,
             step_size=0.1,
-            problem_parameters=None):
+            problem_parameters=None,
+            custom_reward_function=None,
+            custom_termination_function=None,
+            action_space=[-10, 0, 10]):
         """
         env: PendulumOnCart object
         """
@@ -29,44 +32,33 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         # TODO: May need to randomize the initial state.
         initial_state = np.array([0, 0, 0.01, 0])
         problem = PendulumOnCartSimulator(problem_parameters, initial_state)
-        action_space = [-10, 0, 10]
 
         super().__init__(problem, action_space, step_size,"PendulumOnCart")
 
-        # 12 degrees
-        self.max_angle = 20*np.pi/180
-
-        # TODO: Should this be a model constraint?
-        self.max_cart_pos = 2.5
-
         # Punishment for termination
+        # TODO: Not used - use or remove?
         self.termination_reward = -1
 
+        if custom_reward_function is not None:
+            self._reward = custom_reward_function
+        else:
+            self._reward = self._default_reward_function
 
-    def reward(self, state, t=None):
+        if custom_termination_function is not None:
+            self._terminated = custom_termination_function
+        else:
+            self._terminated = self._default_terminated_function
+
+    def reward(self, state, t):
         """
-        Computes a reward based on the current state of the system.
-
-        TODO: Add summary
         """
-        # Calculate reward
-        x, xdot, theta, thetadot = state
-        r_angle = (self.max_angle - abs(theta))/self.max_angle
-        r_pos = (self.max_cart_pos - abs(x))/self.max_cart_pos
-        reward = np.cos(theta*10) # + r_pos
+        return self._reward(state, t)
 
-        return reward
-
-    def terminated(self, state, t=None):
+    def terminated(self, state, t):
         """
-        Checks whether the system has entered a termination state.
-
-        TODO: Add summary
+        TODO
         """
-        #Calculate Termination
-        x, xdot, theta, thetadot = state
-        return abs(theta) > self.max_angle or abs(x) > self.max_cart_pos
-
+        return self._terminated(state, t)
 
     def reset(self, random=False):
         """
@@ -94,8 +86,43 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         title = f"Episode: {episode}"
         self.problem.animate(save=True, filename=filename, title=title, hide=True)
 
+    def _default_reward_function(self, state, t):
+        """
+        Computes a reward based on the current state of the system.
+
+        TODO: Add summary
+        """
+        # 20 degrees
+        max_angle = 20*np.pi/180
+
+        # TODO: Should this be a model constraint?
+        max_cart_pos = 2.5
+
+        x, xdot, theta, thetadot = state
+        r_angle = (max_angle - abs(theta))/max_angle
+        r_pos = (max_cart_pos - abs(x))/max_cart_pos
+        reward = np.cos(theta*10) # + r_pos
+
+        return reward
+
+    def _default_terminated_function(self, state, t):
+        """
+        Checks whether the system has entered a termination state.
+
+        TODO: Add summary
+        """
+        # 20 degrees
+        max_angle = 20*np.pi/180
+
+        # TODO: Should this be a model constraint?
+        max_cart_pos = 2.5
+
+        #Calculate Termination
+        x, xdot, theta, thetadot = state
+        return abs(theta) > max_angle or abs(x) > max_cart_pos
+
 if __name__ == "__main__":
-    from pendulum_on_a_cart import PendulumOnCart
+    from PendulumOnCartSimulator import PendulumOnCartSimulator
 
     def policy(x):
         """
@@ -104,15 +131,15 @@ if __name__ == "__main__":
         """
         return np.random.choice([0, 1, 2])
 
-    env = PendulumOnCartEnvironment(0.1)
+    env = PendulumOnCartEnvironment()
     state = env.get_state()
     n_steps = 200
     print(f"Initial State = {state}")
     for i in range(n_steps):
         action = policy(state)
         next_state = env.step(action)
-        reward = env.reward(next_state)
-        terminated = env.terminated(next_state)
+        reward = env.reward(next_state, i * env.step_size)
+        terminated = env.terminated(next_state, i * env.step_size)
         print(f"Step = {i}, Action = {action}, Reward = {reward}, Terminated = {terminated}")
         state = next_state
 

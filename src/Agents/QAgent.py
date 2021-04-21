@@ -89,10 +89,11 @@ class QAgent:
                 next_state = self.environment.step(action)
 
                 # Compute the actual reward for the new state the system is in.
-                reward = self.environment.reward(next_state)
+                time = timestep * self.environment.step_size
+                reward = self.environment.reward(next_state, time)
 
                 # Check whether the system has entered a terminal case.
-                terminated = self.environment.terminated(next_state)
+                terminated = self.environment.terminated(next_state, time)
 
                 # TODO: Can this be avoided?
                 next_state = next_state.reshape(1, self.environment.state_size)
@@ -127,7 +128,6 @@ class QAgent:
                 self.environment.save(e)
 
             if e % 50 == 0:
-
                 self._save_model()
                 self._evaluate(10, max_steps=timesteps_per_episode)
 

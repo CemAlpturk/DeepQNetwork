@@ -201,6 +201,7 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
 
         if not hide:
             plt.show()
+        plt.close()
 
 if __name__ == "__main__":
     initial_state = np.array([0,0,0.01,0,0,0])

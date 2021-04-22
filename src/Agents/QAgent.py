@@ -128,7 +128,7 @@ class QAgent:
                 if terminated:
                     break
 
-            if len(self.experience) > batch_size:
+            if len(self.experience) >= batch_size:
                 self._experience_replay(batch_size, discount)
                 exploration_rate *= exploration_rate_decay
 
@@ -143,7 +143,7 @@ class QAgent:
 
             if episode % model_alignment_period == 0:
                 self._align_target_model()
-            
+
             if episode % save_animation_period == 0:
                 self.environment.save(episode)
 

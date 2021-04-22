@@ -69,12 +69,12 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         # Calculate reward
         x, theta1, theta2, xdot, theta1dot, thteta2dot = state
         # r_angle1 = (self.max_angle - abs(theta1))/self.max_angle - 0.5
-        # r_angle2 = (self.max_angle - abs(theta2))/self.max_angle - 0.5
+        r_angle2 = (self.max_angle - abs(theta2))/self.max_angle
         # r_pos = (self.max_cart_pos - abs(x))/self.max_cart_pos - 0.5
-        r_angle1 = np.cos(theta1*10)
-        r_angle2 = np.cos(theta2*10)
+        #r_angle1 = np.cos(theta1*10)
+        #r_angle2 = np.cos(theta2*10)
         r_pos = 0
-        reward = r_angle1 + r_angle2 + r_pos
+        reward = r_angle2  + r_angle2 + r_pos
 
         return reward
 
@@ -98,9 +98,12 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         Resets the simulation to its initial conditions
         By setting random to True, new initial conditions are generated randomly
         """
+        max_angle = 5*np.pi/180
         if random:
+            lamb = 0.1*max_angle
             #initial_state = [np.random.uniform(-0.05,0.05) for _ in range(self.state_size)]
-            initial_state = np.random.uniform(-0.05, 0.05,self.state_size)
+            initial_state = np.zeros(self.state_size)
+            initial_state[1:3] = np.random.uniform(-lamb,lamb,2)
             return self.problem.reset(initial_state)
         else:
             return self.problem.reset()

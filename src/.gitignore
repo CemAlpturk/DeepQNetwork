@@ -2,5 +2,7 @@
 __pycache__/
 *.csv
 *.png
+*.gif
 results/
 Models/
+Logs/

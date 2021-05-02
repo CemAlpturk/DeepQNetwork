@@ -36,6 +36,18 @@ class Logger:
         fig.savefig(fig_dir)
         plt.close()
 
+    def log_episode(self, states, u, rewards, terminated, t, episode):
+        data = {
+                "States": states,
+                "Force": u,
+                "Reward": rewards,
+                "Terminated": terminated,
+                "Time": t}
+        df = pd.DataFrame(data)
+        #print(df.head())
+        dir = os.path.join(self.ep_dir,f"Episode_{episode}.csv")
+        df.to_csv(dir, index=False)
+
     def _init_directory(self):
 
         # Check if directory exists
@@ -68,3 +80,9 @@ class Logger:
         with open(self.evals_dir, 'w', newline='') as write_obj:
             csv_writer = writer(write_obj)
             csv_writer.writerow(["Episode","Score"])
+
+        # Create directory for episode metrics
+        ep_dir = os.path.join(timedir,"Episodes")
+        print(f"Creating 'Episodes' directory at: {timedir}")
+        os.mkdir(ep_dir)
+        self.ep_dir = ep_dir

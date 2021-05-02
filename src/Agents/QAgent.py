@@ -41,10 +41,10 @@ class QAgent:
 
         self.Logger = Logger(environment.name)
 
-        self.file_name = "scores.csv"
-        file = open(self.file_name, "w")
-        file.close()
-        self.eval = []
+        # self.file_name = "scores.csv"
+        # file = open(self.file_name, "w")
+        # file.close()
+        # self.eval = []
 
         self.experience = deque(maxlen=memory)
 
@@ -252,6 +252,12 @@ class QAgent:
         # max_steps = 200
         total_reward = 0
         #time_step = 0.1
+        u = []
+        rewards = []
+        term = []
+        t = []
+        states = []
+        actions = self.environment.action_space
         for play in range(n):
             state = self.environment.reset(True).reshape(1, self.environment.state_size)
 
@@ -271,11 +277,20 @@ class QAgent:
                 # Check wheter the new state is a termination or not.
                 terminated = self.environment.terminated(next_state, current_time)
 
+                 #Log play
+                if play == 0:
+                    u.append(actions[action])
+                    t.append(current_time)
+                    rewards.append(reward)
+                    term.append(terminated)
+                    states.append(state)
+
                 # Update the current state variable.
                 state = next_state.reshape(1, self.environment.state_size)
 
                 # Update total reward for the play.
                 total_reward += reward
+
 
                 # Terminate if the termination condition is true.
                 if terminated:
@@ -283,6 +298,9 @@ class QAgent:
 
         average_reward = total_reward/n
         print(f"Average Total Reward: {average_reward:0.3f}")
+
+        # Log the recorded play
+        self.Logger.log_episode(states,u,rewards,term,t,episode)
 
 
         self.Logger.log_eval(episode, average_reward)

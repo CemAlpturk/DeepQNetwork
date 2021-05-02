@@ -19,7 +19,8 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
             problem_parameters=None,
             custom_reward_function=None,
             custom_termination_function=None,
-            action_space=[-5, -1, 0, 1, 5]):
+            action_space=[-5, -1, 0, 1, 5],
+            lamb=0.1):
         """
         env: DoublePendulumOnCart object
         """
@@ -38,7 +39,7 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         # Punishment for termination
         # TODO: Not used - should it be used or removed?
         self.termination_reward = -1
-
+        self.lamb = lamb
         if custom_reward_function is not None:
             self._reward = custom_reward_function
         else:
@@ -98,12 +99,11 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         Resets the simulation to its initial conditions
         By setting random to True, new initial conditions are generated randomly
         """
-        max_angle = 5*np.pi/180
+
         if random:
-            lamb = 0.1*max_angle
             #initial_state = [np.random.uniform(-0.05,0.05) for _ in range(self.state_size)]
             initial_state = np.zeros(self.state_size)
-            initial_state[1:3] = np.random.uniform(-lamb,lamb,2)
+            initial_state[1:3] = np.random.uniform(-self.lamb,self.lamb,2)
             return self.problem.reset(initial_state)
         else:
             return self.problem.reset()

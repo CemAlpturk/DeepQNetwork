@@ -19,7 +19,8 @@ class PendulumOnCartEnvironment(EnvironmentBase):
             problem_parameters=None,
             custom_reward_function=None,
             custom_termination_function=None,
-            action_space=[-10, 0, 10]):
+            action_space=[-10, 0, 10],
+            lamb=0.1):
         """
         env: PendulumOnCart object
         """
@@ -38,6 +39,7 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         # Punishment for termination
         # TODO: Not used - use or remove?
         self.termination_reward = -1
+        self.lamb = lamb
 
         if custom_reward_function is not None:
             self._reward = custom_reward_function
@@ -60,14 +62,15 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         """
         return self._terminated(state, t)
 
-    def reset(self, random=False):
+    def reset(self, random=False,):
         """
         Resets the simulation to its initial conditions
         By setting random to True, new initial conditions are generated randomly
         """
         if random:
             #initial_state = [np.random.uniform(-0.05,0.05) for _ in range(self.state_size)]
-            initial_state = np.random.uniform(-0.05,0.05, self.state_size)
+            initial_state = np.zeros(self.state_size)
+            initial_state[2] = np.random.uniform(-self.lamb, self.lamb)
             return self.problem.reset(initial_state)
         else:
             return self.problem.reset()

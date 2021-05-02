@@ -69,4 +69,4 @@ t = np.linspace(0, 10, 500)
 environment.solve(t, controller=controller.act)
 
 environment.animate()
-environment.problem.animate(save=True,filename="result.gif")
+environment.problem.animate(save=True,filename="resultDoublePendulum.gif")

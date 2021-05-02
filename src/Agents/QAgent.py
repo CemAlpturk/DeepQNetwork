@@ -8,8 +8,7 @@ from matplotlib import pyplot as plt
 
 from .NetworkBuilder import NetworkBuilder
 from .Controller import Controller
-#from Environments import PendulumOnCartEnvironment
-#from Environments import PendulumOnCart
+
 
 class QAgent:
     """

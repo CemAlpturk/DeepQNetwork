@@ -41,7 +41,8 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-10,-5,0,5,10])
+        action_space=[-10,-5,0,5,10],
+        lamb=0.1*max_angle)
 
 # Setup Neural network parameters.
 

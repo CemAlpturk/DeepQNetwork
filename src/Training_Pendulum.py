@@ -19,7 +19,7 @@ if len(sys.argv) > 1:
 
 
 
-max_angle = 20*np.pi/180
+max_angle = 15*np.pi/180
 
 def reward(state, t):
     x, xdot, theta, thetadot = state
@@ -39,7 +39,7 @@ environment = PendulumOnCartEnvironment(
         custom_reward_function=reward,
         custom_termination_function=terminated,
         action_space=[-10,0,10],
-        lamb = max_angle)
+        lamb = max_angle*0.5)
 
 # Setup Neural network parameters.
 
@@ -56,11 +56,12 @@ network_parameters = {
 agent = QAgent(environment, network_parameters, memory=200)
 
 # Train agent - produces a controller that can be used to control the system.
-training_episodes = 250
+training_episodes = 500
 controller = agent.train(
     max_episodes=training_episodes,
     batch_size=200,
-    warm_start=warm_start)
+    warm_start=warm_start,
+    evaluate_model_period=50)
 
 # Simulate problem using the trained controller.
 max_time_steps = 100

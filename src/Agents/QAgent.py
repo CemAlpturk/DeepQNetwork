@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 
 from .NetworkBuilder import NetworkBuilder
 from .Controller import Controller
+from Logger.Logger import Logger
 
 
 class QAgent:
@@ -37,6 +38,8 @@ class QAgent:
         self.q_network = NetworkBuilder.Build(network_parameters)
         self.target_network = NetworkBuilder.Build(network_parameters)
         self._align_target_model()
+
+        self.Logger = Logger(environment.name)
 
         self.file_name = "scores.csv"
         file = open(self.file_name, "w")
@@ -150,7 +153,7 @@ class QAgent:
                 self._save_model()
 
             if episode % evaluate_model_period == 0:
-                self._evaluate(evaluation_size, max_steps=timesteps_per_episode)
+                self._evaluate(evaluation_size, max_steps=timesteps_per_episode,episode=episode)
 
         # Create Controller object
         controller = Controller(self.environment.get_action_space(), self.q_network)
@@ -240,7 +243,7 @@ class QAgent:
         self.target_network.set_weights(self.q_network.get_weights())
         print("Target Network Realligned")
 
-    def _evaluate(self, n, max_steps):
+    def _evaluate(self, n, max_steps, episode):
         """
         TODO: Add summary
         """
@@ -281,19 +284,21 @@ class QAgent:
         average_reward = total_reward/n
         print(f"Average Total Reward: {average_reward:0.3f}")
 
-        # Save to file
-        self.eval.append(average_reward)
-        file = open(self.file_name, "a")
-        file.write(str(average_reward) + '\n')
-        file.close()
 
-        # Generate plot
-        score_figure = plt.figure()
-        plt.plot(self.eval)
-        plt.xlabel('Evaluations')
-        plt.ylabel('Average Reward per Episode')
-        plt.savefig(r'results/Scores.png')
-        plt.close(score_figure)
+        self.Logger.log_eval(episode, average_reward)
+        # Save to file
+        # self.eval.append(average_reward)
+        # file = open(self.file_name, "a")
+        # file.write(str(average_reward) + '\n')
+        # file.close()
+        #
+        # # Generate plot
+        # score_figure = plt.figure()
+        # plt.plot(self.eval)
+        # plt.xlabel('Evaluations')
+        # plt.ylabel('Average Reward per Episode')
+        # plt.savefig(r'results/Scores.png')
+        # plt.close(score_figure)
 
     def _save_model(self):
         print("Saving Model")

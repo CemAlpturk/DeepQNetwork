@@ -79,17 +79,98 @@ The reward is calculated based on how close the system is to its equilibrium poi
 The goal of training the agent is to optimize gained reward for each action taken.
 
 \section{Modeling}
-Here you present the modeling approach and publish your model. If your model has 63434 parameters, you may not wish to print it in detail. The idea is, however, that another group with your background should be able to reproduce your work -- this goes not only for the modeling aspect.
-
-If you use equations, make sure they are all numbered:
+The system consists of a cart that can move in the horizontal direction and two pendulums that are coupled to each other such that there is no collision between any parts.
+Since this project is not about modeling the double pendulum, but rather about controlling it, we have borrowed the equations of motion from (ref).
+The states of the system are represented by,
 \begin{equation}
-\alpha_a^2 + \beta_b^2 = \gamma_c^2.
-\label{eq:formula}
+x  := 
+\begin{bmatrix}
+y & \dot{y}
+\end{bmatrix}
+^T , \quad y := 
+\begin{bmatrix}
+q & \theta_1 & \theta_2
+\end{bmatrix}
+^T
 \end{equation}
-Equations are parts of the text. If they end a sentence, they should end with a dot. If they end a clause, they should end with a comma. You refer to an equation this like: see \eqref{eq:formula}. Note that all units are written in roman type: $\omega=2\pi$~rad/s, $g = 9.81$~m/s$^2$. See \cite{mathslatexwiki} for a tutorial on typesetting maths.
+%\begin{equation}
+%x :=
+%\begin{bmatrix}
+%q & \theta_1 &  \theta_2 &  \dot{q} &  \dot{\theta_1} & \dot{\theta_2}
+%\end{bmatrix}
+% ^T
+%\end{equation}
+\begin{itemize}
+\item $q$ is the position of the cart on the horizontal axis.
+\item $\theta_1$ is the angle of the inner pendulum with respect to the vertical axis in the clockwise direction.
+\item $\theta_2$ is the angle of the outer pendulum with respect to the vertical axis in the clockwise direction.
+\item $\dot{q}$ is the velocity of the cart in the horizontal axis.
+\item $\dot{\theta_1}$ is the angular velocity of the inner pendulum.
+\item $\dot{\theta_2}$ is the angular velocity of the outer pendulum.
+\end{itemize}
 
-\subsection{Some Dummy Text}
-\kant[2]
+The system parameters are represented by,
+\begin{itemize}
+\item $m = 1 [kg]$ is the mass of the cart.
+\item $m_1 = 0.1 [kg]$ is the mass of the inner pendulum.
+\item $m_2 = 0.1[kg]$ is the mass of the outer pendulum.
+\item $l_1 = 1 [m]$ is the length of the inner pendulum.
+\item $l_2 = 1[m]$ is the length of the outer pendulum.
+\item $g = 9.81 [m/s^2]$ is the gravitational acceleration.
+ \end{itemize}
+
+The equations of motions for this system (ref), are adjusted such there is no friction or disturbances. 
+The input to the system is a horizontal force that is acting on the cart, represented by $u$ $[N]$.
+
+\begin{equation}
+M(y) \ddot{y} = f(y,\dot{y},u)
+\end{equation}
+
+
+\begin{equation}
+\resizebox{ \columnwidth}{!} 
+{
+$
+M(y) := 
+\begin{bmatrix}
+m + m_1 +m_2 & l_1(m_1+m_2)\cos \theta_1 & m_2 l_2 \cos \theta_2 \\
+l_1 (m_1 + m_2) \cos \theta_1 & l_1^2(m_1+m_2) & l_1 l_2 m_2 \cos(\theta_1 - \theta_2) \\
+l_2 m_2 \cos \theta_2 & l_1 l_2 m_2 \cos (\theta_1 - \theta_2) & l_2^2 m_2
+\end{bmatrix}
+$
+}
+\end{equation}
+
+\begin{equation}
+\resizebox{ \columnwidth}{!} 
+{
+$
+f(y,\dot{y},u) :=
+\begin{bmatrix}
+l_1(m_1+m_2) (\dot{\theta_1})^2 \sin \theta_1 + m_2 l_2 (\dot{\theta_2})^2 \sin \theta_2 + u\\
+-l_1l_2m_2(\dot{\theta_2})^2 \sin(\theta_1 - \theta_2) + g(m_1 + m_2)l_1 \sin \theta_1 \\
+l_1l_2m_2(\dot{\theta_1})^2 \sin (\theta_1 - \theta_2) + g l_2 m_2 \sin \theta_2
+\end{bmatrix}
+ $
+ }
+\end{equation}
+
+
+
+
+ 
+
+%Here you present the modeling approach and publish your model. If your model has 63434 parameters, you may not wish to print it in detail. The idea is, however, that another group with your background should be able to reproduce your work -- this goes not only for the modeling aspect.
+%
+%If you use equations, make sure they are all numbered:
+%\begin{equation}
+%\alpha_a^2 + \beta_b^2 = \gamma_c^2.
+%\label{eq:formula}
+%\end{equation}
+%Equations are parts of the text. If they end a sentence, they should end with a dot. If they end a clause, they should end with a comma. You refer to an equation this like: see \eqref{eq:formula}. Note that all units are written in roman type: $\omega=2\pi$~rad/s, $g = 9.81$~m/s$^2$. See \cite{mathslatexwiki} for a tutorial on typesetting maths.
+%
+%\subsection{Some Dummy Text}
+%\kant[2]
 
 \section{System Design}
 Describe the control or learning system you have designed.

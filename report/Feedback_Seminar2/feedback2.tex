@@ -6,11 +6,11 @@
                                    % markers for overfull boxes.
                                    % There really shouldn't be any of those anyway.
 
-\usepackage[utf8]{inputenc}        
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,graphicx}
-
+\usepackage{float}
 \usepackage{xcolor}
-\usepackage{hyperref} 
+\usepackage{hyperref}
 \hypersetup{
 	colorlinks,
 	linkcolor={red!50!black},
@@ -45,7 +45,7 @@
 % This file compiles on the Automatic Control Department system by typing the
 % following into the terminal (while in the directory of the file, and with all
 % other files belonging to the template untouched):
-% > pdflatex template        
+% > pdflatex template
 % > biber template
 % The first line compiles the .tex file. The second line generates the
 % bibliography. Once this is done, you may need to run the first line 1-2
@@ -53,10 +53,30 @@
 % produced pdf output.
 
 \section{Introduction}
-Here you introduce the project. What is the background? What project do you aim at solve? References to prior work? If the project makes a positive or negative environmental, or other solitary, impact, describe it here. Are there any ethical considerations? You might want to reference relevant literature, e.g. \cite{openclosed2, Hellerstein2004, Yun2015}. A general \LaTeX\ guide is available at \cite{latexwiki}. 
+The goal of this project is to teach an agent to control a double pendulum on a cart to be standing upright, in its equilibrium point, using reinforcement learning.
+A double pendulum is a highly chaotic system, where its behavior heavily depends on its initial conditions.
+As a result, this system can be very difficult to control. 
+Figure \ref{fig:double_pendulum_chaotic} shows a simulation with 4 double pendulums with nearly identical initial conditions.
+After some time their behaviors become so different that it becomes nearly impossible to make a prediction about the future.
+This illustrates the chaotic behavior of this system.
+Our aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright.
+Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what its working on.
+(Possible reference to qlearning)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\columnwidth]{figures/Double_Pendulum_Chaotic_2.PNG}
+	\label{fig:double_pendulum_chaotic}
+	\caption{4 double pendulums simulated with similar initial conditions after $9.86$ seconds, with a difference of $0.02 rad/s$ differences on the inner pendulum angular velocities. All other initial states were equal.} 
+\end{figure}
+% Here you introduce the project. What is the background? What project do you aim at solve? References to prior work? If the project makes a positive or negative environmental, or other solitary, impact, describe it here. Are there any ethical considerations? You might want to reference relevant literature, e.g. \cite{openclosed2, Hellerstein2004, Yun2015}. A general \LaTeX\ guide is available at \cite{latexwiki}.
 
-\subsection{Some Dummy Text}
-\kant[1] % This generates the dummy text
+\subsection{Reinforcement Learning}
+%\kant[1] % This generates the dummy text
+The main idea of reinforcement learning is to learn to make decisions based on past experiences. 
+In this case this means to train an agent that performs the best action, the force applied in the horizontal direction,  possible given the current states of the system.
+For each action taken by the agent, the environment returns a new state and a reward for that action. 
+The reward is calculated based on how close the system is to its equilibrium point.
+The goal of training the agent is to optimize gained reward for each action taken.
 
 \section{Modeling}
 Here you present the modeling approach and publish your model. If your model has 63434 parameters, you may not wish to print it in detail. The idea is, however, that another group with your background should be able to reproduce your work -- this goes not only for the modeling aspect.
@@ -85,7 +105,7 @@ Did you build anything? If so, what did you build, and using what production met
 \kant[3]
 
 \section{Implementation}
-Here you describe how you implemented your learning or control design. 
+Here you describe how you implemented your learning or control design.
 
 \section{Results}
 If you need to use tables, Table~\ref{tab:extable} shows an example of how they can be typeset. For further details, see \cite{tablelatexwiki}.
@@ -96,16 +116,16 @@ If you need to use tables, Table~\ref{tab:extable} shows an example of how they 
 	\label{tab:extable}
 	\begin{tabular}{lcrrcrrcrr} % (l)eft, (r)ight and (c)enter indentation
 		\toprule
-        & 
+        &
 		\multicolumn{2}{c}{IAE [$\cdot 10^3$~s]} & &
-		\multicolumn{2}{c}{$\text{var}(\tau^o)$ [s]} & &  
+		\multicolumn{2}{c}{$\text{var}(\tau^o)$ [s]} & &
 		\multicolumn{2}{c}{$\tau^o_{max}$ [s]} \\[1mm]
-		$M_C$            &  3     & 10  &~& 3     & 10    &~& 3    & 10 \\ 
+		$M_C$            &  3     & 10  &~& 3     & 10    &~& 3    & 10 \\
         \midrule
-		$C_{\text{orig}}$ & 8.23 & 8.34 &~& 0.695 & 0.745 &~& 5.68 & 6.27 \\ 
-		$C_{\text{fb}}$ & 1.48 & 0.98 &~& 0.030 & 0.021 &~& 1.81 & 1.83 \\ 
+		$C_{\text{orig}}$ & 8.23 & 8.34 &~& 0.695 & 0.745 &~& 5.68 & 6.27 \\
+		$C_{\text{fb}}$ & 1.48 & 0.98 &~& 0.030 & 0.021 &~& 1.81 & 1.83 \\
 		$C_{\text{ff}}$ & 1.23 & 1.43 &~& 0.026 & 0.034 &~& 1.56 & 1.65\\
-        \bottomrule 
+        \bottomrule
 	\end{tabular}
 \end{table}
 
@@ -122,5 +142,3 @@ Discuss the results and what you learned from the project.
 
 
 \end{document}
-
-

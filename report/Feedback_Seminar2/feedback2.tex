@@ -64,7 +64,7 @@ Although this is an academic problem, the results could be applied to any type o
 (Possible reference to qlearning)
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\columnwidth]{figures/Double_Pendulum_Chaotic_2.PNG}
+	\includegraphics[width=0.9\columnwidth]{figures/Double_Pendulum_Chaotic.PNG}
 	\label{fig:double_pendulum_chaotic}
 	\caption{4 double pendulums simulated with similar initial conditions after $9.86$ seconds, with a difference of $0.02 rad/s$ differences on the inner pendulum angular velocities. All other initial states were equal.} 
 \end{figure}
@@ -173,17 +173,44 @@ l_1l_2m_2(\dot{\theta_1})^2 \sin (\theta_1 - \theta_2) + g l_2 m_2 \sin \theta_2
 %\kant[2]
 
 \section{System Design}
-Describe the control or learning system you have designed.
-Did you build anything? If so, what did you build, and using what production methods. If you built the hardware or were handed it, \emph{a photograph of your gadget is mandatory}. Make sure any figures are referenced from from the text---like this, see Figure~\ref{fig:gadget}---and that they all have a descriptive caption.
-\begin{figure}[b]
-	\centering
-	\includegraphics[width=0.7\columnwidth]{balanduino}
-	\caption{Example picture of the Balanduino robot. Place all figures at the top \texttt{[t]} (default) or bottom \texttt{[b]} (only if needed).}
-	\label{fig:gadget} % Should be placed after the caption!
-\end{figure}
+A couple of reinforcement learning methods are Q-learning and Deep Q-learning. 
+\subsection{Q-learning}
+Q-learning is a model free method where the agent has no information about the system its trying to control, thus it can be said that it is a black box model. 
+The agent stores all its experiences in a Q-table that contains the quality of a state-action combination.
+\[ Q : S \times A  \to \mathbb{R} \]
+\[Q(s,a) := \text{Quality of action $a$ given state  $s$} \]
+A trained agent decides on the action to perform by looking up the best action $a$ given state $s$ from the Q-table. 
+In the case where multiple actions give the same values in the Q-table, the action is selected randomly among those.
+The selected action is performed on the environment, which is the inverted pendulum, and a reward is calculated based on the new state of the system.
+In the case where there is no previous knowledge about the current state in the Q-table, the action is selected randomly.
+Essentially the agent tries to find the action that will give the best reward.
+\[ a^* = \max_i Q(s,a_i) \]
+Training the agent corresponds to populating and updating the Q-table based on past experiences of the agent.
+After performing an action given the current state of the system, the agent receives a reward from the environment and the values in the Q-table are updated according to the state-action combination and the reward received.
+\begin{equation}
+Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i Q(s_{t+1},a_i )) 
+\label{eq:qlearning}
+\end{equation}
+\[ 0 < \alpha \leq 1, \quad 0 \leq \gamma \leq 1  \]
+\[ Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] \]
+After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for the delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider 
 
-\subsection{Some Dummy Text}
-\kant[3]
+This method requires a discrete set of actions and states. For the double pendulum problem, this can be achieved by discretizing the states and actions. However since this is a chaotic system, it would require a fine discretization resulting in a massive Q-table. Although this can work in theory, there are practical implementation limitations such as limited memory size. This problem can be resolved by using the Deep Q-learning method.
+
+\subsection{Deep Q-learning}
+In Deep Q-learning, the Q-table is replaced with a deep neural network that tries to learn Q-values instead of memorizing them. A benefit of using Deep Q-learning is that is uses less memory and it has more predictive power on unseen states.
+
+%Describe the control or learning system you have designed.
+%Did you build anything? If so, what did you build, and using what production methods. If you built the hardware or were handed it, \emph{a photograph of your gadget is mandatory}. Make sure any figures are referenced from from the text---like this, see Figure~\ref{fig:gadget}---and that they all have a descriptive caption.
+%\begin{figure}[b]
+%	\centering
+%	\includegraphics[width=0.7\columnwidth]{balanduino}
+%	\caption{Example picture of the Balanduino robot. Place all figures at the top \texttt{[t]} (default) or bottom \texttt{[b]} (only if needed).}
+%	\label{fig:gadget} % Should be placed after the caption!
+%\end{figure}
+%
+%\subsection{Some Dummy Text}
+%\kant[3]
 
 \section{Implementation}
 Here you describe how you implemented your learning or control design.

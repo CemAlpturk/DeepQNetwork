@@ -216,6 +216,13 @@ The network takes in the system states as input arguments and predicts the q-val
 \end{equation}
 where $m$ is the state size and $n$ is the size of the action space.
 The agent chooses the action to perform by picking the largest q-value from the neural network prediction.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/q_network.png}
+	\label{fig:q_network_illustration}
+	\caption{Illustration of a neural network with $3$ inputs and $4$ outputs.}
+\end{figure}
+
 
 The neural network is trained by a method called experience replay that is based on simulating the system and recording all states, rewards and actions taken in memory.
 The simulation ends when it reaches a termination condition that is defined in the environment.

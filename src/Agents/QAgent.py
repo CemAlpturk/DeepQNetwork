@@ -61,7 +61,8 @@ class QAgent:
             save_model_period=100,
             evaluate_model_period=50,
             evaluation_size=10,
-            exploration_rate_decay=0.99) -> Controller:
+            exploration_rate_decay=0.99,
+            epochs=1) -> Controller:
         """
         Trains the network with specified arguments.
 
@@ -131,7 +132,7 @@ class QAgent:
                     break
 
             if len(self.experience) >= batch_size:
-                self._experience_replay(batch_size, discount)
+                self._experience_replay(batch_size, discount, epochs)
                 exploration_rate *= exploration_rate_decay
 
             t2 = time.time()
@@ -186,7 +187,7 @@ class QAgent:
 
         self.experience.append((state, action, reward, next_state, terminated))
 
-    def _experience_replay(self, batch_size, discount=0.9):
+    def _experience_replay(self, batch_size, discount=0.9, epochs):
         """
         Updates network weights (fits model) with data stored in memory from
         executed simulations (training from experience).
@@ -199,7 +200,7 @@ class QAgent:
         states, actions, rewards, next_states, terminated = self._extract_data(batch_size, minibatch)
         targets = self._build_targets(batch_size, states, next_states, rewards, actions, terminated, discount)
 
-        self.q_network.fit(states, targets, epochs=1, verbose=0)
+        self.q_network.fit(states, targets, epochs=epochs, verbose=0)
 
     def _extract_data(self, batch_size, minibatch):
         """

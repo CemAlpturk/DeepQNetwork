@@ -12,7 +12,7 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
+\usepackage{algpseudocode}
 \hypersetup{
 	colorlinks,
 	linkcolor={red!50!black},
@@ -235,7 +235,7 @@ A separate neural network, $NN_{target}$, was used to avoid the non-stationary t
 $NN_{target}$ has the same network architecture as $NN_Q$.
 After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to give better estimations of the unknown q-values.
 
-\begin{algorithm}
+\begin{algorithm}[H]
 	\label{alg:deep_q_training}
 	\caption{Deep Q-Learning}
 	\begin{algorithmic}
@@ -249,6 +249,7 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 			\State $\begin{pmatrix} \mathbf{s}, & \mathbf{a}, & \mathbf{r} & \mathbf{T} & \mathbf{s}_{t+1} \end{pmatrix}$ $\gets Exp$  \Comment{Exp minibatch}
 			\State $y_m = \begin{cases} r_m \\ r_m + \gamma \max ( NN_{target}(\mathbf{s}_{t+1, m}) ) \end{cases}$
 			\State $Q_{targets} \gets [NN_{target}(\mathbf{s}_m), y_m]$ \Comment{Value replacement} 
+			\State $model.fit(\mathbf{s}, Q_{targets})$
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}

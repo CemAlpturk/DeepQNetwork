@@ -232,7 +232,7 @@ class QAgent:
         """
 
         i = terminated==0                                   # Steps that are not terminal
-        targets = self.q_network.predict(states)            # Predict for each step
+        targets = self.target_network.predict(states)            # Predict for each step
         t = self.target_network.predict(next_states[i, :])  # Predict for next steps that are not terminal
 
         targets[range(batch_size), actions] = rewards  # targets[:,action] = reward, selects the "action" column for each row

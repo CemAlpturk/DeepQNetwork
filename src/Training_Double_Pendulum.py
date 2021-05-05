@@ -8,7 +8,7 @@ import sys
 
 import numpy as np
 
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import SGD
 
 from Environments import DoublePendulumOnCartEnvironment
 from Agents import QAgent
@@ -23,7 +23,7 @@ if len(sys.argv) > 1:
     else:
         print("usage: Training_Pendulum.py --warm")
 
-max_angle = 10*np.pi/180
+max_angle = 5*np.pi/180
 
 def reward(state, t):
     x, theta1, theta2, xdot, theta1dot, thteta2dot = state
@@ -36,7 +36,7 @@ def terminated(state, t):
     return abs(theta1) > max_angle or abs(theta2) > max_angle
 
 # Setup the environment (connects the problem to the q-agent).
-step_size = 0.02
+step_size = 0.001
 environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
@@ -46,22 +46,28 @@ environment = DoublePendulumOnCartEnvironment(
 
 # Setup Neural network parameters.
 
-optimizer = Adam(lr=0.01)
+optimizer = SGD(lr=0.1)
 network_parameters = {
     "input_shape" : (6,),                                       # Network input shape.
-    "layers" : [(100, 'relu'), (100, 'relu'), (len(environment.get_action_space()), 'linear')],     # [(nodes, activation function)]
+    "layers" : [(50, 'relu'), (50, 'relu'), (len(environment.get_action_space()), 'linear')],     # [(nodes, activation function)]
     "optimizer" : optimizer,                                    # optimizer
     "loss_function" : "mse",                                    # loss function ('mse', etc.)
 }
 
 # Create agent.
-agent = QAgent(environment, network_parameters, memory=200)
+agent = QAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
-        max_episodes=100,
+        max_episodes=1000,
+        timesteps_per_episode=5000,
         warm_start=warm_start,
-        batch_size=200)
+        evaluate_model_period=10,
+        batch_size=32,
+        discount=0.9,
+        exploration_rate=0.9,
+        exploration_rate_decay=0.99,
+        epochs=1)
 
 # Simulate problem using the trained controller.
 state = environment.reset()

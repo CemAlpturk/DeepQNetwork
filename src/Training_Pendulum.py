@@ -3,7 +3,7 @@ import sys
 
 import numpy as np
 
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import SGD
 
 from Environments import PendulumOnCartEnvironment
 from Agents import QAgent
@@ -19,7 +19,7 @@ if len(sys.argv) > 1:
 
 
 
-max_angle = 15*np.pi/180
+max_angle = 10*np.pi/180
 
 def reward(state, t):
     x, xdot, theta, thetadot = state
@@ -43,7 +43,7 @@ environment = PendulumOnCartEnvironment(
 
 # Setup Neural network parameters.
 
-optimizer = Adam(lr=0.02)
+optimizer = SGD(lr=0.1)
 
 network_parameters = {
     "input_shape" : (4,),                                       # Network input shape.
@@ -53,15 +53,18 @@ network_parameters = {
 }
 
 # Create agent.
-agent = QAgent(environment, network_parameters, memory=200)
+agent = QAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
-training_episodes = 500
+training_episodes = 300
 controller = agent.train(
     max_episodes=training_episodes,
-    batch_size=200,
+    batch_size=32,
     warm_start=warm_start,
-    evaluate_model_period=50)
+    evaluate_model_period=10,
+    exploration_rate=0.9,
+    exploration_rate_decay=0.99,
+    discount=0.9)
 
 # Simulate problem using the trained controller.
 max_time_steps = 100

@@ -200,6 +200,8 @@ The selected action is performed on the environment, which is the inverted pendu
 In the case where there is no previous knowledge about the current state in the Q-table, the action is selected randomly.
 Essentially the agent tries to find the action that will give the best reward.
 \[ a^* = \max_i Q(s,a_i) \]
+During training the agent can act randomly with chance $\epsilon$ that decays over time.
+This forces the agent to explore and populate the Q-table.
 Training the agent corresponds to populating and updating the Q-table based on past experiences of the agent.
 After performing an action given the current state of the system, the agent receives a reward from the environment and the values in the Q-table are updated according to the state-action combination and the reward received.
 Equation \eqref{eq:qlearning} is known as the Bellman equation.
@@ -269,7 +271,9 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
-The actual value $y_m$ replaces the corresponding predicted q-value from $NN_{target}(\mathbf{s}_m)$
+The actual value $y_m$ replaces the corresponding predicted q-value from $NN_{target}(\mathbf{s}_m)$.
+ Since we only have the reward for one action in a given state, we replace the targets for the untaken actions with a prediction from the Q-network. This will result in a loss of 0 for these untaken actions, thus not affecting the training.
+ This way the network is trained only by the state-action pair that has been taken.
 
 % \comment{Predict q-values for actions for current state}
 % \comment{Pick largest q value and map it to the action}
@@ -465,17 +469,27 @@ Reward is given by equation \eqref{eqn:reward_double_pendulum}
 \end{equation}
 with $\theta_{max} = 5$ degrees.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/double_pendulum_eval.png}
+	\caption{Current results for training the controller.}
+	\label{fig:double_pendulum_score}
+\end{figure}
+Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
+We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
 \section{Discussion}
-
-Discuss the results and what you learned from the project.
-
+While training a controller for the double pendulum problem, we saw that for some cases after the average score increases for a while, it suddenly starts to decrease and can remain there untill the training ends.
+We think that this may be a result of the hyperparameter choices such as network architecture.
+We believe that this may be an effect such as overtraining or that the network is too simple.
+We are trying different combinations in order to understand this behavior.
+Also, as seen in Figure \ref{fig:double_pendulum_score}, we are getting sudden spikes during training.
+We are also currently trying to understand this phenomenon.
 \section{Project Plan}
 The initial project plan was followed quite well.
 However, the time to tune hyper parameters for the double pendulum problem were underestimated.
 Work on that part still remains.
 One problem for tuning the hyper parameters is that the feedback loop for a single change is long.
 It takes a long time to train the controller for the double pendulum and therefore a long time before hyper parameters can be adjusted.
-
 Figure \ref{fig:gantt_chart} shows the updated Gantt chart.
 The green colored blocks are completed steps.
 Blue blocks are work in progress.
@@ -485,9 +499,6 @@ Blue blocks are work in progress.
    \caption{Revised Gantt chart.}
    \label{fig:gantt_chart}
 \end{figure}
-
 % Prints cited references
 \printbibliography
-
-
 \end{document}

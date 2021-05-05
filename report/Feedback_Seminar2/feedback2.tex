@@ -9,7 +9,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,graphicx}
 \usepackage{float}
-\usepackage{xcolor}
+\usepackage[table,xcdraw]{xcolor}
 \usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -43,7 +43,15 @@
 \email[pukashawar]{pu6218pa-s@student.lu.se}
 
 \begin{abstract}
-    The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
+    Controlling a double inverted pendulum on a cart is an inherently difficult problem.
+    The system is chaotic meaning that the dynamics cannot be predicted over a longer time span.
+    A way to control such a system is to use the current state to determine an action that moves the cart appropriately to balance the double pendulum.
+    One such way is by reinforcement learning.
+    The approach in this project uses a model free controller trained with Deep Q-learning to control the double pendulum.
+    Benefits of Deep Q-learning over regular Q-learning is that the controller can be used for situations that are not presented during training.
+    This has been confirmed in the results for the single pendulum model, an easier problem to control that was used to confirm the implementation of the learning algorithm.
+    Results for the double pendulum controller are pending.
+    % The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
 \end{abstract}
 
 \end{frontmatter}
@@ -250,14 +258,14 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 		\For{episode $[0, \text{max episodes}]$ }
 			\While{$t < t_{max}$ and $T_t$ is \False} \Comment{Simulate system}
 				\State $q_{values} \gets NN_Q(s_t)$  % \Comment{Predict q-values for actions for current state}
-				\State $a \gets argmax(q_{values})$ 	 % \Comment{Pick largest q value and map it to the action}
+				\State $a \gets argmax(q_{values})$ 	 \Comment{$a$ is index}
 				\State $s_{t+1}, r_t, T_t \gets \text{Step}(ActionSpace[a])$ % \Comment{Simulate system one step}
 				\State $Exp \gets \begin{pmatrix} s_t, & a_t, & r_t & T_t & s_{t+1} \end{pmatrix}$
+				\State $\begin{pmatrix} \mathbf{s}, & \mathbf{a}, & \mathbf{r} & \mathbf{T} & \mathbf{s}_{t+1} \end{pmatrix}$ $\gets Exp$  \Comment{Exp minibatch}
+				\State $y_m = \begin{cases} r_m \\ r_m + \gamma \max ( NN_{target}(\mathbf{s}_{t+1, m}) ) \end{cases}$
+				\State $Targets_{m,j} \gets \begin{cases} y_m, & \text{if} \quad j = a  \\ NN_Q(\mathbf{s}_m)_j \end{cases}$
+				\State $model.fit(\mathbf{s}, Targets)$
 			\EndWhile
-			\State $\begin{pmatrix} \mathbf{s}, & \mathbf{a}, & \mathbf{r} & \mathbf{T} & \mathbf{s}_{t+1} \end{pmatrix}$ $\gets Exp$  \Comment{Exp minibatch}
-			\State $y_m = \begin{cases} r_m \\ r_m + \gamma \max ( NN_{target}(\mathbf{s}_{t+1, m}) ) \end{cases}$
-			\State $Q_{targets} \gets [NN_{target}(\mathbf{s}_m), y_m]$ \Comment{Value replacement} 
-			\State $model.fit(\mathbf{s}, Q_{targets})$
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
@@ -357,10 +365,46 @@ Equations from \cite{Correct_Equations} were used to model the problem.
 System was terminated when the pendulum angle was grater than $\pm 10$ degrees.
 Equation \eqref{eqn:reward_single_pendulum} states the reward function.
 \begin{equation}
-	\label{eqn:reward_single_pendulum}
-	R(s) = (\theta_{max} -  |\theta|)/ \theta_{max}
+    \label{eqn:reward_single_pendulum}
+    R(s) = (\theta_{max} - |\theta|)/ \theta_{max}
 \end{equation}
 where $\theta_{max} = 10$ degrees.
+
+Table \ref{table:params_q_network} shows the neural network setup for the single pendulum problem.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|
+    >{\columncolor[HTML]{CBCEFB}}c |c|c|}
+    \hline
+    \cellcolor[HTML]{9AFF99}\textbf{Layer} & \cellcolor[HTML]{9AFF99}\textbf{Number of Neurons} & \cellcolor[HTML]{9AFF99}\textbf{Activation} \\ \hline
+    \textbf{Input}                         & 4                                                  & -                                           \\ \hline
+    \textbf{Hidden 1}                      & 20                                                 & ReLU                                        \\ \hline
+    \textbf{Hidden 2}                      & 40                                                 & ReLU                                        \\ \hline
+    \textbf{Output}                        & 4                                                  & Linear                                      \\ \hline
+    \end{tabular}
+    \caption{Network parameters for the Q-network}
+    \label{table:params_q_network}
+\end{table}
+
+Table \ref{table:params_pendulum} shows the training parameters for the single pendulum problem.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|
+    >{\columncolor[HTML]{FFCE93}}c |
+    >{\columncolor[HTML]{ECF4FF}}c |}
+    \hline
+    \textbf{Max Angle}     & 10             \\ \hline
+    \textbf{Step Size}     & 0.02           \\ \hline
+    \textbf{Action Space}  & {[}-10,0,10{]} \\ \hline
+    \textbf{Learning Rate} & 0.1            \\ \hline
+    \textbf{Memory}        & 2000           \\ \hline
+    \textbf{Batch Size}    & 32             \\ \hline
+    \textbf{Discount}      & 0.9            \\ \hline
+    \end{tabular}
+    \caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem. }
+    \label{table:params_pendulum}
+\end{table}
 
 Figure \ref{fig:single_pendulum_eval} shows the agent performance over episodes.
 The agent starts to learn how to move the cart to increase the score after a few episodes.
@@ -433,6 +477,22 @@ This would not be possible with a regular Q-table approach since the agent has n
 
 Discuss the results and what you learned from the project.
 
+\section{Project Plan}
+The initial project plan was followed quite well.
+However, the time to tune hyper parameters for the double pendulum problem were underestimated.
+Work on that part still remains.
+One problem for tuning the hyper parameters is that the feedback loop for a single change is long.
+It takes a long time to train the controller for the double pendulum and therefore a long time before hyper parameters can be adjusted.
+
+Figure \ref{fig:gantt_chart} shows the updated Gantt chart.
+The green colored blocks are completed steps.
+Blue blocks are work in progress.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\columnwidth]{figures/Revised_Project_plan.png}
+   \caption{Revised Gantt chart.}
+   \label{fig:gantt_chart}
+\end{figure}
 
 % Prints cited references
 \printbibliography

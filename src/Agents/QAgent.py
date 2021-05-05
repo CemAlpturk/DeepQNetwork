@@ -125,7 +125,7 @@ class QAgent:
                 # Update statistics.
                 total_reward += reward
                 state = next_state
-                steps = timestep
+                steps = timestep+1
 
                 # Terminate episode if the system has reached a termination state.
                 if terminated:
@@ -187,7 +187,7 @@ class QAgent:
 
         self.experience.append((state, action, reward, next_state, terminated))
 
-    def _experience_replay(self, batch_size, discount=0.9, epochs):
+    def _experience_replay(self, batch_size, discount=0.9, epochs=1):
         """
         Updates network weights (fits model) with data stored in memory from
         executed simulations (training from experience).
@@ -232,7 +232,7 @@ class QAgent:
         """
 
         i = terminated==0                                   # Steps that are not terminal
-        targets = self.target_network.predict(states)            # Predict for each step
+        targets = self.q_network.predict(states)            # Predict for each step
         t = self.target_network.predict(next_states[i, :])  # Predict for next steps that are not terminal
 
         targets[range(batch_size), actions] = rewards  # targets[:,action] = reward, selects the "action" column for each row

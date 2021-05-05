@@ -127,14 +127,16 @@ class QAgent:
                 state = next_state
                 steps = timestep+1
 
+                if len(self.experience) >= batch_size:
+                    self._experience_replay(batch_size, discount, epochs)
+                    #exploration_rate *= exploration_rate_decay
+
                 # Terminate episode if the system has reached a termination state.
                 if terminated:
                     break
 
-            if len(self.experience) >= batch_size:
-                self._experience_replay(batch_size, discount, epochs)
-                exploration_rate *= exploration_rate_decay
 
+            exploration_rate *= exploration_rate_decay
             t2 = time.time()
             print(
                 f"Episode: {episode:>5}, "
@@ -200,7 +202,7 @@ class QAgent:
         states, actions, rewards, next_states, terminated = self._extract_data(batch_size, minibatch)
         targets = self._build_targets(batch_size, states, next_states, rewards, actions, terminated, discount)
 
-        self.q_network.fit(states, targets, epochs=epochs, verbose=0)
+        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=batch_size)
 
     def _extract_data(self, batch_size, minibatch):
         """

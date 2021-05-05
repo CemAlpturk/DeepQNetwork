@@ -427,7 +427,7 @@ The initial condition for each episode is randomized preventing the system from 
 Figure \ref{fig:single_pendulum_angle} shows the pendulum angle over time for training episode $170$.
 It seems as if the system is learning which direction to push the cart to get the pendulum closer to the equilibrium point.
 The curve from time $0.5$ to $2.5$ also indicates that the system is starting to understand that it needs to slow down the pendulum before reaching equilibrium to prevent overshooting.
-However, later on it still overshoots a few times.
+However, later on it seems to start oscillating around the equilibrium.
 
 \begin{figure}[H]
 	\centering
@@ -479,7 +479,7 @@ Although this method works for the single pendulum case, since the double pendul
 We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
 \section{Discussion}
 While training a controller for the double pendulum problem, we saw that for some cases after the average score increases for a while, it suddenly starts to decrease and can remain there untill the training ends.
-We think that this may be a result of the hyperparameter choices such as network architecture.
+We think that this may be a result of the hyper parameter choices such as network architecture.
 We believe that this may be an effect such as overtraining or that the network is too simple.
 We are trying different combinations in order to understand this behavior.
 Also, as seen in Figure \ref{fig:double_pendulum_score}, we are getting sudden spikes during training.

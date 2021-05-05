@@ -323,13 +323,25 @@ This way when the reward or the termination needs to be changed it can be done w
 
 % Here you describe how you implemented your learning or control design.
 
-
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/CodeStructure.png}
 	\label{fig:code_architecture}
 	\caption{Code architecture.}
 \end{figure}
+
+\subsection{Evaluation}
+\texttt{Controller} is evaluated after a set of episodes in order to keep track of the controller performance.
+Performance is measured by averaging the total reward for $N_{eval}$ simulations of the dynamic system controlled by the \texttt{Controller}.
+\begin{equation}
+	\label{eqn:evaluation_equation}
+	\frac{1}{N_{eval}} \sum_i^{N_{eval}} \mathbf{R}_i 
+\end{equation}
+$\mathbf{R}_i$ is the total reward for the $i$th simulation of the controlled dynamic system.
+A satisfactory evaluation value can be used as a termination condition for the training to avoid overtraining.
+This mechanism has not yet been implemented.
+The training will continue until the max iterations have been reached.
+
 
 \section{Results}
 A simpler problem was used to confirm the implementation.
@@ -350,6 +362,10 @@ where $\theta_{max} = 10$ degrees.
 
 Figure \ref{fig:single_pendulum_eval} shows the agent performance over episodes.
 The agent starts to learn how to move the cart to increase the score after a few episodes.
+Eventually the reward gain stops increasing.
+The system was simulated with the maximum $200$ steps for each episode, capping the max possible reward to $200$.
+However, $200$ is only possible if the initial condition starts in the equilibrium point.
+The initial condition for each episode is randomized preventing the system from reaching $200$ score in the evaluation.
 
 \begin{figure}[H]
 	\centering
@@ -357,6 +373,11 @@ The agent starts to learn how to move the cart to increase the score after a few
 	\label{fig:single_pendulum_eval}
 	\caption{Evaluated controller score for every $10$ episodes. The evaluation is measured as the average score of $10$ full simulations with the controller. Maximum number of steps for each evaluation iteration was $200$, capping the maximum possible reward to $200$.}
 \end{figure}
+
+Figure \ref{fig:single_pendulum_angle} shows the pendulum angle over time for training episode $170$.
+It seems as if the system is learning which direction to push the cart to get the pendulum closer to the equilibrium point.
+The curve from time $0.5$ to $2.5$ also indicates that the system is starting to understand that it needs to slow down the pendulum before reaching equilibrium to prevent overshooting.
+However, later on it still overshoots a few times.
 
 \begin{figure}[H]
 	\centering

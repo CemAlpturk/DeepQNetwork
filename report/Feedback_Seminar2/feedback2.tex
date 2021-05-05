@@ -68,7 +68,7 @@ After some time their behaviors become so different that it becomes nearly impos
 This illustrates the chaotic behavior of this system.
 Our aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright.
 Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it's working on.
-(Possible reference to qlearning)
+\cite{qlearning_first}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/Double_Pendulum_Chaotic.PNG}
@@ -87,7 +87,7 @@ The goal of training the agent is to optimize gained reward for each action take
 
 \section{Modeling}
 The system consists of a cart that can move in the horizontal direction and two pendulums that are coupled to each other such that there is no collision between any parts.
-Since this project is not about modeling the double pendulum, but rather about controlling it, we have borrowed the equations of motion from (ref).
+Since this project is not about modeling the double pendulum, but rather about controlling it, we have borrowed the equations of motion from \cite{Double_Pendulum_Equations}.
 The states of the system are represented by,
 \begin{equation}
 x  :=
@@ -126,7 +126,7 @@ The system parameters are represented by,
 \item $g = 9.81 [m/s^2]$ is the gravitational acceleration.
  \end{itemize}
 
-The equations of motions for this system (ref), are adjusted such there is no friction or disturbances.
+The equations of motions for this system \cite{Double_Pendulum_Equations}, are adjusted such there is no friction or disturbances.
 The input to the system is a horizontal force that is acting on the cart, represented by $u$ $[N]$.
 
 \begin{equation}

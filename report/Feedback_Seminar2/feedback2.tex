@@ -32,7 +32,7 @@
 % Document begins here
 \begin{document}
 \begin{frontmatter}
-\title{Balance Double Inverted Pendulum on Cart} % Title of the project.
+\title{Balancing a Double Inverted Pendulum on Cart} % Title of the project.
                       							 % Note that all reports are in English,
 							                     %so that our international students can read them.
 
@@ -194,6 +194,7 @@ Essentially the agent tries to find the action that will give the best reward.
 \[ a^* = \max_i Q(s,a_i) \]
 Training the agent corresponds to populating and updating the Q-table based on past experiences of the agent.
 After performing an action given the current state of the system, the agent receives a reward from the environment and the values in the Q-table are updated according to the state-action combination and the reward received.
+Equation \eqref{eq:qlearning} is known as the Bellman equation.
 \begin{equation}
 Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i Q(s_{t+1},a_i ))
 \label{eq:qlearning}
@@ -220,7 +221,7 @@ The agent chooses the action to perform by picking the largest q-value from the 
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/q_network.png}
 	\label{fig:q_network_illustration}
-	\caption{Illustration of a neural network with $3$ inputs and $4$ outputs.}
+	\caption{Illustration of a neural network with $3$ state inputs and $4$ q-value outputs that can be mapped to actions.}
 \end{figure}
 
 
@@ -308,6 +309,18 @@ The \texttt{Controller} is a simple object that produces the force to apply give
 All components are independent of each other making the structure modular.
 By using this structure it is easy to change for example the learning algorithm without having to modify anything else.
 
+\subsection{Simulator}
+The \texttt{Simulator} is responsible for the physical dynamics of the problem and for simulating the problem for given external inputs and time.
+Equations are on the form of RHS-equations and are solved using \texttt{odeint} function in \texttt{Scipy.integrate} package.
+
+\subsection{Environment}
+The reward function and termination condition is implemented in the \texttt{Environment} class.
+It acts as a connector between the \texttt{Agent} and the \texttt{Simulator}.
+This way when the reward or the termination needs to be changed it can be done without altering the learning algorithm (\texttt{Agent}) or the physical model \texttt{Simulator}.
+
+% Reward function : only look at the angle, not the velocity
+% 					don't want the algorithm to sacrifies angle for velocity ... something like that.
+
 % Here you describe how you implemented your learning or control design.
 
 
@@ -319,29 +332,79 @@ By using this structure it is easy to change for example the learning algorithm 
 \end{figure}
 
 \section{Results}
-If you need to use tables, Table~\ref{tab:extable} shows an example of how they can be typeset. For further details, see \cite{tablelatexwiki}.
+A simpler problem was used to confirm the implementation.
+The simpler problem being to balance a single inverted pendulum on a cart.
+The implementation architecture was used to simply replace the environment with one suitable for the single pendulum problem.
+% Once satisfied with the algorithm implementation the double pendulum problem was run.
 
-\begin{table}[t]
+\subsection{Balancing Single Inverted Pendulum}
+The single pendulum problem is non-chaotic.
+Equations from \cite{Correct_Equations} were used to model the problem.
+System was terminated when the pendulum angle was grater than $\pm 10$ degrees.
+Equation \eqref{eqn:reward_single_pendulum} states the reward function.
+\begin{equation}
+	\label{eqn:reward_single_pendulum}
+	R(s) = (\theta_{max} -  |\theta|)/ \theta_{max}
+\end{equation}
+where $\theta_{max} = 10$ degrees.
+
+Figure \ref{fig:single_pendulum_eval} shows the agent performance over episodes.
+The agent starts to learn how to move the cart to increase the score after a few episodes.
+
+\begin{figure}[H]
 	\centering
-	\caption{Example table. Note that the caption goes on top. Place all tables at the top \texttt{[t]} (default) or bottom \texttt{[b]} (only if needed) of the page.}
-	\label{tab:extable}
-	\begin{tabular}{lcrrcrrcrr} % (l)eft, (r)ight and (c)enter indentation
-		\toprule
-        &
-		\multicolumn{2}{c}{IAE [$\cdot 10^3$~s]} & &
-		\multicolumn{2}{c}{$\text{var}(\tau^o)$ [s]} & &
-		\multicolumn{2}{c}{$\tau^o_{max}$ [s]} \\[1mm]
-		$M_C$            &  3     & 10  &~& 3     & 10    &~& 3    & 10 \\
-        \midrule
-		$C_{\text{orig}}$ & 8.23 & 8.34 &~& 0.695 & 0.745 &~& 5.68 & 6.27 \\
-		$C_{\text{fb}}$ & 1.48 & 0.98 &~& 0.030 & 0.021 &~& 1.81 & 1.83 \\
-		$C_{\text{ff}}$ & 1.23 & 1.43 &~& 0.026 & 0.034 &~& 1.56 & 1.65\\
-        \bottomrule
-	\end{tabular}
-\end{table}
+	\includegraphics[width=0.9\columnwidth]{figures/SinglePendulum_eval.png}
+	\label{fig:single_pendulum_eval}
+	\caption{Evaluated controller score for every $10$ episodes. The evaluation is measured as the average score of $10$ full simulations with the controller. Maximum number of steps for each evaluation iteration was $200$, capping the maximum possible reward to $200$.}
+\end{figure}
 
-\subsection{Some Dummy Text}
-\kant[4]
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle.png}
+	\label{fig:single_pendulum_angle}
+	\caption{Pendulum angle over time for training episode $170$.}
+\end{figure}
+
+The trained controller was used to control the single pendulum for initial conditions outside the trained domain, and the controller managed to bring back the pendulum to the known domain and balance it.
+This can be seen in figure \ref{fig:single_pendulum_outside_training_domain}.
+Results indicate that the network has managed to generalize the problem.
+This would not be possible with a regular Q-table approach since the agent has never seen the states outside the training domain and would end up performing random actions.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/q_network.png}
+	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 30$ degrees.}
+	\label{fig:single_pendulum_outside_training_domain}
+\end{figure}
+
+
+
+
+% If you need to use tables, Table~\ref{tab:extable} shows an example of how they can be typeset. For further details, see \cite{tablelatexwiki}.
+
+
+
+% \begin{table}[t]
+% 	\centering
+% 	\caption{Example table. Note that the caption goes on top. Place all tables at the top \texttt{[t]} (default) or bottom \texttt{[b]} (only if needed) of the page.}
+% 	\label{tab:extable}
+% 	\begin{tabular}{lcrrcrrcrr} % (l)eft, (r)ight and (c)enter indentation
+% 		\toprule
+%         &
+% 		\multicolumn{2}{c}{IAE [$\cdot 10^3$~s]} & &
+% 		\multicolumn{2}{c}{$\text{var}(\tau^o)$ [s]} & &
+% 		\multicolumn{2}{c}{$\tau^o_{max}$ [s]} \\[1mm]
+% 		$M_C$            &  3     & 10  &~& 3     & 10    &~& 3    & 10 \\
+%         \midrule
+% 		$C_{\text{orig}}$ & 8.23 & 8.34 &~& 0.695 & 0.745 &~& 5.68 & 6.27 \\
+% 		$C_{\text{fb}}$ & 1.48 & 0.98 &~& 0.030 & 0.021 &~& 1.81 & 1.83 \\
+% 		$C_{\text{ff}}$ & 1.23 & 1.43 &~& 0.026 & 0.034 &~& 1.56 & 1.65\\
+%         \bottomrule
+% 	\end{tabular}
+% \end{table}
+
+% \subsection{Some Dummy Text}
+% \kant[4]
 
 \section{Discussion}
 

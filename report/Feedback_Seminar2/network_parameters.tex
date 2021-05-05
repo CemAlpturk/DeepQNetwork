@@ -1,0 +1,31 @@
+\documentclass{article}
+% Please add the following required packages to your document preamble:
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{amsmath}
+\usepackage{float}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+
+\begin{document}
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[H]
+\centering
+\begin{tabular}{|
+>{\columncolor[HTML]{FFCE93}}c |
+>{\columncolor[HTML]{ECF4FF}}c |}
+\hline
+\textbf{Max Angle}     & 10             \\ \hline
+\textbf{Step Size}     & 0.02           \\ \hline
+\textbf{Action Space}  & {[}-10,0,10{]} \\ \hline
+\textbf{Learning Rate} & 0.1            \\ \hline
+\textbf{Memory}        & 2000           \\ \hline
+\textbf{Batch Size}    & 32             \\ \hline
+\textbf{Discount}      & 0.9            \\ \hline
+\end{tabular}
+\caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem. }
+\label{table:params_pendulum}
+\end{table}
+
+\end{document}

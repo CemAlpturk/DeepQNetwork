@@ -57,8 +57,8 @@ class Controller():
         assert isinstance(file_path, str), "Invalid 'file_path' type, expected 'file_path' to be of type 'str'"
         assert not file_path == False, "Invalid 'file_path' value"
 
-        model = keras.models.load_model(file_path)
-        model.compile()
+        model = keras.models.load_model(file_path, compile=False)
+        #model.compile()
         return Controller(action_space, model)
 
 

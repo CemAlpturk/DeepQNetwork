@@ -2,8 +2,9 @@
 import sys
 
 import numpy as np
-
+import tensorflow as tf
 from tensorflow.keras.optimizers import SGD
+from tensorflow.keras import backend as K
 
 from Environments import PendulumOnCartEnvironment
 from Agents import QAgent
@@ -19,7 +20,7 @@ if len(sys.argv) > 1:
 
 
 
-max_angle = 10*np.pi/180
+max_angle = 5*np.pi/180
 
 def reward(state, t):
     x, xdot, theta, thetadot = state
@@ -41,15 +42,24 @@ environment = PendulumOnCartEnvironment(
         action_space=[-10,0,10],
         lamb = max_angle*0.5)
 
-# Setup Neural network parameters.
+# Setup Neural network parameters
 
 optimizer = SGD(lr=0.1)
+
+def custom_loss_function(y_true, y_pred):
+    """
+    Only the loss from the taken action affects the loss
+    """
+    # find the nonzero component of y_true
+    idx = K.switch(K.not_equal(y_true, 0.0), y_pred, 0.0)
+    loss = tf.subtract(y_true, idx)
+    return K.sum(K.square(loss))
 
 network_parameters = {
     "input_shape" : (4,),                                       # Network input shape.
     "layers" : [(20, 'relu'), (40, 'relu'), (len(environment.get_action_space()), 'linear')],     # [(nodes, activation function)]
     "optimizer" : optimizer,                                    # optimizer
-    "loss_function" : "mse",                                    # loss function ('mse', etc.)
+    "loss_function" : custom_loss_function,                                    # loss function ('mse', etc.)
 }
 
 # Create agent.

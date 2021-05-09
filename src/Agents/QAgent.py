@@ -202,7 +202,7 @@ class QAgent:
         states, actions, rewards, next_states, terminated = self._extract_data(batch_size, minibatch)
         targets = self._build_targets(batch_size, states, next_states, rewards, actions, terminated, discount)
 
-        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=batch_size)
+        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=1)
 
     def _extract_data(self, batch_size, minibatch):
         """
@@ -234,7 +234,8 @@ class QAgent:
         """
 
         i = terminated==0                                   # Steps that are not terminal
-        targets = self.q_network.predict(states)            # Predict for each step
+        #targets = self.q_network.predict(states)            # Predict for each step
+        targets = np.zeros((batch_size,len(self.environment.action_space)))
         t = self.target_network.predict(next_states[i, :])  # Predict for next steps that are not terminal
 
         targets[range(batch_size), actions] = rewards  # targets[:,action] = reward, selects the "action" column for each row

@@ -25,12 +25,15 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
     def __init__(self, parameters, initial_state):
 
         super().__init__(initial_state)
-
+    
         self.m = parameters["cart_mass"]
         self.m1 = parameters["pendulum_1_mass"]
         self.m2 = parameters["pendulum_2_mass"]
         self.l1 = parameters["pendulum_1_length"]
         self.l2 = parameters["pendulum_2_length"]
+        self.d1 = parameters["cart_friction"]
+        self.d2 = parameters["pendulum_1_friction"]
+        self.d3 = parameters["pendulum_2_friction"]
 
     def print(self):
         """
@@ -43,6 +46,9 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
         print(f"Pendulum-2 mass: {self.m2}")
         print(f"Pendulum-1 length: {self.l1}")
         print(f"Pendulum-2 length: {self.l2}")
+        print(f"Cart friction: {self.d1}")
+        print(f"Pendulum-1 friction: {self.d2}")
+        print(f"Pendulum-2 friction: {self.d3}")
         print(f"Initial conditions: {self.initial_state} \n\
     [\n \
         Cart x position: {self.initial_state[0]} \n \
@@ -74,13 +80,13 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
 
 
         F[0] = self.l1*(self.m1+self.m2)*q1_dot**2*np.sin(q1) + \
-                self.m2*self.l2*q2_dot**2*np.sin(q2) + u
+                self.m2*self.l2*q2_dot**2*np.sin(q2) - self.d1*x_dot + u
 
         F[1] = -self.l1*self.l2*self.m2*q2_dot**2*np.sin(q1-q2) + \
-                self.g*(self.m1+self.m2)*self.l1*np.sin(q1)
+                self.g*(self.m1+self.m2)*self.l1*np.sin(q1) - self.d2*q1_dot
 
         F[2] = self.l1*self.l2*self.m2*q1_dot**2*np.sin(q1-q2) + \
-                self.g*self.l2*self.m2*np.sin(q2)
+                self.g*self.l2*self.m2*np.sin(q2) - self.d3*q2_dot
 
         tmp = np.linalg.inv(M).dot(F)
 
@@ -210,10 +216,13 @@ if __name__ == "__main__":
             "pendulum_1_mass": 0.1,
             "pendulum_2_mass": 0.1,
             "pendulum_1_length": 1.0,
-            "pendulum_2_length": 1.0
+            "pendulum_2_length": 1.0,
+            "cart_friction": 0.01,
+            "pendulum_1_friction": 0.01,
+            "pendulum_2_friction": 0.01
     }
 
-    problem = DoublePendulumOnCart(parameters, initial_state)
+    problem = DoublePendulumOnCartSimulator(parameters, initial_state)
     problem.print()
     state = problem.get_current_state()
     t = np.linspace(0,10,100)

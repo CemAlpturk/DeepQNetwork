@@ -62,6 +62,7 @@ class QAgent:
             evaluate_model_period=50,
             evaluation_size=10,
             exploration_rate_decay=0.99,
+            min_exploration_rate=0.1,
             epochs=1) -> Controller:
         """
         Trains the network with specified arguments.
@@ -135,8 +136,10 @@ class QAgent:
                 if terminated:
                     break
 
-
-            exploration_rate *= exploration_rate_decay
+            if exploration_rate > min_exploration_rate:
+                exploration_rate *= exploration_rate_decay
+            else:
+                exploration_rate = min_exploration_rate
             t2 = time.time()
             print(
                 f"Episode: {episode:>5}, "
@@ -202,7 +205,7 @@ class QAgent:
         states, actions, rewards, next_states, terminated = self._extract_data(batch_size, minibatch)
         targets = self._build_targets(batch_size, states, next_states, rewards, actions, terminated, discount)
 
-        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=1)
+        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=batch_size)
 
     def _extract_data(self, batch_size, minibatch):
         """

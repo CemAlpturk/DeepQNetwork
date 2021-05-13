@@ -23,10 +23,10 @@ class NetworkBuilder:
 
         model = Sequential()
         model.add(Input(shape=network_parameters["input_shape"]))
-
+        init = network_parameters["initializer"]
         for layer in network_parameters["layers"]:
             nodes, activation_function = layer
-            model.add(Dense(nodes, activation=activation_function))
+            model.add(Dense(nodes, activation=activation_function,kernel_initializer=init))
 
         model.compile(
             loss=network_parameters["loss_function"],

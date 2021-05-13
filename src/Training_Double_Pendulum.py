@@ -83,7 +83,7 @@ network_parameters = {
     "layers" : layers,                                          # [(nodes, activation function)]
     "optimizer" : optimizer,                                    # optimizer
     "loss_function" : custom_loss_function,                                    # loss function ('mse', etc.)
-    "initializer" : tf.keras.initializers.he_uniform
+    "initializer" : tf.keras.initializers.he_uniform()
 }
 
 # Create agent.
@@ -92,7 +92,7 @@ agent = DoubleQAgent(environment, network_parameters, memory=2000)
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
         max_episodes=10000,
-        timesteps_per_episode=1000,
+        timesteps_per_episode=500,
         warm_start=warm_start,
         evaluate_model_period=10,
         model_alignment_period=10,

@@ -200,8 +200,11 @@ The selected action is performed on the environment, which is the inverted pendu
 In the case where there is no previous knowledge about the current state in the Q-table, the action is selected randomly.
 Essentially the agent tries to find the action that will give the best reward.
 \[ a^* = \max_i Q(s,a_i) \]
-During training the agent can act randomly with chance $\epsilon$ that decays over time.
-This forces the agent to explore and populate the Q-table.
+The agent uses an $\epsilon$-greedy policy to decide on the next move, where the agent performs a random action with probability $\epsilon$ or performs the best action based on its current policy with probability $1-\epsilon$.
+Having a high $\epsilon$ value will correspond to performing randomly and exploring the state-action space but will delay the convergence of the Q-table. 
+Having a low $\epsilon$ value can cause the agent to rarely try new things but instead will try to exploit its current solution to the problem.
+A balance between these problems can be obtained by starting with a high $\epsilon$ value and decaying it over time to allow the agent to try new things in the beginning and slowly exploit the best solution it has found. 
+\\
 Training the agent corresponds to populating and updating the Q-table based on past experiences of the agent.
 After performing an action given the current state of the system, the agent receives a reward from the environment and the values in the Q-table are updated according to the state-action combination and the reward received.
 Equation \eqref{eq:qlearning} is known as the Bellman equation.
@@ -211,7 +214,8 @@ Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i
 \end{equation}
 \[ 0 < \alpha \leq 1, \quad 0 \leq \gamma \leq 1  \]
 \[ Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] \]
-After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for the delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider
+After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for the delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider future rewards.
+
 
 This method requires a discrete set of actions and states. For the double pendulum problem, this can be achieved by discretizing the states and actions.
 However since this is a chaotic system, it would require a fine discretization resulting in a massive Q-table. Although this can work in theory, there are practical implementation limitations such as limited memory size.
@@ -236,6 +240,8 @@ The agent chooses the action to perform by picking the largest q-value from the 
 
 
 The neural network is trained by a method called experience replay that is based on simulating the system and recording all states, rewards and actions taken in memory.
+During experience replay, a random batch is taken from the memory and is used to train the network.
+The reason for taking random batches from memory and not sequential data, is to reduce the correlation between the data points.
 The simulation ends when it reaches a termination condition that is defined in the environment.
 For the double pendulum case the termination condition is when the outer pendulum angle becomes larger than a defined maximum value.
 One full simulation from start to termination is called an episode.
@@ -253,6 +259,7 @@ A separate neural network, $NN_{target}$, was used to avoid the non-stationary t
 $NN_{target}$ has the same network architecture as $NN_Q$.
 After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to give better estimations of the unknown q-values.
 
+
 \begin{algorithm}[H]
 	\label{alg:deep_q_training}
 	\caption{Deep Q-Learning}
@@ -265,8 +272,10 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 				\State $Exp \gets \begin{pmatrix} s_t, & a_t, & r_t & T_t & s_{t+1} \end{pmatrix}$
 				\State $\begin{pmatrix} \mathbf{s}, & \mathbf{a}, & \mathbf{r} & \mathbf{T} & \mathbf{s}_{t+1} \end{pmatrix}$ $\gets Exp$  \Comment{Exp minibatch}
 				\State $y_m = \begin{cases} r_m \\ r_m + \gamma \max ( NN_{target}(\mathbf{s}_{t+1, m}) ) \end{cases}$
-				\State $Targets_{m,j} \gets \begin{cases} y_m, & \text{if} \quad j = a  \\ NN_Q(\mathbf{s}_m)_j \end{cases}$
-				\State $model.fit(\mathbf{s}, Targets)$
+				%\State $Targets_{m,j} \gets \begin{cases} y_m, & \text{if} \quad j = a  \\ NN_Q(\mathbf{s}_m)_j \end{cases}$
+				\State  $Loss \gets (y_m - NN_Q(\mathbf{s}_{t+1,m})_{a_m})^2$
+				\State Perform gradient descent on Loss
+				%\State $model.fit(\mathbf{s}, Targets)$
 			\EndWhile
 		\EndFor
 	\end{algorithmic}
@@ -274,6 +283,8 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 The actual value $y_m$ replaces the corresponding predicted q-value from $NN_{target}(\mathbf{s}_m)$.
  Since we only have the reward for one action in a given state, we replace the targets for the untaken actions with a prediction from the Q-network. This will result in a loss of 0 for these untaken actions, thus not affecting the training.
  This way the network is trained only by the state-action pair that has been taken.
+ This will however cause the implementation to be slower since a prediction has to be made before each weight update.
+ This was solved by implementing a custom loss function in \texttt{Keras} where the loss only depends on the Q-value of the taken action.
 
 % \comment{Predict q-values for actions for current state}
 % \comment{Pick largest q value and map it to the action}

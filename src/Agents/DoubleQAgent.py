@@ -46,6 +46,8 @@ class DoubleQAgent:
         # file.close()
         # self.eval = []
 
+        self.episode_loss = []
+
         self.experience = deque(maxlen=memory)
 
     def train(
@@ -136,6 +138,9 @@ class DoubleQAgent:
                 if terminated:
                     break
 
+            self.Logger.log_loss(np.mean(self.episode_loss), episode)
+            self.episode_loss = []
+            
             if exploration_rate > min_exploration_rate:
                 exploration_rate *= exploration_rate_decay
             else:
@@ -206,7 +211,9 @@ class DoubleQAgent:
         states, actions, rewards, next_states, terminated = self._extract_data(batch_size, minibatch)
         targets = self._build_targets(batch_size, states, next_states, rewards, actions, terminated, discount)
 
-        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=1)
+        history = self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=1)
+        self.episode_loss.append(history.history['loss'][0])
+
 
     def _extract_data(self, batch_size, minibatch):
         """

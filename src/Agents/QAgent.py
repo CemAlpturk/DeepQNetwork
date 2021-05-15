@@ -46,6 +46,8 @@ class QAgent:
         # file.close()
         # self.eval = []
 
+        self.episode_loss = []
+
         self.experience = deque(maxlen=memory)
 
     def train(
@@ -136,6 +138,10 @@ class QAgent:
                 if terminated:
                     break
 
+            # Log the average loss for this episode
+            self.Logger.log_loss(np.mean(self.episode_loss), episode)
+            self.episode_loss = []
+
             if exploration_rate > min_exploration_rate:
                 exploration_rate *= exploration_rate_decay
             else:
@@ -177,6 +183,7 @@ class QAgent:
             return self.environment.get_random_action()
 
         q_values = self.q_network.predict(state)
+        #print(q_values)
         return np.argmax(q_values[0])
 
     def _store(
@@ -205,7 +212,9 @@ class QAgent:
         states, actions, rewards, next_states, terminated = self._extract_data(batch_size, minibatch)
         targets = self._build_targets(batch_size, states, next_states, rewards, actions, terminated, discount)
 
-        self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=batch_size)
+        history = self.q_network.fit(states, targets, epochs=epochs, verbose=0, batch_size=1)
+        #print(history.history['loss'])
+        self.episode_loss.append(history.history['loss'][0])
 
     def _extract_data(self, batch_size, minibatch):
         """
@@ -248,7 +257,7 @@ class QAgent:
 
     def _align_target_model(self):
         self.target_network.set_weights(self.q_network.get_weights())
-        print("Target Network Realligned")
+        #print("Target Network Realligned")
 
     def _evaluate(self, n, max_steps, episode):
         """

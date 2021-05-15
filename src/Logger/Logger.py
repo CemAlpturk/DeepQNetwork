@@ -16,6 +16,7 @@ class Logger:
     def __init__(self, problem_name):
         self.problem_name = problem_name
         self.evals_file_name = "evals.csv"
+        self.loss_file_name = "loss.csv"
 
         self._init_directory()
 
@@ -47,6 +48,23 @@ class Logger:
         #print(df.head())
         dir = os.path.join(self.ep_dir,f"Episode_{episode}.csv")
         df.to_csv(dir, index=False)
+
+    def log_loss(self, loss, episode):
+        """
+        Appends average loss score for each episode to the appropriate file
+        """
+        with open(self.loss_dir, 'a+', newline='') as write_obj:
+            csv_writer = writer(write_obj)
+            csv_writer.writerow([episode,loss])
+
+        if episode % 10 == 0:
+            # Generate plot for losses
+            df = pd.read_csv(self.loss_dir)
+            ax = df.plot(x="Episode", y="Loss")
+            fig = ax.get_figure()
+            fig_dir = os.path.join(os.path.dirname(self.loss_dir),"Loss.png")
+            fig.savefig(fig_dir)
+            plt.close()
 
     def _init_directory(self):
 
@@ -86,3 +104,12 @@ class Logger:
         print(f"Creating 'Episodes' directory at: {timedir}")
         os.mkdir(ep_dir)
         self.ep_dir = ep_dir
+
+        # Create directory for episode losses
+        losses_dir = os.path.join(timedir,"Loss")
+        print(f"Creating 'Loss' directory at: {timedir}")
+        os.mkdir(losses_dir)
+        self.loss_dir = os.path.join(losses_dir, self.loss_file_name)
+        with open(self.loss_dir, 'w', newline='') as write_obj:
+            csv_writer = writer(write_obj)
+            csv_writer.writerow(["Episode","Loss"])

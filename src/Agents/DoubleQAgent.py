@@ -105,11 +105,6 @@ class DoubleQAgent:
             # TODO: Check if possible to avoid reshape!!
             state = state.reshape(1, self.state_size)
 
-            # Log the Q-values
-            if episode % 10 == 1:
-                q_values = self.q_network.predict(state)[0]
-                self.Logger.log_q_values(q_values, episode)
-
             for timestep in range(timesteps_per_episode):
                 # Predict which action will yield the highest reward.
                 action = self._act(state, exploration_rate)

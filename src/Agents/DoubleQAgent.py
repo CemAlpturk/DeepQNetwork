@@ -173,6 +173,7 @@ class DoubleQAgent:
 
             if episode % evaluate_model_period == 0:
                 self._evaluate(evaluation_size, max_steps=timesteps_per_episode,episode=episode)
+                self.episode_q_values = np.zeros(len(self.environment.action_space))
 
         # Create Controller object
         controller = Controller(self.environment.get_action_space(), self.q_network)

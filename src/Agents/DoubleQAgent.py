@@ -65,7 +65,8 @@ class DoubleQAgent:
             evaluation_size=10,
             exploration_rate_decay=0.99,
             min_exploration_rate=0.1,
-            epochs=1) -> Controller:
+            epochs=1,
+            log_q_values=False) -> Controller:
         """
         Trains the network with specified arguments.
 
@@ -107,7 +108,7 @@ class DoubleQAgent:
 
             for timestep in range(timesteps_per_episode):
                 # Predict which action will yield the highest reward.
-                action = self._act(state, exploration_rate)
+                action = self._act(state, exploration_rate, log_q_values)
 
                 # Take the system forward one step in time.
                 next_state = self.environment.step(action)
@@ -142,8 +143,9 @@ class DoubleQAgent:
             self.episode_loss = []
 
             # Log the average Q-values for this episode
-            self.Logger.log_q_values(self.episode_q_values/steps, episode)
-            self.episode_q_values = np.zeros(len(self.environment.action_space))
+            if log_q_values:
+                self.Logger.log_q_values(self.episode_q_values/steps, episode)
+                self.episode_q_values = np.zeros(len(self.environment.action_space))
             if exploration_rate > min_exploration_rate:
                 exploration_rate *= exploration_rate_decay
             else:
@@ -178,7 +180,8 @@ class DoubleQAgent:
     def _act(
             self,
             state,
-            exploration_rate : float):
+            exploration_rate : float,
+            log_q_values=False):
         """
          Returns index
         """
@@ -186,7 +189,8 @@ class DoubleQAgent:
             return self.environment.get_random_action()
 
         q_values = self.q_network.predict(state)[0]
-        self.episode_q_values += q_values
+        if log_q_values:
+            self.episode_q_values += q_values
         return np.argmax(q_values)
 
     def _store(

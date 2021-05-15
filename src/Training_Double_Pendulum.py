@@ -8,7 +8,7 @@ import sys
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras import backend as K
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
@@ -39,14 +39,18 @@ def custom_loss_function(y_true, y_pred):
 def reward(state, t):
     x, theta1, theta2, xdot, theta1dot, theta2dot = state
     #r_angle2 = (max_angle - abs(theta2))/max_angle
-    xp = x + np.sin(theta1) + np.sin(theta2)
-    yp = np.cos(theta1) + np.cos(theta2)
-    dist_penalty = 0.01 * xp ** 2 + (yp - 2) ** 2
+    #r_angle1 = (max_angle - abs(theta1))/max_angle
+    #xp = x + np.sin(theta1) + np.sin(theta2)
+    #yp = np.cos(theta1) + np.cos(theta2)
+    #dist_penalty = 0.01 * xp ** 2 + (yp - 2) ** 2
     #vel_penalty = 1e-3 * theta1dot**2 + 5e-3 * theta2dot**2
     #dist_penalty = xp ** 2 + (yp - 2) ** 2
+    #vel_penalty = theta1dot**2 + theta2dot**2
+    angle_penalty = theta1**2 + theta2**2
     vel_penalty = theta1dot**2 + theta2dot**2
-    alive_bonus = 10
-    r = alive_bonus - dist_penalty - vel_penalty
+    alive_bonus = 1
+    r = alive_bonus - angle_penalty - vel_penalty
+    #r = r_angle1**2 + r_angle2**2 -vel_penalty
     return r
 
 def terminated(state, t):
@@ -62,11 +66,11 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-10,0,10],
-        lamb=0.1)
+        action_space=[-5,0,5],
+        lamb=0.01)
 
 # Setup Neural network parameters.
-initial_learning_rate = 0.1
+initial_learning_rate = 0.0001
 lr_schedule = ExponentialDecay(
     initial_learning_rate,
     decay_steps=10000,
@@ -75,8 +79,8 @@ lr_schedule = ExponentialDecay(
 optimizer = Adam(learning_rate=lr_schedule)
 
 layers = []
-for _ in range(5):
-    layers.append((20,'relu'))
+for _ in range(10):
+    layers.append((30,'relu'))
 layers.append((len(environment.action_space),'linear'))
 network_parameters = {
     "input_shape" : (6,),                                       # Network input shape.
@@ -103,7 +107,8 @@ controller = agent.train(
         exploration_rate_decay=0.99,
         min_exploration_rate=0.1,
         save_model_period=10,
-        epochs=1)
+        epochs=1,
+        log_q_values=True)
 
 # Simulate problem using the trained controller.
 state = environment.reset()

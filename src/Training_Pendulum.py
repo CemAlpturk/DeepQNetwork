@@ -47,11 +47,11 @@ environment = PendulumOnCartEnvironment(
         custom_reward_function=reward,
         custom_termination_function=terminated,
         action_space=[-10,0,10],
-        lamb = max_angle*0.5)
+        lamb = max_angle*0.1)
 
 # Setup Neural network parameters
 
-optimizer = Adam(lr=0.01)
+optimizer = Adam(lr=0.001)
 
 def custom_loss_function(y_true, y_pred):
     """
@@ -74,7 +74,7 @@ network_parameters = {
 agent = DoubleQAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
-training_episodes = 500
+training_episodes = 150
 controller = agent.train(
     max_episodes=training_episodes,
     timesteps_per_episode=200,
@@ -84,8 +84,9 @@ controller = agent.train(
     exploration_rate=0.5,
     exploration_rate_decay=0.99,
     model_alignment_period=10,
-    discount=0.9,
-    save_model_period=10)
+    discount=0.1,
+    save_model_period=10,
+    log_q_values=True)
 
 # Simulate problem using the trained controller.
 max_time_steps = 100

@@ -148,7 +148,7 @@ class DoubleQAgent:
 
             # Log the average Q-values for this episode
             self.Logger.log_q_values(self.episode_q_values/steps, episode)
-
+            self.episode_q_values = np.zeros(len(self.environment.action_space))
             if exploration_rate > min_exploration_rate:
                 exploration_rate *= exploration_rate_decay
             else:

@@ -17,6 +17,7 @@ class Logger:
         self.problem_name = problem_name
         self.evals_file_name = "evals.csv"
         self.loss_file_name = "loss.csv"
+        self.q_file_name = "q_values.csv"
 
         self._init_directory()
 
@@ -66,6 +67,40 @@ class Logger:
             fig.savefig(fig_dir)
             plt.close()
 
+    def log_q_values(self, q_values, episode):
+        """
+        Appends Q-values for each episode to the appropriate file
+        """
+        # data = {"Episode": episode, "Q-values": q_values}
+        # df = pd.DataFrame(data)
+        # df.to_pickle(self.q_dir, mode='a', header=False)
+        q_num = len(q_values)
+        if episode == 1:
+            header = ["Episode"]
+            for i in range(1, q_num+1):
+                header.append(f"Q-{i}")
+            with open(self.q_dir, 'a+', newline='') as write_obj:
+                csv_writer = writer(write_obj)
+                csv_writer.writerow(header)
+
+        row = [episode]
+        for q in q_values:
+            row.append(q)
+        with open(self.q_dir, 'a+', newline='') as write_obj:
+            csv_writer = writer(write_obj)
+            csv_writer.writerow(row)
+
+        if episode % 10 == 0:
+            df = pd.read_csv(self.q_dir)
+            ax = df.plot(x="Episode")
+            fig = ax.get_figure()
+            fig_dir = os.path.join(os.path.dirname(self.q_dir),"Q_values.png")
+            fig.savefig(fig_dir)
+            plt.close()
+
+
+
+
     def _init_directory(self):
 
         # Check if directory exists
@@ -113,3 +148,11 @@ class Logger:
         with open(self.loss_dir, 'w', newline='') as write_obj:
             csv_writer = writer(write_obj)
             csv_writer.writerow(["Episode","Loss"])
+
+        # Create directory for episode q-values
+        q_dir = os.path.join(timedir,"Q_values")
+        print(f"Creating 'Q_values' directory at: {timedir}")
+        os.mkdir(q_dir)
+        self.q_dir = os.path.join(q_dir, self.q_file_name)
+        file = open(self.q_dir, 'w', newline='')
+        file.close()

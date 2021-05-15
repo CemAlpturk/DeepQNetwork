@@ -47,7 +47,7 @@ class DoubleQAgent:
         # self.eval = []
 
         self.episode_loss = []
-
+        self.episode_q_values = np.zeros(len(environment.action_space))
         self.experience = deque(maxlen=memory)
 
     def train(
@@ -105,6 +105,11 @@ class DoubleQAgent:
             # TODO: Check if possible to avoid reshape!!
             state = state.reshape(1, self.state_size)
 
+            # Log the Q-values
+            if episode % 10 == 1:
+                q_values = self.q_network.predict(state)[0]
+                self.Logger.log_q_values(q_values, episode)
+
             for timestep in range(timesteps_per_episode):
                 # Predict which action will yield the highest reward.
                 action = self._act(state, exploration_rate)
@@ -140,7 +145,10 @@ class DoubleQAgent:
 
             self.Logger.log_loss(np.mean(self.episode_loss), episode)
             self.episode_loss = []
-            
+
+            # Log the average Q-values for this episode
+            self.Logger.log_q_values(self.episode_q_values/steps, episode)
+
             if exploration_rate > min_exploration_rate:
                 exploration_rate *= exploration_rate_decay
             else:
@@ -181,9 +189,9 @@ class DoubleQAgent:
         if np.random.rand() <= exploration_rate:
             return self.environment.get_random_action()
 
-        q_values = self.q_network.predict(state)
-        #print(q_values)
-        return np.argmax(q_values[0])
+        q_values = self.q_network.predict(state)[0]
+        self.episode_q_values += q_values
+        return np.argmax(q_values)
 
     def _store(
             self,

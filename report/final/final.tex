@@ -489,12 +489,47 @@ with $\theta_{max} = 5$ degrees.
 Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
 We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
 \section{Discussion}
-While training a controller for the double pendulum problem, we saw that for some cases after the average score increases for a while, it suddenly starts to decrease and can remain there untill the training ends.
-We think that this may be a result of the hyper parameter choices such as network architecture.
-We believe that this may be an effect such as overtraining or that the network is too simple.
-We are trying different combinations in order to understand this behavior.
-Also, as seen in Figure \ref{fig:double_pendulum_score}, we are getting sudden spikes during training.
-We are also currently trying to understand this phenomenon.
+% Talk about the problem
+The double pendulum is a highly chaotic system making it difficult to control.
+In situations where the agent receives two states that are very close to each other, the applied action may result in very different outcomes which makes the learning of the expected reward for that action very difficult.
+% add difference between wide and deep networks
+We have found that deeper networks perform better than wider ones for this problem.
+This may be due to wider networks having less non-linearity compared to deeper ones since deep networks have more coupled activations.
+
+After playing around with the exploration rate $\epsilon$, we have found that a lower exploration rate performs better for this problem.
+Higher exploration rate forces the agent to take actions that it normally would avoid causing it to explore the action space more.
+For Q-learning, this is a desired thing since the purpose is to fill and update the Q-table.
+However a high exploration rate leads to the agent exploring things that it should avoid, rather than finding the best action to perform.
+In Q-learning, this is not an issue since the q-values of the state-action pairs do not directly affect each other.
+However for Deep Q-learning, every weight update affects all q-values for the state-action pairs.
+This is why we preferred to train the agent with a lower exploration rate, where the agent explores things to do rather than things to avoid.
+In the case where the learning rate is too low, the agent will almost always prefer to take the same actions which can cause overfitting in the network.
+This is why we need some exploration during training.
+For the same reason, we preferred to use a strict termination condition. 
+Since the agents purpose is to control the pendulums around the equilibrium, there is little to no advantage in allowing the pendulum to move too far from the equilibrium point.
+
+When we used a discount factor closer to $1$, we found that it takes longer for the q-values to converge, and they converged to larger values, as seen in fig(ref).
+Since this specific problem does not have any delayed rewards, such as reaching a goal in a game, it made more sense to use a low discount factor $\gamma$, which shortened the time it took for the q-values to converge.
+
+% Difficulties in training
+As seen in table (ref here) tuning hyperparameters is a difficult process. 
+Due to the time the training takes, evaluating the performance of a different set of hyperparameters is challenging.
+Since the training process highly depends on the hyperparameters, the time it takes for one episode can be vastly different for different hyperparameters.
+Aside from the time it takes to get the results, evaluating the effect of the hyperparameters is not straight forward.
+Even when using the same set of hyperparameters we can get different results.
+Trying to estimate the effect of a new hyperparameter is problematic.
+Due to these reasons, a trial and error approach was more effective.
+We believe that with the right hyperparameters, the double pendulum can be controlled.
+
+% pendulum specific
+% Double pendulum specific
+% Future work
+%While training a controller for the double pendulum problem, we saw that for some cases after the average score increases for a while, it suddenly starts to decrease and can remain there untill the training ends.
+%We think that this may be a result of the hyper parameter choices such as network architecture.
+%We believe that this may be an effect such as overtraining or that the network is too simple.
+%We are trying different combinations in order to understand this behavior.
+%Also, as seen in Figure \ref{fig:double_pendulum_score}, we are getting sudden spikes during training.
+%We are also currently trying to understand this phenomenon.
 \section{Project Plan}
 The initial project plan was followed quite well.
 However, the time to tune hyper parameters for the double pendulum problem were underestimated.

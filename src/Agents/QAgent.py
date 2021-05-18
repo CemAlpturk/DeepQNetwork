@@ -1,7 +1,7 @@
 import numpy as np
 import time
 import random
-from os import path
+import os
 
 from collections import deque
 from matplotlib import pyplot as plt
@@ -346,9 +346,16 @@ class QAgent:
 
     def _save_model(self):
         print("Saving Model")
+        parent_dir = os.getcwd()
+        dir = self.environment.name
+        path = os.path.join(parent_dir,"Models")
+        if not os.path.exists(path):
+            print(f"Creating 'Models' directory at: {dir}")
+            os.mkdir(path)
+        filepath = os.path.join(path,os.path.join(dir,"q_network"))
 
         # TODO: Fix path for windows.
-        filepath = f"./Models/{self.environment.name}/q_network"
+        #filepath = f"./Models/{self.environment.name}/q_network"
         self.q_network.save(filepath)
 
     def _load_model(self):

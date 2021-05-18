@@ -407,7 +407,7 @@ Table \ref{table:params_q_network} shows the neural network setup for the single
     \textbf{Input}                         & 4                                                  & -                                           \\ \hline
     \textbf{Hidden 1}                      & 20                                                 & ReLU                                        \\ \hline
     \textbf{Hidden 2}                      & 40                                                 & ReLU                                        \\ \hline
-    \textbf{Output}                        & 4                                                  & Linear                                      \\ \hline
+    \textbf{Output}                        & 3                                                  & Linear                                      \\ \hline
     \end{tabular}
     \caption{Network parameters for the Q-network}
     \label{table:params_q_network}
@@ -491,6 +491,14 @@ Figure \ref{fig:single_pendulum_eval_01} shows the training result for $\gamma=0
 	\includegraphics[width=0.9\columnwidth]{figures/pendulum_gamma_01.png}
 	\caption{Evaluation of the controller with the same conditions in Table \ref{table:params_pendulum}, except that $\gamma=0.1$. The drop at the end may be caused due to outlier initial conditions during evaluation.}
 	\label{fig:single_pendulum_eval_01}
+\end{figure}
+
+Figure \ref{fig:pendulum_force} shows the distribution of actions taken for an agent that was trained with a larger action space. This plot shows that most of these actions were rarely used except for $\pm 10$. When the agent was trained for the same number of episodes, the overall performance was worse than in Figure \ref{fig:single_pendulum_eval}. This showed that a larger action space requires more training in order to get the same performance. In this case training time can be reduced by only using the actions that were most used by the agent.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_force.png}
+	\caption{The distribution of used actions for an action space of $[-20,-10,-5,0,5,10,20]$. The model was trained with the same hyperparameters in Table \ref{table:params_pendulum}.}
+	\label{fig:pendulum_force}
 \end{figure}
 
 

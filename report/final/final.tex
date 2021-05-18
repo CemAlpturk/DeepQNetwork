@@ -192,28 +192,40 @@ A couple of reinforcement learning methods are Q-learning and Deep Q-learning.
 \subsection{Q-learning}
 Q-learning is a model free method where the agent has no information about the system its trying to control, thus it can be said that it is a black box model.
 The agent stores all its experiences in a Q-table that contains the quality of a state-action combination.
-\[ Q : S \times A  \to \mathbb{R} \]
+\begin{equation}
+Q : S \times A  \to \mathbb{R}
+\end{equation}
+%\[ Q : S \times A  \to \mathbb{R} \]
 \[Q(s,a) := \text{Quality of action $a$ given state  $s$} \]
 A trained agent decides on the action to perform by looking up the best action $a$ given state $s$ from the Q-table.
 In the case where multiple actions give the same values in the Q-table, the action is selected randomly among those.
 The selected action is performed on the environment, which is the inverted pendulum, and a reward is calculated based on the new state of the system.
 In the case where there is no previous knowledge about the current state in the Q-table, the action is selected randomly.
 Essentially the agent tries to find the action that will give the best reward.
-\[ a^* = \max_i Q(s,a_i) \]
+\begin{equation}
+ a^* = \max_i Q(s,a_i)
+\end{equation}
+%\[ a^* = \max_i Q(s,a_i) \]
 The agent uses an $\epsilon$-greedy policy to decide on the next move, where the agent performs a random action with probability $\epsilon$ or performs the best action based on its current policy with probability $1-\epsilon$.
 Having a high $\epsilon$ value will correspond to performing randomly and exploring the state-action space but will delay the convergence of the Q-table. 
 Having a low $\epsilon$ value can cause the agent to rarely try new things but instead will try to exploit its current solution to the problem.
 A balance between these problems can be obtained by starting with a high $\epsilon$ value and decaying it over time to allow the agent to try new things in the beginning and slowly exploit the best solution it has found. 
 \\
+Each state-action pair in a trained Q-table, represents the expected value in \eqref{eq:exp}. These values represent the expected return of rewards for future actions if action $a_t$ is taken at state $s_t$.
+\begin{equation}
+Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] 
+\label{eq:exp}
+\end{equation}
 Training the agent corresponds to populating and updating the Q-table based on past experiences of the agent.
 After performing an action given the current state of the system, the agent receives a reward from the environment and the values in the Q-table are updated according to the state-action combination and the reward received.
 Equation \eqref{eq:qlearning} is known as the Bellman equation.
 \begin{equation}
-Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i Q(s_{t+1},a_i ))
-\label{eq:qlearning}
+Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i Q(s_{t+1},a_i )) \\
+\label{eq:qlearning} 
 \end{equation}
 \[ 0 < \alpha \leq 1, \quad 0 \leq \gamma \leq 1  \]
-\[ Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] \]
+
+%\[ Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] \]
 After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for the delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider future rewards.
 
 
@@ -496,15 +508,16 @@ In situations where the agent receives two states that are very close to each ot
 We have found that deeper networks perform better than wider ones for this problem.
 This may be due to wider networks having less non-linearity compared to deeper ones since deep networks have more coupled activations.
 
-After playing around with the exploration rate $\epsilon$, we have found that a lower exploration rate performs better for this problem.
+After playing around with the exploration rate $\epsilon$, we have found that a dynamic exploration rate performs better for this problem, rather than a static one.
 Higher exploration rate forces the agent to take actions that it normally would avoid causing it to explore the action space more.
 For Q-learning, this is a desired thing since the purpose is to fill and update the Q-table.
 However a high exploration rate leads to the agent exploring things that it should avoid, rather than finding the best action to perform.
 In Q-learning, this is not an issue since the q-values of the state-action pairs do not directly affect each other.
 However for Deep Q-learning, every weight update affects all q-values for the state-action pairs.
-This is why we preferred to train the agent with a lower exploration rate, where the agent explores things to do rather than things to avoid.
 In the case where the learning rate is too low, the agent will almost always prefer to take the same actions which can cause overfitting in the network.
-This is why we need some exploration during training.
+This is why we preferred to train the agent with a dynamic exploration rate, where the agent performs randomly in the beginning and and over time becomes more deterministic.
+However we still have a minimum $\epsilon$, to allow the agent to explore during the later episodes of training.
+This prevents the agent from overfitting to states close to the equilibrium point.
 For the same reason, we preferred to use a strict termination condition. 
 Since the agents purpose is to control the pendulums around the equilibrium, there is little to no advantage in allowing the pendulum to move too far from the equilibrium point.
 

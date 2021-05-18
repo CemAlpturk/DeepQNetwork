@@ -19,6 +19,7 @@ class OdeProblemBase(ABC):
         self.initial_state = initial_state
         self.states = [initial_state]
         self.time = [0.0]
+        self.u = [0.0]
 
     def get_initial_state(self):
         """
@@ -81,6 +82,7 @@ class OdeProblemBase(ABC):
         # self.states = np.append(self.states, new_state, axis=0)
         self.states.append(new_state)
         self.time.append(self.time[-1] + step_size)
+        self.u.append(external_force)
 
         return new_state
 

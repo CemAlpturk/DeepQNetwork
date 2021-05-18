@@ -45,7 +45,13 @@ class PendulumOnCartSimulator(OdeProblemBase):
             f"\t\tPendulum angular velocity: {self.initial_state[3]}\n"
             "\t]")
 
-    def animate(self, save=False, filename=None, title="Pendulum on a Cart", hide=False):
+    def animate(
+        self,
+        save=False,
+        filename=None,
+        title="Pendulum on a Cart",
+        hide=False,
+        animate_force=False):
         """
         TODO: Complete summary.
         """
@@ -71,6 +77,21 @@ class PendulumOnCartSimulator(OdeProblemBase):
             facecolor='none',
             edgecolor='k')
 
+        # Create animation components for applied force.
+        if animate_force:
+            force_bar_border = [0.0, -2.0]
+            force_bar = patches.Rectangle(
+                force_bar_border,
+                1.0,
+                1.0,
+                facecolor='r',
+                alpha=0.5)
+            force_divider = patches.Rectangle(
+                [0.0, -2.0],
+                0.1,
+                1.0,
+                facecolor='k')
+
         # Pendulum arm
         theta0 = self.initial_state[2]
         initial_pendulum_bob_location = [
@@ -89,6 +110,13 @@ class PendulumOnCartSimulator(OdeProblemBase):
             ax.add_patch(cart)
             ax.add_line(pendulumArm)
             time_text.set_text('Time 0.0')
+
+            # Only add the force animation if set to: True.
+            if animate_force:
+                ax.add_patch(force_bar)
+                ax.add_patch(force_divider)
+                return force_divider, force_bar, cart, pendulumArm, time_text
+            
             return cart, pendulumArm, time_text
 
         def animate(i):
@@ -109,6 +137,17 @@ class PendulumOnCartSimulator(OdeProblemBase):
 
             # Update time
             time_text.set_text(f"Time: {self.time[i]:2.2f}")
+
+            # Only update force animation if set to: True.
+            if animate_force:
+                # Update the force_bar.
+                force_bar.set_width(self.u[i]) # Scale so that max force_bar is mapped to 1 (for the plot)
+
+                # Set the applied force amount to the label.
+                ax.set_xlabel(f'Applied force: {self.u[i]}')
+
+                return force_bar, force_divider, cart, pendulumArm, time_text
+
             return cart, pendulumArm, time_text
 
         num_frames = len(self.time)
@@ -122,8 +161,7 @@ class PendulumOnCartSimulator(OdeProblemBase):
             interval=interval,
             frames=len(self.states),
             init_func=init,
-            blit=True
-        )
+            blit=True)
 
         if save:
             writergif = animation.PillowWriter(fps=fps)

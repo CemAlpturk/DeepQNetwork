@@ -96,15 +96,22 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
 
         return dxdt
 
-    def animate(self, save=False, filename=None, title="Double Pendulum on a Cart", hide=False):
+    def animate(
+        self,
+        save=False,
+        filename=None,
+        title="Double Pendulum on a Cart",
+        hide=False,
+        animate_force=False):
         """
         TODO
         """
+        xlim_max = 5
         fig = plt.figure()
         ax = fig.add_subplot(
             111,
             aspect='equal',
-            xlim = (-5,5),
+            xlim = (-xlim_max,xlim_max),
             ylim = (-2,2),
             title = title
         )
@@ -148,6 +155,23 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
             marker='o'
         )
 
+        # Create animation components for applied force.
+        if animate_force:
+            force_bar_border = [0.0, -2.0]
+            force_bar = patches.Rectangle(
+                force_bar_border,
+                1.0,
+                1.0,
+                facecolor='r',
+                alpha=0.5)
+            force_divider = patches.Rectangle(
+                [0.0, -2.0],
+                0.1,
+                1.0,
+                facecolor='k')
+
+            max_applied_force = np.max(np.abs(self.external_forces))
+
         # Time
         time_text = ax.text(-2, 1.6, '', fontsize=15)
         def init():
@@ -155,10 +179,16 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
             ax.add_line(pendulumArm1)
             ax.add_line(pendulumArm2)
             time_text.set_text('Time 0.0')
+
+            # Only add the force animation if set to: True.
+            if animate_force:
+                ax.add_patch(force_bar)
+                ax.add_patch(force_divider)
+                return force_divider, force_bar, cart, pendulumArm1, pendulumArm2, time_text
+
             return cart, pendulumArm1, pendulumArm2, time_text
 
         def animate(i):
-
             cart_xpos, q1, q2, x_dot, q1_dot, q2_dot = self.states[i]
 
             # Cart
@@ -184,6 +214,19 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
 
             # Update time
             time_text.set_text(f"Time: {self.time[i]:2.2f}")
+
+            # Only update force animation if set to: True.
+            if animate_force:
+                # Update the force_bar.
+                # Scale so that max force_bar is mapped to 'xlim_max' (for the plot)
+                scaled_force = xlim_max * self.external_forces[i] / max_applied_force
+                force_bar.set_width(scaled_force) 
+
+                # Set the applied force amount to the label.
+                ax.set_xlabel(f'Applied force: {self.external_forces[i]}')
+
+                return force_bar, force_divider, cart, pendulumArm1, pendulumArm2, time_text
+
             return cart, pendulumArm1, pendulumArm2, time_text
 
         # TODO: Adjust framerate

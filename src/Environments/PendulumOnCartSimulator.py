@@ -57,11 +57,12 @@ class PendulumOnCartSimulator(OdeProblemBase):
         """
         # TODO: Add error handling in case someone invokes animate before sovle!!
         # Create animation plot.
+        xlim_max = 5
         fig = plt.figure()
         ax = fig.add_subplot(
             111,
             aspect = 'equal',
-            xlim = (-5, 5),
+            xlim = (-xlim_max, xlim_max),
             ylim = (-2, 2),
             title = title)
 
@@ -91,6 +92,8 @@ class PendulumOnCartSimulator(OdeProblemBase):
                 0.1,
                 1.0,
                 facecolor='k')
+
+            max_applied_force = np.max(np.abs(self.external_forces))
 
         # Pendulum arm
         theta0 = self.initial_state[2]
@@ -141,10 +144,12 @@ class PendulumOnCartSimulator(OdeProblemBase):
             # Only update force animation if set to: True.
             if animate_force:
                 # Update the force_bar.
-                force_bar.set_width(self.u[i]) # Scale so that max force_bar is mapped to 1 (for the plot)
+                # Scale so that max force_bar is mapped to 4 (for the plot)
+                scaled_force = xlim_max * self.external_forces[i] / max_applied_force
+                force_bar.set_width(scaled_force) 
 
                 # Set the applied force amount to the label.
-                ax.set_xlabel(f'Applied force: {self.u[i]}')
+                ax.set_xlabel(f'Applied force: {self.external_forces[i]}')
 
                 return force_bar, force_divider, cart, pendulumArm, time_text
 

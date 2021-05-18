@@ -447,27 +447,30 @@ The initial condition for each episode is randomized preventing the system from 
 	\caption{Evaluated controller score for every $10$ episodes. The evaluation is measured as the average score of $10$ full controlled simulations. Maximum number of steps for each evaluation iteration was $200$, capping the maximum possible reward to $200$.}
 \end{figure}
 
-Figure \ref{fig:single_pendulum_angle} shows the pendulum angle over time for training episode $170$.
-It seems as if the system is learning which direction to push the cart to get the pendulum closer to the equilibrium point.
-The curve from time $0.5$ to $2.5$ also indicates that the system is starting to understand that it needs to slow down the pendulum before reaching equilibrium to prevent overshooting.
-However, later on it seems to start oscillating around the equilibrium.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle.png}
-	\label{fig:single_pendulum_angle}
-	\caption{Pendulum angle over time for training episode $170$.}
-\end{figure}
+%Figure \ref{fig:single_pendulum_angle} shows the pendulum angle over time for training episode $170$.
+%It seems as if the system is learning which direction to push the cart to get the pendulum closer to the equilibrium point.
+%The curve from time $0.5$ to $2.5$ also indicates that the system is starting to understand that it needs to slow down the pendulum before reaching equilibrium to prevent overshooting.
+%However, later on it seems to start oscillating around the equilibrium.
+%
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle.png}
+%	\label{fig:single_pendulum_angle}
+%	\caption{Pendulum angle over time for training episode $170$.}
+%\end{figure}
 
 The trained controller was used to control the single pendulum for initial conditions outside the trained domain, and the controller managed to bring back the pendulum to the known domain and balance it.
 This can be seen in figure \ref{fig:single_pendulum_outside_training_domain}.
 Results indicate that the network has managed to generalize the problem.
 This would not be possible with a regular Q-table approach since the agent has never seen the states outside the training domain and would end up performing random actions.
+Although the agent was able to bring the pendulum back to its equilibrium point, it later starts to move to the right with a small angle.
+The reason for this might be that the cart ended up far away from the origin, which confused the agent.
+This can be resolved by training the agent for more episodes.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_30.png}
-	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 30$ degrees.}
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_20.png}
+	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 20$ degrees.}
 	\label{fig:single_pendulum_outside_training_domain}
 \end{figure}
 

@@ -414,23 +414,21 @@ Table \ref{table:params_q_network} shows the neural network setup for the single
 \end{table}
 
 Table \ref{table:params_pendulum} shows the training parameters for the single pendulum problem.
-
 \begin{table}[H]
-    \centering
-    \begin{tabular}{|
-    >{\columncolor[HTML]{FFCE93}}c |
-    >{\columncolor[HTML]{ECF4FF}}c |}
-    \hline
-    \textbf{Max Angle}     & 10             \\ \hline
-    \textbf{Step Size}     & 0.02           \\ \hline
-    \textbf{Action Space}  & {[}-10,0,10{]} \\ \hline
-    \textbf{Learning Rate} & 0.1            \\ \hline
-    \textbf{Memory}        & 2000           \\ \hline
-    \textbf{Batch Size}    & 32             \\ \hline
-    \textbf{Discount}      & 0.9            \\ \hline
-    \end{tabular}
-    \caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem. }
-    \label{table:params_pendulum}
+\centering
+\begin{tabular}{|
+>{\columncolor[HTML]{FFCE93}}c |c|}
+\hline
+\textbf{Max Angle} & 10 \\ \hline
+\textbf{Step Size} & 0.02 \\ \hline
+\textbf{Action Space} & [-10,0,10] \\ \hline
+\textbf{Learning Rate} & 0.001 \\ \hline
+\textbf{Memory} & 2000 \\ \hline
+\textbf{Batch Size} & 32 \\ \hline
+\textbf{Discount} & 0.9 \\ \hline
+\end{tabular}
+\caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem.}
+\label{table:params_pendulum}
 \end{table}
 
 Figure \ref{fig:single_pendulum_eval} shows the agent performance over episodes.
@@ -472,6 +470,27 @@ This can be resolved by training the agent for more episodes.
 	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_20.png}
 	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 20$ degrees.}
 	\label{fig:single_pendulum_outside_training_domain}
+\end{figure}
+Figure \ref{fig:pendulum_gamma_01} and \ref{fig:pendulum_gamma_09} shows the average Q-values during training for $\gamma=0.1$ and $\gamma=0.9$ respectively. It can be seen that the Q-values for a low $\gamma$ value converges much faster while for the larger $\gamma$ value, convergence has not happened at the end of the training.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_q_gamma_01.png}
+	\caption{Q-values for $\gamma=0.1$.}
+	\label{fig:pendulum_gamma_01}
+\end{figure} 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_q_gamma_09.png}
+	\caption{Q-values for $\gamma=0.9$.}
+	\label{fig:pendulum_gamma_09}
+\end{figure}
+
+Figure \ref{fig:single_pendulum_eval_01} shows the training result for $\gamma=0.1$, while the other hyperparameters remained the same. It can be seen that the score converges faster since the Q-values converge faster. This is due to the algorithm only taking the instant and near future rewards in to consideration, thus being short sighted. However the overall performance showed that, with $\gamma=0.1$ the agent was unable to generalize and even had issues with initial conditions that were close to $\theta_{max}$. This can also be seen in the dip during the end of the training in Figure \ref{fig:single_pendulum_eval_01}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/pendulum_gamma_01.png}
+	\caption{Evaluation of the controller with the same conditions in Table \ref{table:params_pendulum}, except that $\gamma=0.1$. The drop at the end may be caused due to outlier initial conditions during evaluation.}
+	\label{fig:single_pendulum_eval_01}
 \end{figure}
 
 

@@ -61,12 +61,12 @@ def terminated(state, t):
     #return yp <= 1.9
 
 # Setup the environment (connects the problem to the q-agent).
-step_size = 0.01
+step_size = 0.02
 environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-5,0,5],
+        action_space=[-1,0,1],
         lamb=0.01)
 
 # Setup Neural network parameters.
@@ -91,19 +91,19 @@ network_parameters = {
 }
 
 # Create agent.
-agent = DoubleQAgent(environment, network_parameters, memory=2000)
+agent = QAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
-        max_episodes=10000,
+        max_episodes=300,
         timesteps_per_episode=500,
         warm_start=warm_start,
         evaluate_model_period=10,
-        model_alignment_period=10,
+        model_alignment_period=1,
         save_animation_period=25,
         batch_size=32,
         discount=0.9,
-        exploration_rate=0.5,
+        exploration_rate=0.9,
         exploration_rate_decay=0.99,
         min_exploration_rate=0.1,
         save_model_period=10,

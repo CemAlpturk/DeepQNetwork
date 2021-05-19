@@ -51,7 +51,10 @@
     The approach in this project uses a model free controller trained with Deep Q-learning to control the double pendulum.
     Benefits of Deep Q-learning over regular Q-learning is that the controller can be used for situations that are not presented during training.
     This has been confirmed in the results for the single pendulum model, an easier problem to control that was used to confirm the implementation of the learning algorithm.
-    Results for the double pendulum controller are pending.
+    The double pendulum is more difficult with its chaotic nature and the limitation that the cart with a single degree of freedom is trying to control multiple states.
+    Results show that the double pendulum can be balanced for up-to one second with a network of $5$ layers and $20$ nodes in each layer.
+    The agent was trained for a limited number of episodes limiting the amount of experience and knowledge it could gather about the problem.
+    We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for far longer using Deep Q-Learning.
     % The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
 \end{abstract}
 
@@ -71,19 +74,13 @@
 \section{Introduction}
 The goal of this project is to teach an agent to control a double pendulum on a cart to be standing upright, in its equilibrium point, using reinforcement learning.
 A double pendulum is a highly chaotic system, where its behavior heavily depends on its initial conditions.
-As a result, this system can be very difficult to control.
+Controlling the system with a cart limited to a single degree of freedom is a difficult but solvable problem \cite{Classic_Control_Theory}.
 Figure \ref{fig:double_pendulum_chaotic} shows a simulation with 4 double pendulums with nearly identical initial conditions.
 After some time their behaviors become so different that it becomes nearly impossible to make a prediction about the future.
 This illustrates the chaotic behavior of this system.
 The aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright.
-Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it's working on.
-\cite{qlearning_first}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Double_Pendulum_Chaotic.PNG}
-	\label{fig:double_pendulum_chaotic}
-	\caption{4 double pendulums simulated with similar initial conditions after $9.86$ seconds, with a difference of $0.02 rad/s$ differences on the inner pendulum angular velocities. All other initial states were equal.}
-\end{figure}
+Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it's working on \cite{Deep_Q_Learning_First}.
+
 % Here you introduce the project. What is the background? What project do you aim at solve? References to prior work? If the project makes a positive or negative environmental, or other solitary, impact, describe it here. Are there any ethical considerations? You might want to reference relevant literature, e.g. \cite{openclosed2, Hellerstein2004, Yun2015}. A general \LaTeX\ guide is available at \cite{latexwiki}.
 
 \subsection{Reinforcement Learning}
@@ -93,6 +90,13 @@ In this case this means to train an agent to perform the best action possible in
 For each action taken by the agent, the environment returns a new state and a reward for that action.
 The reward is calculated based on how close the system is to its equilibrium point.
 The goal of training the agent is to optimize gained reward for each action taken.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Double_Pendulum_Chaotic.PNG}
+	\caption{4 double pendulums simulated with similar initial conditions after $9.86$ seconds, with a difference of $0.02 rad/s$ differences on the inner pendulum angular velocities. All other initial states were equal.}
+	\label{fig:double_pendulum_chaotic}
+\end{figure}
 
 \section{Modeling}
 The system consists of a cart that can move in the horizontal direction and two pendulums that are coupled to each other such that there is no collision between any parts.
@@ -191,7 +195,7 @@ l_1l_2m_2(\dot{\theta_1})^2 \sin (\theta_1 - \theta_2) + g l_2 m_2 \sin \theta_2
 \section{System Design}
 A couple of reinforcement learning methods are Q-learning and Deep Q-learning.
 \subsection{Q-learning}
-Q-learning is a model free method where the agent has no information about the system its trying to control, thus it can be said that it is a black box model.
+Q-learning is a model free method \cite{original_q_learning} where the agent has no information about the system its trying to control, thus it can be said that it is a black box model.
 The agent stores all its experiences in a Q-table that contains the quality of a state-action combination.
 \begin{equation}
 Q : S \times A  \to \mathbb{R}
@@ -235,7 +239,7 @@ However since this is a chaotic system, it would require a fine discretization r
 This problem can be resolved by using the Deep Q-learning method.
 
 \subsection{Deep Q-learning}
-In Deep Q-learning, the Q-table is replaced with a deep neural network that tries to learn Q-values instead of memorizing them.
+In Deep Q-learning, the Q-table is replaced with a deep neural network \cite{Deep_Q_Learning_First} that tries to learn Q-values instead of memorizing them.
 A benefit of using Deep Q-learning is that is uses less memory and it has more predictive power on unseen states.
 The network takes in the system states as input arguments and predicts the q-values.
 \begin{equation}
@@ -461,7 +465,7 @@ The initial condition for each episode is randomized preventing the system from 
 %\end{figure}
 
 The trained controller was used to control the single pendulum for initial conditions outside the trained domain, and the controller managed to bring back the pendulum to the known domain and balance it.
-This can be seen in figure \ref{fig:single_pendulum_outside_training_domain}.
+This can be seen in Figure \ref{fig:single_pendulum_outside_training_domain}.
 Results indicate that the network has managed to generalize the problem.
 This would not be possible with a regular Q-table approach since the agent has never seen the states outside the training domain and would end up performing random actions.
 Although the agent was able to bring the pendulum back to its equilibrium point, it later starts to move to the right with a small angle.
@@ -585,7 +589,7 @@ Table \ref{table:params_pendulum} and \ref{table:other_params_time} show the com
 
 \section{Discussion}
 % Talk about the problem
-The double pendulum is a highly chaotic system making it difficult to control.
+The double pendulum is a highly chaotic system and with the cart limited to a single degree of freedom it is difficult to control.
 In situations where the agent receives two states that are very close to each other, the applied action may result in very different outcomes which makes the learning of the expected reward for that action very difficult.
 % add difference between wide and deep networks
 We have found that deeper networks perform better than wider ones for this problem.
@@ -598,7 +602,7 @@ However a high exploration rate leads to the agent exploring things that it shou
 In Q-learning, this is not an issue since the q-values of the state-action pairs do not directly affect each other.
 However for Deep Q-learning, every weight update affects all q-values for the state-action pairs.
 In the case where the learning rate is too low, the agent will almost always prefer to take the same actions which can cause overfitting in the network.
-This is why we preferred to train the agent with a dynamic exploration rate, where the agent performs randomly in the beginning and and over time becomes more deterministic.
+This is why we preferred to train the agent with a dynamic exploration rate, where the agent performs randomly in the beginning and over time becomes more deterministic.
 However we still have a minimum $\epsilon$, to allow the agent to explore during the later episodes of training.
 This prevents the agent from overfitting to states close to the equilibrium point.
 For the same reason, we preferred to use a strict termination condition. 
@@ -609,7 +613,7 @@ Although this specific problem does not have any delayed rewards, such as reachi
 Our results indicated that using a higher $\gamma$ value helped the agent generalize much better and was more resilient to near edge starting conditions.
 
 % Difficulties in training
-As seen in table (ref here) tuning hyperparameters is a difficult process. 
+As seen in Table \ref{table:def_params_time} tuning hyperparameters is a difficult process. 
 Due to the time the training takes, evaluating the performance of a different set of hyperparameters is challenging.
 Since the training process highly depends on the hyperparameters, the time it takes for one episode can be vastly different for different hyperparameters.
 Aside from the time it takes to get the results, evaluating the effect of the hyperparameters is not straight forward.
@@ -623,7 +627,7 @@ Different hyperparameters, reward functions and termination conditions affect th
 As seen in Table \ref{table:def_params_time} and \ref{table:other_params_time}, the agent was trained with a more flexlible termination condition, which allowed it to survive longer in an episode, however it takes more episodes for the Q-values to converge since the state-action space is much larger than before which takes more training time.
 The simulation time for episode $50$ in Table \ref{table:def_params_time} cannot be directly compared with the corresponding value in Table \ref{table:other_params_time}.
 
-We have tried other model-free methods such as Linear Q-learning (ref) and Double Deep Q-learning (ref) but they did not achieve better performance than our Deep Q-learning (ref?) implementation.
+We have tried other model-free methods such as Linear Q-learning \cite{Linear_Q_Learning} and Double Deep Q-learning \cite{Deep_Double_Q_Learning}, but they did not achieve better performance than our Deep Q-learning \cite{Deep_Q_Learning_First} implementation.
 
 % pendulum specific
 % Double pendulum specific

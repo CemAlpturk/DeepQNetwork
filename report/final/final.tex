@@ -512,22 +512,25 @@ Figure \ref{fig:pendulum_force} shows the distribution of actions taken for an a
 % If you need to use tables, Table~\ref{tab:extable} shows an example of how they can be typeset. For further details, see \cite{tablelatexwiki}.
 
 \subsection{Balancing Double Inverted Pendulum}
-Results are currently not sufficient.
-Various experiments are being conducted with different hyper parameters such as network sizes, different action spaces, learning rates etc.
-A problem with tuning hyper parameters is the long feedback loop coming from long training times.
+%Results are currently not sufficient.
+%Various experiments are being conducted with different hyper parameters such as network sizes, different action spaces, learning rates etc.
+%A problem with tuning hyper parameters is the long feedback loop coming from long training times.
 
-The termination condition is given by equation \eqref{eqn:termination_double_pendulum}.
+The termination condition is given by equation \eqref{eqn:termination_double_pendulum},
 \begin{equation}
+	|\theta_1| > \theta_{max} \text{ or } |\theta_2| > \theta_{max}
 	\label{eqn:termination_double_pendulum}
-	y_{outer} < y_{min}
 \end{equation}
-$y_{outer}$ is the height of the outer pendulum bob and $y_{min}$ the minimum height allowed for the bob.
-Reward is given by equation \eqref{eqn:reward_double_pendulum}
+where $\theta_1$ is the angle of the inner pendulum and $\theta_2$ is the angle of the outer pendulum.
+$\theta_{max} = 5$ degrees was chosen in order to train the agent in a strict state space close to the equilibrium point.
+Due to the limited degrees of freedom of the system higher values of $\theta_{max}$ can allow the pendulums to move to positions where they can not be recovered from.
+Reward is given by equation \eqref{eqn:reward_double_pendulum},
 \begin{equation}
+	R(s) = 1 - \left( \theta_1^2 + \theta_2^2 \right) - \left(\dot{\theta_1}^2 + \dot{\theta_2}^2 \right)
 	\label{eqn:reward_double_pendulum}
-	R(s) = (\theta_{max} - |\theta_{outer}|) / \theta_{max}
 \end{equation}
-with $\theta_{max} = 5$ degrees.
+where the agent receives a bonus for being alive of $1$, a penalty for being further away from the equilibrium point given by $\theta_1^2 + \theta_2^2$, and a penalty for the velocity of the pendulums given by $\dot{\theta_1}^2 + \dot{\theta_2}^2$.
+The total score received in an episode depends on the step size of the simulation and the duration that the agent is able to survive.
 
 \begin{figure}[H]
 	\centering
@@ -537,6 +540,40 @@ with $\theta_{max} = 5$ degrees.
 \end{figure}
 Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
 We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
+
+Table \ref{table:double_params_q_network} shows the neural network setup for the single pendulum problem.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|
+    >{\columncolor[HTML]{CBCEFB}}c |c|c|}
+    \hline
+    \cellcolor[HTML]{9AFF99}\textbf{Layer} & \cellcolor[HTML]{9AFF99}\textbf{Number of Neurons} & \cellcolor[HTML]{9AFF99}\textbf{Activation} \\ \hline
+    \textbf{Input}                         & 4                                                  & -                                           \\ \hline
+    \textbf{Hidden 1}                      & 20                                                 & ReLU                                        \\ \hline
+    \textbf{Hidden 2}                      & 40                                                 & ReLU                                        \\ \hline
+    \textbf{Output}                        & 3                                                  & Linear                                      \\ \hline
+    \end{tabular}
+    \caption{Network parameters for the Q-network}
+    \label{table:double_params_q_network}
+\end{table}
+
+Table \ref{table:params_double_pendulum} shows the training parameters for the single pendulum problem.
+\begin{table}[H]
+\centering
+\begin{tabular}{|
+>{\columncolor[HTML]{FFCE93}}c |c|}
+\hline
+\textbf{Max Angle} & 10 \\ \hline
+\textbf{Step Size} & 0.02 \\ \hline
+\textbf{Action Space} & [-10,0,10] \\ \hline
+\textbf{Learning Rate} & 0.001 \\ \hline
+\textbf{Memory} & 2000 \\ \hline
+\textbf{Batch Size} & 32 \\ \hline
+\textbf{Discount} & 0.9 \\ \hline
+\end{tabular}
+\caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem.}
+\label{table:params_double_pendulum}
+\end{table}
 \subsection{Training Time}
 The training time of the agent heavily depends on the hyperparameters and the overall performance of the agent. 
 In the first few episodes, due to the agents lack of experience the episodes will terminate faster, thus resulting in shorter episodes.

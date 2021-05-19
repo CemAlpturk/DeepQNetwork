@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{subcaption}
 \hypersetup{
 	colorlinks,
 	linkcolor={red!50!black},
@@ -74,7 +75,7 @@ As a result, this system can be very difficult to control.
 Figure \ref{fig:double_pendulum_chaotic} shows a simulation with 4 double pendulums with nearly identical initial conditions.
 After some time their behaviors become so different that it becomes nearly impossible to make a prediction about the future.
 This illustrates the chaotic behavior of this system.
-Our aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright.
+The aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright.
 Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it's working on.
 \cite{qlearning_first}
 \begin{figure}[H]
@@ -88,14 +89,14 @@ Although this is an academic problem, the results could be applied to any type o
 \subsection{Reinforcement Learning}
 %\kant[1] % This generates the dummy text
 The main idea of reinforcement learning is to learn to make decisions based on past experiences.
-In this case this means to train an agent that performs the best action, the force applied in the horizontal direction,  possible given the current states of the system.
+In this case this means to train an agent to perform the best action possible in order to control the pendulums.
 For each action taken by the agent, the environment returns a new state and a reward for that action.
 The reward is calculated based on how close the system is to its equilibrium point.
 The goal of training the agent is to optimize gained reward for each action taken.
 
 \section{Modeling}
 The system consists of a cart that can move in the horizontal direction and two pendulums that are coupled to each other such that there is no collision between any parts.
-Since this project is not about modeling the double pendulum, but rather about controlling it, we have borrowed the equations of motion from \cite{Double_Pendulum_Equations}.
+Since this project is not about modeling the double pendulum, but rather about controlling it, the equations of motion have been borrowed from \cite{Double_Pendulum_Equations}.
 The states of the system are represented by,
 \begin{equation}
 x  :=
@@ -210,7 +211,7 @@ The agent uses an $\epsilon$-greedy policy to decide on the next move, where the
 Having a high $\epsilon$ value will correspond to performing randomly and exploring the state-action space but will delay the convergence of the Q-table. 
 Having a low $\epsilon$ value can cause the agent to rarely try new things but instead will try to exploit its current solution to the problem.
 A balance between these problems can be obtained by starting with a high $\epsilon$ value and decaying it over time to allow the agent to try new things in the beginning and slowly exploit the best solution it has found. 
-\\
+
 Each state-action pair in a trained Q-table, represents the expected value in \eqref{eq:exp}. These values represent the expected return of rewards for future actions if action $a_t$ is taken at state $s_t$.
 \begin{equation}
 Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] 
@@ -389,13 +390,15 @@ The implementation architecture was used to simply replace the environment with 
 \subsection{Balancing Single Inverted Pendulum}
 The single pendulum problem is non-chaotic.
 Equations from \cite{Correct_Equations} were used to model the problem.
-System was terminated when the pendulum angle was grater than $\pm 10$ degrees.
+System was terminated when the pendulum angle was greater than $\pm 10$ degrees.
 Equation \eqref{eqn:reward_single_pendulum} states the reward function.
+
 \begin{equation}
     \label{eqn:reward_single_pendulum}
     R(s) = (\theta_{max} - |\theta|)/ \theta_{max}
 \end{equation}
 where $\theta_{max} = 10$ degrees.
+The value was chosen by trial and error, where $10$ degrees gave the best overall performance.
 
 Table \ref{table:params_q_network} shows the neural network setup for the single pendulum problem.
 \begin{table}[H]
@@ -441,8 +444,8 @@ The initial condition for each episode is randomized preventing the system from 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/SinglePendulum_eval.png}
-	\label{fig:single_pendulum_eval}
 	\caption{Evaluated controller score for every $10$ episodes. The evaluation is measured as the average score of $10$ full controlled simulations. Maximum number of steps for each evaluation iteration was $200$, capping the maximum possible reward to $200$.}
+	\label{fig:single_pendulum_eval}
 \end{figure}
 
 %Figure \ref{fig:single_pendulum_angle} shows the pendulum angle over time for training episode $170$.
@@ -530,6 +533,56 @@ with $\theta_{max} = 5$ degrees.
 \end{figure}
 Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
 We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
+\subsection{Training Time}
+The training time of the agent heavily depends on the hyperparameters and the overall performance of the agent. 
+In the first few episodes, due to the agents lack of experience the episodes will terminate faster, thus resulting in shorter episodes.
+As the agent gains more experience, it learns to survive for longer, increasing the computation time for a single episode.
+Table \ref{table:params_pendulum} and \ref{table:other_params_time} show the computation and simulation time differences for a change in the termination condition.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{CBCEFB} 
+\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Single Pendulum}} \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{1} & 0.72 s & 0.56 s\\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\vdots & \vdots & \vdots \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{50} & 24.73 s & 4 s \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\vdots & \vdots & \vdots \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{100} & 28.52 s & 4 s\\ \hline
+\end{tabular}
+\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}.}
+\label{table:def_params_time}
+\end{table}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{CBCEFB} 
+\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Single Pendulum}} \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{1} & 0.76 s & 0.6 s \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\vdots & \vdots & \vdots \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{50} & 6.03 s & 0.86 s \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\vdots & \vdots & \vdots \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{100} & 26.77 s & 4 s\\ \hline
+\end{tabular}
+\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}, with a modification of $\theta_{max} = 20$ degrees.}
+\label{table:other_params_time}
+\end{table}
+
 \section{Discussion}
 % Talk about the problem
 The double pendulum is a highly chaotic system making it difficult to control.
@@ -551,8 +604,9 @@ This prevents the agent from overfitting to states close to the equilibrium poin
 For the same reason, we preferred to use a strict termination condition. 
 Since the agents purpose is to control the pendulums around the equilibrium, there is little to no advantage in allowing the pendulum to move too far from the equilibrium point.
 
-When we used a discount factor closer to $1$, we found that it takes longer for the q-values to converge, and they converged to larger values, as seen in fig(ref).
-Since this specific problem does not have any delayed rewards, such as reaching a goal in a game, it made more sense to use a low discount factor $\gamma$, which shortened the time it took for the q-values to converge.
+When we used a discount factor closer to $1$, we found that it takes longer for the q-values to converge, and they converged to larger values, as seen in Figure \ref{fig:pendulum_gamma_09}.
+Although this specific problem does not have any delayed rewards, such as reaching a goal in a game, it made more sense to use a high discount factor $\gamma$, so that the agent can take into account the consequences of its actions, such as if an action makes the pendulum overshoot the equilibrium point or not.
+Our results indicated that using a higher $\gamma$ value helped the agent generalize much better and was more resilient to near edge starting conditions.
 
 % Difficulties in training
 As seen in table (ref here) tuning hyperparameters is a difficult process. 
@@ -564,6 +618,13 @@ Trying to estimate the effect of a new hyperparameter is problematic.
 Due to these reasons, a trial and error approach was more effective.
 We believe that with the right hyperparameters, the double pendulum can be controlled.
 
+The duration that the agent survives for an episode does not directly correlate with the agents performance.
+Different hyperparameters, reward functions and termination conditions affect the duration the agent is able to survive, which makes evaluating hyperparameters problematic.
+As seen in Table \ref{table:def_params_time} and \ref{table:other_params_time}, the agent was trained with a more flexlible termination condition, which allowed it to survive longer in an episode, however it takes more episodes for the Q-values to converge since the state-action space is much larger than before which takes more training time.
+The simulation time for episode $50$ in Table \ref{table:def_params_time} cannot be directly compared with the corresponding value in Table \ref{table:other_params_time}.
+
+We have tried other model-free methods such as Linear Q-learning (ref) and Double Deep Q-learning (ref) but they did not achieve better performance than our Deep Q-learning (ref?) implementation.
+
 % pendulum specific
 % Double pendulum specific
 % Future work
@@ -573,21 +634,21 @@ We believe that with the right hyperparameters, the double pendulum can be contr
 %We are trying different combinations in order to understand this behavior.
 %Also, as seen in Figure \ref{fig:double_pendulum_score}, we are getting sudden spikes during training.
 %We are also currently trying to understand this phenomenon.
-\section{Project Plan}
-The initial project plan was followed quite well.
-However, the time to tune hyper parameters for the double pendulum problem were underestimated.
-Work on that part still remains.
-One problem for tuning the hyper parameters is that the feedback loop for a single change is long.
-It takes a long time to train the controller for the double pendulum and therefore a long time before hyper parameters can be adjusted.
-Figure \ref{fig:gantt_chart} shows the updated Gantt chart.
-The green colored blocks are completed steps.
-Blue blocks are work in progress.
-\begin{figure}[H]
-   \centering
-   \includegraphics[width=0.9\columnwidth]{figures/Revised_Project_plan.png}
-   \caption{Revised Gantt chart.}
-   \label{fig:gantt_chart}
-\end{figure}
+%\section{Project Plan}
+%The initial project plan was followed quite well.
+%However, the time to tune hyper parameters for the double pendulum problem were underestimated.
+%Work on that part still remains.
+%One problem for tuning the hyper parameters is that the feedback loop for a single change is long.
+%It takes a long time to train the controller for the double pendulum and therefore a long time before hyper parameters can be adjusted.
+%Figure \ref{fig:gantt_chart} shows the updated Gantt chart.
+%The green colored blocks are completed steps.
+%Blue blocks are work in progress.
+%\begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.9\columnwidth]{figures/Revised_Project_plan.png}
+%   \caption{Revised Gantt chart.}
+%   \label{fig:gantt_chart}
+%\end{figure}
 % Prints cited references
 \printbibliography
 \end{document}

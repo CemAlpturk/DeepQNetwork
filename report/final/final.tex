@@ -33,7 +33,7 @@
 % Document begins here
 \begin{document}
 \begin{frontmatter}
-\title{Balancing a Double Inverted Pendulum on Cart} % Title of the project.
+\title{Balancing a Inverted Double Pendulum with Reinforcement Learning} % Title of the project.
                       							 % Note that all reports are in English,
 							                     %so that our international students can read them.
 
@@ -244,22 +244,22 @@ This problem can be resolved by using the Deep Q-learning method.
 \subsection{Deep Q-learning}
 In Deep Q-learning, the Q-table is replaced with a deep neural network \cite{Deep_Q_Learning_First} that tries to learn Q-values instead of memorizing them.
 A benefit of using Deep Q-learning is that is uses less memory and it has more predictive power on unseen states.
-The network takes in the system states as input arguments and predicts the q-values.
+The network takes in the system states as input arguments and predicts the Q-values.
 \begin{equation}
 	\label{eqn:neural_network_mapping}
 	NN_Q := \mathbb{R}^m \to \mathbb{R}^n
 \end{equation}
 where $m$ is the state size and $n$ is the size of the action space.
-The agent chooses the action to perform by picking the largest q-value from the neural network prediction.
+The agent chooses the action to perform by picking the largest Q-value from the neural network prediction.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/q_network.png}
 	\label{fig:q_network_illustration}
-	\caption{Illustration of a neural network with $3$ state inputs and $4$ q-value outputs that can be mapped to actions.}
+	\caption{Illustration of a neural network with $3$ state inputs and $4$ Q-value outputs that can be mapped to actions.}
 \end{figure}
 
 
-The neural network is trained by a method called experience replay that is based on simulating the system and recording all states, rewards and actions taken in memory.
+The neural network is trained by a method called experience replay that is based on simulating the system and recording all states, rewards and actions taken in memory \cite{Deep_Q_Learning_First}.
 During experience replay, a random batch is taken from the memory and is used to train the network.
 The reason for taking random batches from memory and not sequential data, is to reduce the correlation between the data points.
 The simulation ends when it reaches a termination condition that is defined in the environment.
@@ -271,13 +271,13 @@ The stored experience is used to fit the neural network once there is enough exp
 \end{equation}
 where $s_t$ is the state at time t, $a_t$ the action taken by the system at time t, $r_t$ the gained reward for the taken action, $T_t$ indicating whether the system has terminated and $s_{t+1}$ the next state in time.
 The experience is used to map a target for the neural network training.
-Targets are q-values for each action given a state.
-Since the experience only holds data about the actual action that was taken for a given state the other q-values for the same state have to be estimated to complete the entire target vector.
-There are several ways to estimate the unknown q-values for a given state.
+Targets are Q-values for each action given a state.
+Since the experience only holds data about the actual action that was taken for a given state the other Q-values for the same state have to be estimated to complete the entire target vector.
+There are several ways to estimate the unknown Q-values for a given state.
 Although the $NN_Q$ network can be used to predict the target values for the other actions it causes the targets to be non-stationary leading to the network chasing its own tail.
 A separate neural network, $NN_{target}$, was used to avoid the non-stationary targets problem.
 $NN_{target}$ has the same network architecture as $NN_Q$.
-After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to give better estimations of the unknown q-values.
+After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to give better estimations of the unknown Q-values.
 
 
 \begin{algorithm}[H]
@@ -300,7 +300,7 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
-The actual value $y_m$ replaces the corresponding predicted q-value from $NN_{target}(\mathbf{s}_m)$.
+The actual value $y_m$ replaces the corresponding predicted Q-value from $NN_{target}(\mathbf{s}_m)$.
  Since we only have the reward for one action in a given state, we replace the targets for the untaken actions with a prediction from the Q-network. This will result in a loss of 0 for these untaken actions, thus not affecting the training.
  This way the network is trained only by the state-action pair that has been taken.
  This will however cause the implementation to be slower since a prediction has to be made before each weight update.
@@ -537,15 +537,6 @@ Reward is given by equation \eqref{eqn:reward_double_pendulum},
 where the agent receives a bonus for being alive of $1$, a penalty for being further away from the equilibrium point given by $\theta_1^2 + \theta_2^2$, and a penalty for the velocity of the pendulums given by $\dot{\theta_1}^2 + \dot{\theta_2}^2$.
 The total score received in an episode depends on the step size of the simulation and the duration that the agent is able to survive.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/double_pendulum_eval.png}
-	\caption{Current results for training the controller.}
-	\label{fig:double_pendulum_score}
-\end{figure}
-Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
-We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
-
 Table \ref{table:double_params_q_network} shows the neural network setup for the single pendulum problem.
 The weights of the network were initialized with uniform HE-initialization similar to the single pendulum problem.
 \begin{table}[H]
@@ -579,6 +570,27 @@ Table \ref{table:params_double_pendulum} shows the training parameters for the s
 \caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem.}
 \label{table:params_double_pendulum}
 \end{table}
+%Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
+%We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
+Figure \ref{fig:double_pendulum_score} shows the agents score over $500$ episodes. 
+During training the agent was able to balance the pendulum up to three seconds.
+A comparison between the agents performance, baseline and a random controller is also illustrated in the figure.
+Although the trained agent cannot balance the pendulums for a long time, it performs much better than the others.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Double_pendulum_eval.png}
+	\caption{Evaluated controller score for every 10 episodes. The evaluation is measured as the average score of 10 full controlled simulations. The baseline is measured by evaluating 200 simulations without a controller which lasted on average for $0.5$ seconds. A controller that performs actions randomly achieves an average score of $32$, estimated the same way as the baseline.}
+	\label{fig:double_pendulum_score}
+\end{figure}
+Figure \ref{fig:double_pendulum_q_values} shows the average Q-values of the network during training.
+It can be seen that the Q-values have converged and can be interpreted as the network having reached its limit and training being complete.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/Q_values_double.png}
+	\caption{Q-values during training.}
+	\label{fig:double_pendulum_q_values}
+\end{figure}
+
 \subsection{Training Time}
 The training time of the agent heavily depends on the hyperparameters and the overall performance of the agent. 
 In the first few episodes, due to the agents lack of experience the episodes will terminate faster, thus resulting in shorter episodes.
@@ -664,8 +676,8 @@ After playing around with the exploration rate $\epsilon$, we have found that a 
 Higher exploration rate forces the agent to take actions that it normally would avoid causing it to explore the action space more.
 For Q-learning, this is a desired thing since the purpose is to fill and update the Q-table.
 However a high exploration rate leads to the agent exploring things that it should avoid, rather than finding the best action to perform.
-In Q-learning, this is not an issue since the q-values of the state-action pairs do not directly affect each other.
-However for Deep Q-learning, every weight update affects all q-values for the state-action pairs.
+In Q-learning, this is not an issue since the Q-values of the state-action pairs do not directly affect each other.
+However for Deep Q-learning, every weight update affects all Q-values for the state-action pairs.
 In the case where the learning rate is too low, the agent will almost always prefer to take the same actions which can cause overfitting in the network.
 This is why we preferred to train the agent with a dynamic exploration rate, where the agent performs randomly in the beginning and over time becomes more deterministic.
 However we still have a minimum $\epsilon$, to allow the agent to explore during the later episodes of training.
@@ -673,7 +685,7 @@ This prevents the agent from overfitting to states close to the equilibrium poin
 For the same reason, we preferred to use a strict termination condition. 
 Since the agents purpose is to control the pendulums around the equilibrium, there is little to no advantage in allowing the pendulum to move too far from the equilibrium point.
 
-When we used a discount factor closer to $1$, we found that it takes longer for the q-values to converge, and they converged to larger values, as seen in Figure \ref{fig:pendulum_gamma_09}.
+When we used a discount factor closer to $1$, we found that it takes longer for the Q-values to converge, and they converged to larger values, as seen in Figure \ref{fig:pendulum_gamma_09}.
 Although this specific problem does not have any delayed rewards, such as reaching a goal in a game, it made more sense to use a high discount factor $\gamma$, so that the agent can take into account the consequences of its actions, such as if an action makes the pendulum overshoot the equilibrium point or not.
 Our results indicated that using a higher $\gamma$ value helped the agent generalize much better and was more resilient to near edge starting conditions.
 

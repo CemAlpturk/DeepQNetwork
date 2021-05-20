@@ -25,7 +25,7 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
     def __init__(self, parameters, initial_state):
 
         super().__init__(initial_state)
-    
+
         self.m = parameters["cart_mass"]
         self.m1 = parameters["pendulum_1_mass"]
         self.m2 = parameters["pendulum_2_mass"]
@@ -173,7 +173,7 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
             max_applied_force = np.max(np.abs(self.external_forces))
 
         # Time
-        time_text = ax.text(-2, 1.6, '', fontsize=15)
+        time_text = ax.text(-4, 1.6, '', fontsize=15)
         def init():
             ax.add_patch(cart)
             ax.add_line(pendulumArm1)
@@ -219,8 +219,9 @@ class DoublePendulumOnCartSimulator(OdeProblemBase):
             if animate_force:
                 # Update the force_bar.
                 # Scale so that max force_bar is mapped to 'xlim_max' (for the plot)
-                scaled_force = xlim_max * self.external_forces[i] / max_applied_force
-                force_bar.set_width(scaled_force) 
+                #scaled_force = xlim_max * self.external_forces[i] / max_applied_force
+                scaled_force = self.external_forces[i]
+                force_bar.set_width(scaled_force)
 
                 # Set the applied force amount to the label.
                 ax.set_xlabel(f'Applied force: {self.external_forces[i]}')

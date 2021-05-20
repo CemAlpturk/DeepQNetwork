@@ -35,19 +35,23 @@ from Environments import DoublePendulumOnCartSimulator
 
 
 max_angle = 0*np.pi/180
-initial_state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+initial_state = np.array([0.0, 0.0, 0.0, 1.0, 0.0, 0.0])
 
 problem_parameters = {
         "cart_mass": 1.0,
         "pendulum_1_mass": 0.1,
         "pendulum_2_mass": 0.1,
         "pendulum_1_length": 1.0,
-        "pendulum_2_length": 1.0
-    }
+        "pendulum_2_length": 1.0,
+        "cart_friction" : 0.0,
+        "pendulum_1_friction" : 0.0,
+        "pendulum_2_friction" : 0.0
+    } 
 
 problem = DoublePendulumOnCartSimulator(problem_parameters, initial_state)
 
 t = np.linspace(0,2,200)
-problem.solve(t, controller=controller.act)
+problem.solve(t)
 
-problem.animate()
+
+# problem.animate()

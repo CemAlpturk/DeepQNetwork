@@ -1,7 +1,7 @@
 % !TeX encoding = UTF-8
 
-\documentclass{LTHtwocol} % Use this when you work on your report.
-% \documentclass[final]{LTHtwocol} % Use this for the final version.
+%\documentclass{LTHtwocol} % Use this when you work on your report.
+\documentclass[final]{LTHtwocol} % Use this for the final version.
                                    % It will remove page numbers and
                                    % markers for overfull boxes.
                                    % There really shouldn't be any of those anyway.
@@ -14,6 +14,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{subcaption}
+\usepackage{nccmath}
 \hypersetup{
 	colorlinks,
 	linkcolor={red!50!black},
@@ -30,10 +31,12 @@
 \algnewcommand\True{\textbf{true}\space}
 \algnewcommand\False{\textbf{false}\space}
 
+\raggedbottom
+
 % Document begins here
 \begin{document}
 \begin{frontmatter}
-\title{Balancing a Inverted Double Pendulum with Reinforcement Learning} % Title of the project.
+\title{Balancing an Inverted Double Pendulum with Reinforcement Learning} % Title of the project.
                       							 % Note that all reports are in English,
 							                     %so that our international students can read them.
 
@@ -81,7 +84,7 @@ Controlling the system with a cart limited to a single degree of freedom is a di
 The aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright as seen in Figure \ref{fig:double_pendulum_controlled}.
 Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it is working on \cite{Deep_Q_Learning_First}.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/double_pendulum.png}
 	\caption{A double pendulum being controlled by a trained agent that is applying $-1N$ in the horizontal direction.}
@@ -219,7 +222,7 @@ Having a high $\epsilon$ value will correspond to performing randomly and explor
 Having a low $\epsilon$ value can cause the agent to rarely try new things but instead will try to exploit its current solution to the problem.
 A balance between these problems can be obtained by starting with a high $\epsilon$ value and decaying it over time to allow the agent to try new things in the beginning and slowly exploit the best solution it has found. 
 
-Each state-action pair in a trained Q-table, represents the expected value in \eqref{eq:exp}. These values represent the expected return of rewards for future actions if action $a_t$ is taken at state $s_t$.
+Each state-action pair in a trained Q-table, represents the expected value in Equation \eqref{eq:exp}. These values represent the expected return of rewards for future actions if action $a_t$ is taken at state $s_t$.
 \begin{equation}
 Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] 
 \label{eq:exp}
@@ -234,7 +237,7 @@ Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i
 \[ 0 < \alpha \leq 1, \quad 0 \leq \gamma \leq 1  \]
 
 %\[ Q(s_t,a_t) = E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \hdots | s_t,a_t] \]
-After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for the delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider future rewards.
+After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by Equation \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for a delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider future rewards.
 
 
 This method requires a discrete set of actions and states. For the double pendulum problem, this can be achieved by discretizing the states and actions.
@@ -251,7 +254,7 @@ The network takes in the system states as input arguments and predicts the Q-val
 \end{equation}
 where $m$ is the state size and $n$ is the size of the action space.
 The agent chooses the action to perform by picking the largest Q-value from the neural network prediction.
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/q_network.png}
 	\label{fig:q_network_illustration}
@@ -265,22 +268,22 @@ The reason for taking random batches from memory and not sequential data, is to 
 The simulation ends when it reaches a termination condition that is defined in the environment.
 For the double pendulum case the termination condition is when the outer pendulum angle becomes larger than a defined maximum value.
 One full simulation from start to termination is called an episode.
-The stored experience is used to fit the neural network once there is enough experience stored in the memory.
+The stored experience is used to fit the neural network once there is enough experience stored in the memory. 
 \begin{equation}
 	Exp \leftarrow \begin{pmatrix}s_t, & a_t, & r_t, & T_t, & s_{t+1}	\end{pmatrix}
 \end{equation}
-where $s_t$ is the state at time t, $a_t$ the action taken by the system at time t, $r_t$ the gained reward for the taken action, $T_t$ indicating whether the system has terminated and $s_{t+1}$ the next state in time.
+Where $s_t$ is the state at time t, $a_t$ the action taken by the system at time t, $r_t$ the gained reward for the taken action, $T_t$ indicating whether the system has terminated and $s_{t+1}$ the next state in time.
 The experience is used to map a target for the neural network training.
 Targets are Q-values for each action given a state.
 Since the experience only holds data about the actual action that was taken for a given state the other Q-values for the same state have to be estimated to complete the entire target vector.
 There are several ways to estimate the unknown Q-values for a given state.
-Although the $NN_Q$ network can be used to predict the target values for the other actions it causes the targets to be non-stationary leading to the network chasing its own tail.
+Although the $NN_Q$ network can be used to predict the target values for the other actions it causes the targets to be non-stationary leading to the network chasing its own tail \cite{Deep_Q_Learning_Target_Network}.
 A separate neural network, $NN_{target}$, was used to avoid the non-stationary targets problem.
 $NN_{target}$ has the same network architecture as $NN_Q$.
 After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to give better estimations of the unknown Q-values.
 
 
-\begin{algorithm}[H]
+\begin{algorithm}[htp]
 	\label{alg:deep_q_training}
 	\caption{Deep Q-Learning}
 	\begin{algorithmic}
@@ -360,14 +363,14 @@ For the double pendulum case, the simulator solves Equation \eqref{eq_rhs_double
 \subsection{Environment}
 The reward function and termination condition is implemented in the \texttt{Environment} class.
 It acts as a connector between the \texttt{Agent} and the \texttt{Simulator}.
-This way when the reward or the termination needs to be changed it can be done without altering the learning algorithm (\texttt{Agent}) or the physical model \texttt{Simulator}.
+This way when the reward or the termination needs to be changed it can be done without altering the learning algorithm (\texttt{Agent}) or the physical model (\texttt{Simulator}).
 
 % Reward function : only look at the angle, not the velocity
 % 					don't want the algorithm to sacrifies angle for velocity ... something like that.
 
 % Here you describe how you implemented your learning or control design.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/CodeStructure.png}
 	\label{fig:code_architecture}
@@ -384,7 +387,7 @@ Performance is measured by averaging the total reward for $N_{eval}$ simulations
 Notice that the number of simulation steps $M_i$ for each simulation varies as a simulation may reach a termination condition sooner or later than another simulation.
 % $\mathbf{R}_i$ is the total reward for the $i$th simulation of the controlled dynamic system.
 A satisfactory evaluation value can be used as a termination condition for the training to avoid overtraining.
-This mechanism has not yet been implemented.
+This mechanism has not been implemented.
 The training will continue until the max iterations have been reached.
 
 
@@ -421,7 +424,7 @@ The weights of the network were initialized with uniform HE-initialization, whic
     \textbf{Hidden 2}                      & 40                                                 & ReLU                                        \\ \hline
     \textbf{Output}                        & 3                                                  & Linear                                      \\ \hline
     \end{tabular}
-    \caption{Network parameters for the Q-network}
+    \caption{Network parameters for the single pendulum Q-network.}
     \label{table:params_q_network}
 \end{table}
 
@@ -450,7 +453,7 @@ The system was simulated with the maximum $200$ steps for each episode, capping 
 However, $200$ is only possible if the initial condition starts in the equilibrium point.
 The initial condition for each episode is randomized preventing the system from reaching $200$ score in the evaluation.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/SinglePendulum_eval.png}
 	\caption{Evaluated controller score for every $10$ episodes. The evaluation is measured as the average score of $10$ full controlled simulations. Maximum number of steps for each evaluation iteration was $200$, capping the maximum possible reward to $200$.}
@@ -477,20 +480,20 @@ Although the agent was able to bring the pendulum back to its equilibrium point,
 The reason for this might be that the cart ended up far away from the origin, which confused the agent.
 This can be resolved by training the agent for more episodes.
 
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_20.png}
 	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 20$ degrees.}
 	\label{fig:single_pendulum_outside_training_domain}
 \end{figure}
 Figure \ref{fig:pendulum_gamma_01} and \ref{fig:pendulum_gamma_09} shows the average Q-values during training for $\gamma=0.1$ and $\gamma=0.9$ respectively. It can be seen that the Q-values for a low $\gamma$ value converges much faster while for the larger $\gamma$ value, convergence has not happened at the end of the training.
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_q_gamma_01.png}
 	\caption{Q-values for $\gamma=0.1$.}
 	\label{fig:pendulum_gamma_01}
 \end{figure} 
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_q_gamma_09.png}
 	\caption{Q-values for $\gamma=0.9$.}
@@ -498,7 +501,7 @@ Figure \ref{fig:pendulum_gamma_01} and \ref{fig:pendulum_gamma_09} shows the ave
 \end{figure}
 
 Figure \ref{fig:single_pendulum_eval_01} shows the training result for $\gamma=0.1$, while the other hyperparameters remained the same. It can be seen that the score converges faster since the Q-values converge faster. This is due to the algorithm only taking the instant and near future rewards in to consideration, thus being short sighted. However the overall performance showed that, with $\gamma=0.1$ the agent was unable to generalize and even had issues with initial conditions that were close to $\theta_{max}$. This can also be seen in the dip during the end of the training in Figure \ref{fig:single_pendulum_eval_01}.
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/pendulum_gamma_01.png}
 	\caption{Evaluation of the controller with the same conditions in Table \ref{table:params_pendulum}, except that $\gamma=0.1$. The drop at the end may be caused due to outlier initial conditions during evaluation.}
@@ -506,7 +509,7 @@ Figure \ref{fig:single_pendulum_eval_01} shows the training result for $\gamma=0
 \end{figure}
 
 Figure \ref{fig:pendulum_force} shows the distribution of actions taken for an agent that was trained with a larger action space. This plot shows that most of these actions were rarely used except for $\pm 10$. When the agent was trained for the same number of episodes, the overall performance was worse than in Figure \ref{fig:single_pendulum_eval}. This showed that a larger action space requires more training in order to get the same performance. In this case training time can be reduced by only using the actions that were most used by the agent.
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_force.png}
 	\caption{The distribution of used actions for an action space of $[-20,-10,-5,0,5,10,20]$. The model was trained with the same hyperparameters in Table \ref{table:params_pendulum}.}
@@ -516,28 +519,28 @@ Figure \ref{fig:pendulum_force} shows the distribution of actions taken for an a
 
 % If you need to use tables, Table~\ref{tab:extable} shows an example of how they can be typeset. For further details, see \cite{tablelatexwiki}.
 
-\subsection{Balancing Double Inverted Pendulum}
+\subsection{Balancing Inverted Double Pendulum}
 %Results are currently not sufficient.
 %Various experiments are being conducted with different hyper parameters such as network sizes, different action spaces, learning rates etc.
 %A problem with tuning hyper parameters is the long feedback loop coming from long training times.
 
-The termination condition is given by equation \eqref{eqn:termination_double_pendulum},
+The termination condition is given by Equation \eqref{eqn:termination_double_pendulum},
 \begin{equation}
 	|\theta_1| > \theta_{max} \text{ or } |\theta_2| > \theta_{max}
 	\label{eqn:termination_double_pendulum}
 \end{equation}
 where $\theta_1$ is the angle of the inner pendulum and $\theta_2$ is the angle of the outer pendulum.
 $\theta_{max} = 5$ degrees was chosen in order to train the agent in a strict state space close to the equilibrium point.
-Due to the limited degrees of freedom of the system higher values of $\theta_{max}$ can allow the pendulums to move to positions where they can not be recovered from.
-Reward is given by equation \eqref{eqn:reward_double_pendulum},
+Due to the limited degrees of freedom of the system, higher values of $\theta_{max}$ can allow the pendulums to move to positions where they can not be recovered from.
+Reward is given by Equation \eqref{eqn:reward_double_pendulum},
 \begin{equation}
 	R(s) = 1 - \left( \theta_1^2 + \theta_2^2 \right) - \left(\dot{\theta_1}^2 + \dot{\theta_2}^2 \right)
 	\label{eqn:reward_double_pendulum}
 \end{equation}
-where the agent receives a bonus for being alive of $1$, a penalty for being further away from the equilibrium point given by $\theta_1^2 + \theta_2^2$, and a penalty for the velocity of the pendulums given by $\dot{\theta_1}^2 + \dot{\theta_2}^2$.
+where the agent receives a bonus of $1$ for being alive, a penalty for being further away from the equilibrium point given by $\theta_1^2 + \theta_2^2$, and a penalty for the velocity of the pendulums given by $\dot{\theta_1}^2 + \dot{\theta_2}^2$.
 The total score received in an episode depends on the step size of the simulation and the duration that the agent is able to survive.
 
-Table \ref{table:double_params_q_network} shows the neural network setup for the single pendulum problem.
+Table \ref{table:double_params_q_network} shows the neural network setup for the double pendulum problem.
 The weights of the network were initialized with uniform HE-initialization similar to the single pendulum problem.
 \begin{table}[H]
     \centering
@@ -549,11 +552,11 @@ The weights of the network were initialized with uniform HE-initialization simil
     \textbf{Hidden 1-10}                      & 30                                               & ReLU                                        \\ \hline
     \textbf{Output}                        & 3                                                  & Linear                                      \\ \hline
     \end{tabular}
-    \caption{Network parameters for the Q-network}
+    \caption{Network parameters for the double pendulum Q-network.}
     \label{table:double_params_q_network}
 \end{table}
 
-Table \ref{table:params_double_pendulum} shows the training parameters for the single pendulum problem.
+Table \ref{table:params_double_pendulum} shows the training parameters for the double pendulum problem.
 \begin{table}[H]
 \centering
 \begin{tabular}{|
@@ -567,7 +570,7 @@ Table \ref{table:params_double_pendulum} shows the training parameters for the s
 \textbf{Batch Size} & 32 \\ \hline
 \textbf{Discount} & 0.9 \\ \hline
 \end{tabular}
-\caption{Parameters for the Deep Q-learning algorithm on the single pendulum problem.}
+\caption{Parameters for the Deep Q-learning algorithm on the double pendulum problem.}
 \label{table:params_double_pendulum}
 \end{table}
 %Although this method works for the single pendulum case, since the double pendulum is a highly chaotic system, the algorithm is having a difficult time training the controller as seen in Figure \ref{fig:double_pendulum_score}.
@@ -584,7 +587,7 @@ Although the trained agent cannot balance the pendulums for a long time, it perf
 \end{figure}
 Figure \ref{fig:double_pendulum_q_values} shows the average Q-values of the network during training.
 It can be seen that the Q-values have converged and can be interpreted as the network having reached its limit and training being complete.
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/Q_values_double.png}
 	\caption{Q-values during training.}
@@ -595,73 +598,76 @@ It can be seen that the Q-values have converged and can be interpreted as the ne
 The training time of the agent heavily depends on the hyperparameters and the overall performance of the agent. 
 In the first few episodes, due to the agents lack of experience the episodes will terminate faster, thus resulting in shorter episodes.
 As the agent gains more experience, it learns to survive for longer, increasing the computation time for a single episode.
-Table \ref{table:params_pendulum} and \ref{table:other_params_time} show the computation and simulation time differences for a change in the termination condition.
+Table \ref{table:def_params_time} and \ref{table:other_params_time} show the computation and simulation time differences for a change in the termination condition.
 \begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\rowcolor[HTML]{CBCEFB} 
-\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Single Pendulum}} \\ \hline
-\rowcolor[HTML]{FFCCC9} 
-\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{1} & 0.72 s & 0.56 s\\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\vdots & \vdots & \vdots \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{50} & 24.73 s & 4 s \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\vdots & \vdots & \vdots \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{100} & 28.52 s & 4 s\\ \hline
-\end{tabular}
-\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}.}
-\label{table:def_params_time}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline
+	\rowcolor[HTML]{CBCEFB} 
+	\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Single Pendulum}} \\ \hline
+	\rowcolor[HTML]{FFCCC9} 
+	\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{1} & 0.72 s & 0.56 s\\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\vdots & \vdots & \vdots \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{50} & 24.73 s & 4 s \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\vdots & \vdots & \vdots \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{100} & 28.52 s & 4 s\\ \hline
+	\end{tabular}
+	\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}.}
+	\label{table:def_params_time}
 \end{table}
+
+
+
 \begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\rowcolor[HTML]{CBCEFB} 
-\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Single Pendulum}} \\ \hline
-\rowcolor[HTML]{FFCCC9} 
-\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{1} & 0.76 s & 0.6 s \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\vdots & \vdots & \vdots \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{50} & 6.03 s & 0.86 s \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\vdots & \vdots & \vdots \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{100} & 26.77 s & 4 s\\ \hline
-\end{tabular}
-\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}, with a modification of $\theta_{max} = 20$ degrees.}
-\label{table:other_params_time}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline
+	\rowcolor[HTML]{CBCEFB} 
+	\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Single Pendulum}} \\ \hline
+	\rowcolor[HTML]{FFCCC9} 
+	\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{1} & 0.76 s & 0.6 s \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\vdots & \vdots & \vdots \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{50} & 6.03 s & 0.86 s \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\vdots & \vdots & \vdots \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{100} & 26.77 s & 4 s\\ \hline
+	\end{tabular}
+	\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}, with a modification of $\theta_{max} = 20$ degrees.}
+	\label{table:other_params_time}
 \end{table}
 
 \begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\rowcolor[HTML]{CBCEFB} 
-\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Double Pendulum}} \\ \hline
-\rowcolor[HTML]{FFCCC9} 
-\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{1} & 2.95 s & 0.8 s\\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\vdots & \vdots & \vdots \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{300} & 17.38 s & 1.96 s \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\vdots & \vdots & \vdots \\ \hline
-\rowcolor[HTML]{FFFFC7} 
-\textbf{500} & 29.13 s & 2.62 s\\ \hline
-\end{tabular}
-\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_double_pendulum}.}
-\label{table:def_params_time_double}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline
+	\rowcolor[HTML]{CBCEFB} 
+	\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Double Pendulum}} \\ \hline
+	\rowcolor[HTML]{FFCCC9} 
+	\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{1} & 2.95 s & 0.8 s\\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\vdots & \vdots & \vdots \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{300} & 17.38 s & 1.96 s \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\vdots & \vdots & \vdots \\ \hline
+	\rowcolor[HTML]{FFFFC7} 
+	\textbf{500} & 29.13 s & 2.62 s\\ \hline
+	\end{tabular}
+	\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_double_pendulum}.}
+	\label{table:def_params_time_double}
 \end{table}
 
 \section{Discussion}
@@ -690,14 +696,14 @@ Although this specific problem does not have any delayed rewards, such as reachi
 Our results indicated that using a higher $\gamma$ value helped the agent generalize much better and was more resilient to near edge starting conditions.
 
 % Difficulties in training
-As seen in Table \ref{table:def_params_time} tuning hyperparameters is a difficult process. 
+As seen in Table \ref{table:def_params_time_double} tuning hyperparameters is a difficult process. 
 Due to the time the training takes, evaluating the performance of a different set of hyperparameters is challenging.
 Since the training process highly depends on the hyperparameters, the time it takes for one episode can be vastly different for different hyperparameters.
 Aside from the time it takes to get the results, evaluating the effect of the hyperparameters is not straight forward.
 Even when using the same set of hyperparameters we can get different results.
 Trying to estimate the effect of a new hyperparameter is problematic.
 Due to these reasons, a trial and error approach was more effective.
-We believe that with the right hyperparameters, the double pendulum can be controlled.
+We believe that with the right hyperparameters, the double pendulum can be controlled for longer.
 
 The duration that the agent survives for an episode does not directly correlate with the agents performance.
 Different hyperparameters, reward functions and termination conditions affect the duration the agent is able to survive, which makes evaluating hyperparameters problematic.

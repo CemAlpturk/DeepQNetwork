@@ -52,7 +52,7 @@
     Benefits of Deep Q-learning over regular Q-learning is that the controller can be used for situations that are not presented during training.
     This has been confirmed in the results for the single pendulum model, an easier problem to control that was used to confirm the implementation of the learning algorithm.
     The double pendulum is more difficult with its chaotic nature and the limitation that the cart with a single degree of freedom is trying to control multiple states.
-    Results show that the double pendulum can be balanced for up-to one second with a network of $5$ layers and $20$ nodes in each layer.
+    Results show that the double pendulum can be balanced for up-to three seconds with a network of $10$ layers and $30$ nodes in each layer.
     The agent was trained for a limited number of episodes limiting the amount of experience and knowledge it could gather about the problem.
     We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for far longer using Deep Q-Learning.
     % The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
@@ -75,11 +75,18 @@
 The goal of this project is to teach an agent to control a double pendulum on a cart to be standing upright, in its equilibrium point, using reinforcement learning.
 A double pendulum is a highly chaotic system, where its behavior heavily depends on its initial conditions.
 Controlling the system with a cart limited to a single degree of freedom is a difficult but solvable problem \cite{Classic_Control_Theory}.
-Figure \ref{fig:double_pendulum_chaotic} shows a simulation with 4 double pendulums with nearly identical initial conditions.
-After some time their behaviors become so different that it becomes nearly impossible to make a prediction about the future.
-This illustrates the chaotic behavior of this system.
-The aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright.
-Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it's working on \cite{Deep_Q_Learning_First}.
+%Figure \ref{fig:double_pendulum_chaotic} shows a simulation with 4 double pendulums with nearly identical initial conditions.
+%After some time their behaviors become so different that it becomes nearly impossible to make a prediction about the future.
+%This illustrates the chaotic behavior of this system.
+The aim is to create an agent that can learn from its own experiences to control the double pendulum, by applying a force on the cart in the horizontal direction, such that it stays upright as seen in Figure \ref{fig:double_pendulum_controlled}.
+Although this is an academic problem, the results could be applied to any type of learning problem since the agent is unaware of what it is working on \cite{Deep_Q_Learning_First}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{figures/double_pendulum.png}
+	\caption{A double pendulum being controlled by a trained agent that is applying $-1N$ in the horizontal direction.}
+	\label{fig:double_pendulum_controlled}
+\end{figure}
 
 % Here you introduce the project. What is the background? What project do you aim at solve? References to prior work? If the project makes a positive or negative environmental, or other solitary, impact, describe it here. Are there any ethical considerations? You might want to reference relevant literature, e.g. \cite{openclosed2, Hellerstein2004, Yun2015}. A general \LaTeX\ guide is available at \cite{latexwiki}.
 
@@ -91,12 +98,7 @@ For each action taken by the agent, the environment returns a new state and a re
 The reward is calculated based on how close the system is to its equilibrium point.
 The goal of training the agent is to optimize gained reward for each action taken.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Double_Pendulum_Chaotic.PNG}
-	\caption{4 double pendulums simulated with similar initial conditions after $9.86$ seconds, with a difference of $0.02 rad/s$ differences on the inner pendulum angular velocities. All other initial states were equal.}
-	\label{fig:double_pendulum_chaotic}
-\end{figure}
+
 
 \section{Modeling}
 The system consists of a cart that can move in the horizontal direction and two pendulums that are coupled to each other such that there is no collision between any parts.
@@ -144,6 +146,7 @@ The input to the system is a horizontal force that is acting on the cart, repres
 
 \begin{equation}
 M(y) \ddot{y} = f(y,\dot{y},u)
+\label{eq_rhs_double_pendulum}
 \end{equation}
 
 
@@ -195,7 +198,7 @@ l_1l_2m_2(\dot{\theta_1})^2 \sin (\theta_1 - \theta_2) + g l_2 m_2 \sin \theta_2
 \section{System Design}
 A couple of reinforcement learning methods are Q-learning and Deep Q-learning.
 \subsection{Q-learning}
-Q-learning is a model free method \cite{original_q_learning} where the agent has no information about the system its trying to control, thus it can be said that it is a black box model.
+Q-learning is a model free method \cite{original_q_learning} where the agent has no information about the system it is trying to control, thus it can be said that it is a black box model.
 The agent stores all its experiences in a Q-table that contains the quality of a state-action combination.
 \begin{equation}
 Q : S \times A  \to \mathbb{R}
@@ -352,6 +355,7 @@ By using this structure it is easy to change for example the learning algorithm 
 \subsection{Simulator}
 The \texttt{Simulator} is responsible for the physical dynamics of the problem and for simulating the problem for given external inputs and time.
 Equations are on the form of RHS-equations and are solved using \texttt{odeint} function in \texttt{Scipy.integrate} package.
+For the double pendulum case, the simulator solves Equation \eqref{eq_rhs_double_pendulum} for $\ddot{y}$ to produce the next state using the ODE solver.
 
 \subsection{Environment}
 The reward function and termination condition is implemented in the \texttt{Environment} class.
@@ -405,6 +409,7 @@ where $\theta_{max} = 10$ degrees.
 The value was chosen by trial and error, where $10$ degrees gave the best overall performance.
 
 Table \ref{table:params_q_network} shows the neural network setup for the single pendulum problem.
+The weights of the network were initialized with uniform HE-initialization, which is an optimized weight initialization method when using ReLU activation functions \cite{He_initialization}.
 \begin{table}[H]
     \centering
     \begin{tabular}{|
@@ -542,15 +547,15 @@ Although this method works for the single pendulum case, since the double pendul
 We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
 
 Table \ref{table:double_params_q_network} shows the neural network setup for the single pendulum problem.
+The weights of the network were initialized with uniform HE-initialization similar to the single pendulum problem.
 \begin{table}[H]
     \centering
     \begin{tabular}{|
     >{\columncolor[HTML]{CBCEFB}}c |c|c|}
     \hline
     \cellcolor[HTML]{9AFF99}\textbf{Layer} & \cellcolor[HTML]{9AFF99}\textbf{Number of Neurons} & \cellcolor[HTML]{9AFF99}\textbf{Activation} \\ \hline
-    \textbf{Input}                         & 4                                                  & -                                           \\ \hline
-    \textbf{Hidden 1}                      & 20                                                 & ReLU                                        \\ \hline
-    \textbf{Hidden 2}                      & 40                                                 & ReLU                                        \\ \hline
+    \textbf{Input}                         & 6                                                  & -                                           \\ \hline
+    \textbf{Hidden 1-10}                      & 30                                               & ReLU                                        \\ \hline
     \textbf{Output}                        & 3                                                  & Linear                                      \\ \hline
     \end{tabular}
     \caption{Network parameters for the Q-network}
@@ -563,10 +568,10 @@ Table \ref{table:params_double_pendulum} shows the training parameters for the s
 \begin{tabular}{|
 >{\columncolor[HTML]{FFCE93}}c |c|}
 \hline
-\textbf{Max Angle} & 10 \\ \hline
+\textbf{Max Angle} & 5 \\ \hline
 \textbf{Step Size} & 0.02 \\ \hline
-\textbf{Action Space} & [-10,0,10] \\ \hline
-\textbf{Learning Rate} & 0.001 \\ \hline
+\textbf{Action Space} & [-1,0,1] \\ \hline
+\textbf{Learning Rate} & 0.0001 \\ \hline
 \textbf{Memory} & 2000 \\ \hline
 \textbf{Batch Size} & 32 \\ \hline
 \textbf{Discount} & 0.9 \\ \hline
@@ -622,6 +627,29 @@ Table \ref{table:params_pendulum} and \ref{table:other_params_time} show the com
 \end{tabular}
 \caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_pendulum}, with a modification of $\theta_{max} = 20$ degrees.}
 \label{table:other_params_time}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{CBCEFB} 
+\multicolumn{3}{|c|}{\cellcolor[HTML]{CBCEFB}\textbf{Double Pendulum}} \\ \hline
+\rowcolor[HTML]{FFCCC9} 
+\textbf{Episode} & \textbf{Computation} & \textbf{Simulation} \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{1} & 2.95 s & 0.8 s\\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\vdots & \vdots & \vdots \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{300} & 17.38 s & 1.96 s \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\vdots & \vdots & \vdots \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{500} & 29.13 s & 2.62 s\\ \hline
+\end{tabular}
+\caption{Computation and simulation times for episodes with hyperparameters specified in Table \ref{table:params_double_pendulum}.}
+\label{table:def_params_time_double}
 \end{table}
 
 \section{Discussion}

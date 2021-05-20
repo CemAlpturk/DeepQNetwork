@@ -25,7 +25,7 @@ if len(sys.argv) > 1:
     else:
         print("usage: Training_Pendulum.py --warm")
 
-max_angle = 10*np.pi/180
+max_angle = 5*np.pi/180
 
 def custom_loss_function(y_true, y_pred):
     """
@@ -95,7 +95,7 @@ agent = QAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
-        max_episodes=300,
+        max_episodes=500,
         timesteps_per_episode=500,
         warm_start=warm_start,
         evaluate_model_period=10,
@@ -106,7 +106,7 @@ controller = agent.train(
         exploration_rate=0.9,
         exploration_rate_decay=0.99,
         min_exploration_rate=0.1,
-        save_model_period=10,
+        save_model_period=100,
         epochs=1,
         log_q_values=True)
 

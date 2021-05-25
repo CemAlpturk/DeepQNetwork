@@ -22,19 +22,26 @@ class Logger:
         self._init_directory()
 
 
-    def log_eval(self, episode, score):
+    def log_eval(self, episode, score, time):
         """
         Append inputs to apropriate directory
         """
         with open(self.evals_dir, 'a+', newline='') as write_obj:
             csv_writer = writer(write_obj)
-            csv_writer.writerow([episode,score])
+            csv_writer.writerow([episode,score,time])
 
         # Generate plot for scores
         df = pd.read_csv(self.evals_dir)
         ax = df.plot(x="Episode", y="Score")
         fig = ax.get_figure()
         fig_dir = os.path.join(os.path.dirname(self.evals_dir),"Scores.png")
+        fig.savefig(fig_dir)
+        plt.close()
+
+        # Generate plot for times
+        ax = df.plot(x="Episode", y="Time")
+        fig = ax.get_figure()
+        fig_dir = os.path.join(os.path.dirname(self.evals_dir),"Times.png")
         fig.savefig(fig_dir)
         plt.close()
 
@@ -132,7 +139,7 @@ class Logger:
         self.evals_dir = os.path.join(eval_dir, self.evals_file_name)
         with open(self.evals_dir, 'w', newline='') as write_obj:
             csv_writer = writer(write_obj)
-            csv_writer.writerow(["Episode","Score"])
+            csv_writer.writerow(["Episode","Score", "Time"])
 
         # Create directory for episode metrics
         ep_dir = os.path.join(timedir,"Episodes")

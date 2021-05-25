@@ -21,7 +21,8 @@ class QAgent:
         self,
         environment,
         network_parameters : dict,
-        memory = 2000):
+        memory = 2000,
+        use_features=None):
         """
         Initializes a Q-Agent.
 
@@ -32,8 +33,16 @@ class QAgent:
 
         self.environment = environment
 
+        # Adjust used features
+        if use_features == None:
+            self.idx = [True]*environment.state_size
+        else:
+            self.idx = use_features
+
         # For reshaping TODO: (check if it's possible to avoid reshaping in the algorithm)
-        self.state_size = environment.state_size
+        #self.state_size = environment.state_size
+        self.state_size = sum(self.idx)
+        network_parameters["input_shape"] = (self.state_size,)
 
         self.q_network = NetworkBuilder.Build(network_parameters)
         self.target_network = NetworkBuilder.Build(network_parameters)
@@ -105,14 +114,14 @@ class QAgent:
             state = self.environment.reset(random=True) # start from random state
 
             # TODO: Check if possible to avoid reshape!!
-            state = state.reshape(1, self.state_size)
+            state = state[self.idx].reshape(1, self.state_size)
 
             for timestep in range(timesteps_per_episode):
                 # Predict which action will yield the highest reward.
                 action = self._act(state, exploration_rate,log_q_values)
 
                 # Take the system forward one step in time.
-                next_state = self.environment.step(action)
+                next_state = self.environment.step(action)[self.idx]
 
                 # Compute the actual reward for the new state the system is in.
                 current_time = timestep * self.environment.step_size
@@ -122,7 +131,7 @@ class QAgent:
                 terminated = self.environment.terminated(next_state, current_time)
 
                 # TODO: Can this be avoided?
-                next_state = next_state.reshape(1, self.environment.state_size)
+                next_state = next_state.reshape(1, self.state_size)
 
                 # Store results for current step.
                 self._store(state, action, reward, next_state, terminated)
@@ -176,7 +185,7 @@ class QAgent:
                 self._evaluate(evaluation_size, max_steps=timesteps_per_episode,episode=episode)
 
         # Create Controller object
-        controller = Controller(self.environment.get_action_space(), self.q_network)
+        controller = Controller(self.environment.get_action_space(), self.q_network, self.idx)
         print("Controller Created")
         return controller
 
@@ -283,9 +292,11 @@ class QAgent:
         term = []
         t = []
         states = []
+        times = 0
+        current_time = 0
         actions = self.environment.action_space
         for play in range(n):
-            state = self.environment.reset(True).reshape(1, self.environment.state_size)
+            state = self.environment.reset(True)[self.idx].reshape(1, self.state_size)
 
             for i in range(max_steps):
                 # Determine the action to take based on the current state of the system.
@@ -294,7 +305,7 @@ class QAgent:
                 action = self._act(state, -1)           # TODO: Discuss - using -1 to get around the random part of the '_act' method.
 
                 # Take one step in time and apply the force from the action.
-                next_state = self.environment.step(action)
+                next_state = self.environment.step(action)[self.idx]
 
                 # Compute reward for the new state.
                 current_time = i * self.environment.step_size
@@ -312,7 +323,7 @@ class QAgent:
                     states.append(state)
 
                 # Update the current state variable.
-                state = next_state.reshape(1, self.environment.state_size)
+                state = next_state.reshape(1, self.state_size)
 
                 # Update total reward for the play.
                 total_reward += reward
@@ -322,27 +333,17 @@ class QAgent:
                 if terminated:
                     break
 
+            times += current_time
+        average_time = times / n
         average_reward = total_reward/n
-        print(f"Average Total Reward: {average_reward:0.3f}")
+        print(f"Average Total Reward: {average_reward:0.2f}, Average Time: {average_time:0.2f} Seconds")
 
         # Log the recorded play
         self.Logger.log_episode(states,u,rewards,term,t,episode)
 
 
-        self.Logger.log_eval(episode, average_reward)
-        # Save to file
-        # self.eval.append(average_reward)
-        # file = open(self.file_name, "a")
-        # file.write(str(average_reward) + '\n')
-        # file.close()
-        #
-        # # Generate plot
-        # score_figure = plt.figure()
-        # plt.plot(self.eval)
-        # plt.xlabel('Evaluations')
-        # plt.ylabel('Average Reward per Episode')
-        # plt.savefig(r'results/Scores.png')
-        # plt.close(score_figure)
+        self.Logger.log_eval(episode, average_reward, average_time)
+
 
     def _save_model(self):
         print("Saving Model")

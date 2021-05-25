@@ -37,7 +37,7 @@ def custom_loss_function(y_true, y_pred):
     return K.square(K.sum(loss))
 
 def reward(state, t):
-    x, theta1, theta2, xdot, theta1dot, theta2dot = state
+    theta1, theta2, xdot, theta1dot, theta2dot = state
     #r_angle2 = (max_angle - abs(theta2))/max_angle
     #r_angle1 = (max_angle - abs(theta1))/max_angle
     #xp = x + np.sin(theta1) + np.sin(theta2)
@@ -54,7 +54,7 @@ def reward(state, t):
     return r
 
 def terminated(state, t):
-    x, theta1, theta2, xdot, theta1dot, thteta2dot = state
+    theta1, theta2, xdot, theta1dot, thteta2dot = state
 
     return abs(theta1) > max_angle or abs(theta2) > max_angle
     #yp = np.cos(theta1) + np.cos(theta2)
@@ -66,20 +66,20 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-1,0,1],
+        action_space=[-2,0,2],
         lamb=0.01)
 
 # Setup Neural network parameters.
 initial_learning_rate = 0.0001
 lr_schedule = ExponentialDecay(
     initial_learning_rate,
-    decay_steps=10000,
+    decay_steps=1000,
     decay_rate=1,
     staircase=True)
 optimizer = Adam(learning_rate=lr_schedule)
 
 layers = []
-for _ in range(10):
+for _ in range(15):
     layers.append((30,'relu'))
 layers.append((len(environment.action_space),'linear'))
 network_parameters = {
@@ -90,8 +90,14 @@ network_parameters = {
     "initializer" : tf.keras.initializers.he_uniform()
 }
 
+use_features = [True]*6
+use_features[0] = False
+
 # Create agent.
-agent = QAgent(environment, network_parameters, memory=2000)
+agent = QAgent(environment,
+        network_parameters,
+        memory=2000,
+        use_features=use_features)
 
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
@@ -104,9 +110,9 @@ controller = agent.train(
         batch_size=32,
         discount=0.9,
         exploration_rate=0.9,
-        exploration_rate_decay=0.99,
+        exploration_rate_decay=0.995,
         min_exploration_rate=0.1,
-        save_model_period=100,
+        save_model_period=10,
         epochs=1,
         log_q_values=True)
 

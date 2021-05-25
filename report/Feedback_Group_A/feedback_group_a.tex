@@ -1,0 +1,94 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{amsmath}
+\usepackage{cancel}
+\usepackage{cases}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{subcaption}
+\usepackage{csquotes}
+\usepackage{physics}    % For d/dx symbols
+\usepackage[toc,page]{appendix}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+% \bibliographystyle{plain.bst}
+\bibliography{references}
+
+\title{Feedback for Group A - from Group H \\ Course: FRTN70 - Project in Systems Control and Learning}
+\date{}
+
+\setlength{\parindent}{0cm} % Determines the indentation for new paragraphs
+\setlength{\parskip}{1em}
+
+\begin{document}
+
+\maketitle
+
+Very interesting project and well written report.
+It will be exciting to see the final result.
+The problem and the solution are both explained in a way that is understandable for someone with limited background in this field.
+Good job on that!
+
+It is very interesting that you used different models to solve the same problem.
+We are curious to see how they all perform.
+
+You managed to fill out a great discussion with the limited results you have so far.
+Really good with several suggestions on how to improve the models in future work.
+
+We have some suggestions for what can be analyzed and added to the report as well as some minor pointers on typos.
+
+It would be nice to see a graph showing the how the total investment changes over the test period for all (or most) models.
+A visual way to interpret the Sharpe ratio to get an idea of what it means in practice to follow and use the different models.
+
+What does the initial investment look like at $t = 0$?
+Is the investment equally distributed in all assets in the portfolio in the beginning, or perhaps weighted for the values of the stocks?
+
+Some pointers presented below.
+
+\begin{itemize}
+	\item Typo in the word 'be/bee'. The $\beta_2$ parameter needs to \textbf{bee} so that $\beta_2 \in (0, 1)$ and $\mu_2$ can be calculated as:
+	
+	\item Sentence at the end of section "3. Implementation" is incomplete.
+	
+	\item Table numbering is a little confusing. Table-3 comes up before Table-2.
+	
+	\item In various places the 'e' is missing in Sharpe. 
+	\begin{itemize}
+		\item Table-2 caption.
+		
+		\item Table-2 in the label.
+		
+		\item Section peformance metrics: To evaluate the forecasting methods used, two different performance metrics are studied, the first being the Sharp Ratio.
+		
+		\item By calculating the Sharp Ratio the investments returns is compared to it’s risk.	
+	\end{itemize}
+	
+	\item In section 2.1 the risk aversion parameter is mentioned as aviation parameter.
+
+
+	\item For equations (11) and (14) it would look nicer with the word "if" in regular text rather than math mode. \verb'\text{if}' can be used in math mode to achieve this (this is a completely subjective suggestion).
+	
+	\item In section 2.1, while explaining the methods that can be used to calculate the covariance, the Ledoit and Wolf’s method is mentioned but not referenced.
+	
+	\item Typo in table-1 $T[SCM$. Should be an underscore.
+\end{itemize}
+
+
+Table-3 is difficult to read.
+Perhaps the table can be modified to have one hyperparameter per line in the final column, see example below.
+\url{https://www.tablesgenerator.com/latex_tables#}
+Can be used to generate latex code for tables.
+
+\begin{table}[hb]
+\begin{tabular}{|l|l|l|}
+\hline
+Return Forecasting method & Covariance Forcasting method & Optimal hyper parmaeters                                                                 \\ \hline
+SMA                       & SCM                          & \begin{tabular}[c]{@{}l@{}}$\gamma_t = $,\\ $T_{SMA} = $,\\ $T_{SCM} = $\end{tabular}    \\ \hline
+SMA                       & EMACM                        & \begin{tabular}[c]{@{}l@{}}$\gamma_t = $,\\ $T_{SMA} = $,\\ $T_{LW+SCM} = $\end{tabular} \\ \hline
+\dots      & \dots         & \dots                                                                     \\ \hline
+\end{tabular}
+\end{table}
+
+\end{document}

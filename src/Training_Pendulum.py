@@ -71,7 +71,7 @@ network_parameters = {
 }
 
 # Create agent.
-agent = DoubleQAgent(environment, network_parameters, memory=2000)
+agent = QAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
 training_episodes = 150

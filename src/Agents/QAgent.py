@@ -121,7 +121,7 @@ class QAgent:
                 action = self._act(state, exploration_rate,log_q_values)
 
                 # Take the system forward one step in time.
-                next_state = self.environment.step(action)[self.idx]
+                next_state = self.environment.step(action)
 
                 # Compute the actual reward for the new state the system is in.
                 current_time = timestep * self.environment.step_size
@@ -131,7 +131,7 @@ class QAgent:
                 terminated = self.environment.terminated(next_state, current_time)
 
                 # TODO: Can this be avoided?
-                next_state = next_state.reshape(1, self.state_size)
+                next_state = next_state[self.idx].reshape(1, self.state_size)
 
                 # Store results for current step.
                 self._store(state, action, reward, next_state, terminated)
@@ -305,7 +305,7 @@ class QAgent:
                 action = self._act(state, -1)           # TODO: Discuss - using -1 to get around the random part of the '_act' method.
 
                 # Take one step in time and apply the force from the action.
-                next_state = self.environment.step(action)[self.idx]
+                next_state = self.environment.step(action)
 
                 # Compute reward for the new state.
                 current_time = i * self.environment.step_size
@@ -323,7 +323,7 @@ class QAgent:
                     states.append(state)
 
                 # Update the current state variable.
-                state = next_state.reshape(1, self.state_size)
+                state = next_state[self.idx].reshape(1, self.state_size)
 
                 # Update total reward for the play.
                 total_reward += reward

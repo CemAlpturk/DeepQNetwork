@@ -285,19 +285,19 @@ class QAgent:
 
         print(f"Evaluating Model for {n} runs")
         # max_steps = 200
-        total_reward = 0
+        total_rewards = []
         #time_step = 0.1
         u = []
         rewards = []
         term = []
         t = []
         states = []
-        times = 0
+        times = []
         current_time = 0
         actions = self.environment.action_space
         for play in range(n):
             state = self.environment.reset(True)[self.idx].reshape(1, self.state_size)
-
+            total_reward = 0
             for i in range(max_steps):
                 # Determine the action to take based on the current state of the system.
                 # TODO: Is this correct? The 'act' function actually uses a randomness to predict the action (when exploration rate is high)
@@ -333,16 +333,21 @@ class QAgent:
                 if terminated:
                     break
 
-            times += current_time
-        average_time = times / n
-        average_reward = total_reward/n
-        print(f"Average Total Reward: {average_reward:0.2f}, Average Time: {average_time:0.2f} Seconds")
+            times.append(current_time)
+            total_rewards.append(total_reward)
+        average_time = np.mean(times)
+        median_time = np.median(times)
+        std_time = np.std(times)
+        average_reward = np.mean(total_rewards)
+        median_reward = np.median(total_rewards)
+        std_reward = np.std(times)
+        print(f"Average Total Reward: {average_reward:0.2f}, Median Total Reward: {median_reward:0.2f} Average Time: {average_time:0.2f} Seconds")
 
         # Log the recorded play
         self.Logger.log_episode(states,u,rewards,term,t,episode)
 
 
-        self.Logger.log_eval(episode, average_reward, average_time)
+        self.Logger.log_eval(episode, average_reward, average_time, median_reward, median_time, std_reward, std_time)
 
 
     def _save_model(self):

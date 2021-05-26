@@ -175,8 +175,8 @@ class QAgent:
             if episode % model_alignment_period == 0:
                 self._align_target_model()
 
-            if episode % save_animation_period == 0:
-                self.environment.save(episode)
+            # if episode % save_animation_period == 0:
+            #     self.environment.save(episode)
 
             if episode % save_model_period == 0:
                 self._save_model()
@@ -296,7 +296,9 @@ class QAgent:
         current_time = 0
         actions = self.environment.action_space
         for play in range(n):
-            state = self.environment.reset(True)[self.idx].reshape(1, self.state_size)
+            state = self.environment.reset(True)
+            state_full = state.reshape(1,-1)
+            state = state[self.idx].reshape(1, self.state_size)
             total_reward = 0
             for i in range(max_steps):
                 # Determine the action to take based on the current state of the system.
@@ -320,9 +322,10 @@ class QAgent:
                     t.append(current_time)
                     rewards.append(reward)
                     term.append(terminated)
-                    states.append(state)
+                    states.append(state_full)
 
                 # Update the current state variable.
+                state_full = next_state.reshape(1,-1)
                 state = next_state[self.idx].reshape(1, self.state_size)
 
                 # Update total reward for the play.

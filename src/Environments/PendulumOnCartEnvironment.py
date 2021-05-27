@@ -87,7 +87,7 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         """
         filename = f"./results/PendulumOnCart/Episode_{episode}.gif"
         title = f"Episode: {episode}"
-        self.problem.animate(save=True, filename=filename, title=title, hide=True)
+        self.problem.animate(save=True, filename=filename, title=title, hide=True, max_angle=10)
 
     def _default_reward_function(self, state, t):
         """

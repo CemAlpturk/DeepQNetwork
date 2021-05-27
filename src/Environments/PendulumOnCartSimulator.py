@@ -51,7 +51,8 @@ class PendulumOnCartSimulator(OdeProblemBase):
         filename=None,
         title="Pendulum on a Cart",
         hide=False,
-        animate_force=False):
+        animate_force=False,
+        max_angle=None):
         """
         TODO: Complete summary.
         """
@@ -107,20 +108,42 @@ class PendulumOnCartSimulator(OdeProblemBase):
             color='r',
             marker='o')
 
+        # Add boundary (needs to be relative to the cart.)
+        x_boundary = np.sin(max_angle)
+        print(x_boundary)
+        left_boundary = lines.Line2D(
+            [-x_boundary, 0.0],
+            [1.5, 0.0],
+            color='r',
+            marker='',
+            ls="--",
+            alpha=0.5)
+
+        right_boundary = lines.Line2D(
+            [0.0, x_boundary],
+            [0.0, 1.5],
+            color='r',
+            marker="",
+            ls="--",
+            alpha=0.5)
+
         # Time:
-        time_text = ax.text(-2., 1.6,'', fontsize=15)
+        time_text = ax.text(-4., 1.6,'', fontsize=15)
         def init():
             ax.add_patch(cart)
             ax.add_line(pendulumArm)
             time_text.set_text('Time 0.0')
 
+            ax.add_line(left_boundary)
+            ax.add_line(right_boundary)
+
             # Only add the force animation if set to: True.
             if animate_force:
                 ax.add_patch(force_bar)
                 ax.add_patch(force_divider)
-                return force_divider, force_bar, cart, pendulumArm, time_text
+                return force_divider, force_bar, left_boundary, right_boundary, cart, pendulumArm, time_text
             
-            return cart, pendulumArm, time_text
+            return cart, left_boundary, right_boundary, pendulumArm, time_text
 
         def animate(i):
             cart_xpos, cart_vel, theta, theta_dot = self.states[i]
@@ -141,6 +164,11 @@ class PendulumOnCartSimulator(OdeProblemBase):
             # Update time
             time_text.set_text(f"Time: {self.time[i]:2.2f}")
 
+            # Update termination boundary (the y-data doesn't change).
+            # boundary_x = np.sin(max_angle) + cart_xpos
+            left_boundary.set_xdata([-x_boundary + cart_xpos, cart_xpos])
+            right_boundary.set_xdata([cart_xpos, x_boundary + cart_xpos])
+
             # Only update force animation if set to: True.
             if animate_force:
                 # Update the force_bar.
@@ -151,15 +179,15 @@ class PendulumOnCartSimulator(OdeProblemBase):
                 # Set the applied force amount to the label.
                 ax.set_xlabel(f'Applied force: {self.external_forces[i]}')
 
-                return force_bar, force_divider, cart, pendulumArm, time_text
+                return force_divider, force_bar, left_boundary, right_boundary, cart, pendulumArm, time_text
 
-            return cart, pendulumArm, time_text
+            return cart, left_boundary, right_boundary, pendulumArm, time_text
 
         num_frames = len(self.time)
         time_interval = self.time[-1] - self.time[0]
         fps = num_frames / time_interval
         interval = 1000/fps
-        
+
         anim = animation.FuncAnimation(
             fig,
             animate,

@@ -10,7 +10,7 @@ class Controller():
     for the simulator.
     """
 
-    def __init__(self, action_space, model):
+    def __init__(self, action_space, model, idx):
         """
         TODO: Fill
         """
@@ -18,6 +18,7 @@ class Controller():
         self.action_space = action_space
         self.model = model
         self.input_shape = model.input_shape[1]
+        self.idx = idx
 
     def act(self, state, t):
         """
@@ -26,7 +27,7 @@ class Controller():
         # TODO: Complete and talk about the summary:
             returns the external force to apply to the system.
         """
-        state = state.reshape(1, self.input_shape)
+        state = state[self.idx].reshape(1, self.input_shape)
         action_ind = np.argmax(self.model.predict(state)[0])
         return self.action_space[action_ind]
 

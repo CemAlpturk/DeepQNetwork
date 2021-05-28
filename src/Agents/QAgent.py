@@ -106,9 +106,11 @@ class QAgent:
             if not check:
                 print("Using default network") # TODO: temp solution
 
+        max_reward = 0
         for episode in range(1, max_episodes + 1):
             t1 = time.time()
             total_reward = 0
+            eval_score = 0
             terminated = False
             steps = 0
             state = self.environment.reset(random=True) # start from random state
@@ -178,11 +180,13 @@ class QAgent:
             # if episode % save_animation_period == 0:
             #     self.environment.save(episode)
 
-            if episode % save_model_period == 0:
-                self._save_model()
 
             if episode % evaluate_model_period == 0:
-                self._evaluate(evaluation_size, max_steps=timesteps_per_episode,episode=episode)
+                eval_score = self._evaluate(evaluation_size, max_steps=timesteps_per_episode,episode=episode)
+
+            if eval_score > max_reward:
+                self._save_model()
+                max_reward = eval_score
 
         # Create Controller object
         controller = Controller(self.environment.get_action_space(), self.q_network, self.idx)
@@ -351,7 +355,7 @@ class QAgent:
 
 
         self.Logger.log_eval(episode, average_reward, average_time, median_reward, median_time, std_reward, std_time)
-
+        return average_reward
 
     def _save_model(self):
         print("Saving Model")

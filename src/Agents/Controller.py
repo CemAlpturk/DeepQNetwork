@@ -48,7 +48,8 @@ class Controller():
     @staticmethod
     def load_controller(
             action_space,
-            file_path : str):
+            file_path : str,
+            idx):
         """
         Loads a controller with model from specified file paht and action space.
 
@@ -60,7 +61,7 @@ class Controller():
 
         model = keras.models.load_model(file_path, compile=False)
         #model.compile()
-        return Controller(action_space, model)
+        return Controller(action_space, model, idx)
 
 
 if __name__ == "__main__":

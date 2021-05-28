@@ -65,9 +65,12 @@ class QAgent:
                 "memory": memory,
                 "features": self.idx,
                 "input_shape": network_parameters["input_shape"],
-                "layers": network_parameters["layers"]
+                "layers": network_parameters["layers"],
+                "step_size": environment.step_size,
+                "action_space": environment.action_space,
+                "lamb": environment.lamb,
                 }
-        #self.params.update(network_parameters)
+        self.params.update(self.q_network.optimizer.get_config())
 
     def train(
             self,

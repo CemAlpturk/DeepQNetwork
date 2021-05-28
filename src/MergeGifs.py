@@ -22,7 +22,7 @@ files = [_ for _ in listdir(root) if _.endswith(".gif")]
 files.sort(key=natural_keys)
 
 #Create writer object
-new_gif = imageio.get_writer('output.gif')
+new_gif = imageio.get_writer('output.gif', fps=60)
 
 for file in files:
     print(f"Merging gif {file}.")

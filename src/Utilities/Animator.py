@@ -275,15 +275,12 @@ class SinglePendulumAnimator:
 
             return cart, pendulumArm, time_text
 
-        num_frames = len(times)
-        time_interval = times[-1] - times[0]
-        fps = num_frames / time_interval
-        interval = 1000/fps
+        times, states, external_forces, fps, interval = SinglePendulumAnimator._trim_data(times, states, external_forces)
 
         anim = animation.FuncAnimation(
             fig,
             animate,
-            interval=interval,
+            # interval=1.0,
             frames=len(states),
             init_func=init,
             blit=True)
@@ -295,6 +292,27 @@ class SinglePendulumAnimator:
 
         if not hide:
             plt.show()
+
+    @staticmethod
+    def _trim_data(times, states, forces):
+        """
+        Trims the data to match FPS (60).
+        """
+        num_frames = len(times)
+        time_interval = times[-1] - times[0]
+        fps = num_frames / time_interval
+
+        while fps > 60:
+            times = times[1::2]
+            states = states[1::2]
+            forces = forces[1::2]
+
+            num_frames = len(times)
+            time_interval = times[-1] - times[0]
+            fps = num_frames / time_interval
+
+        interval = 1000/fps
+        return (times, states, forces, fps, interval)
 
     @staticmethod
     def _create_cart(
@@ -665,64 +683,7 @@ class DoublePendulumAnmiator:
 
             return cart, pendulumArm1, pendulumArm2, time_text
 
-        # TODO: Adjust framerate
-        num_frames = len(times)
-        # print(f"number of frames before: {num_frames}")
-        time_interval = times[-1] - times[0]
-        fps = num_frames / time_interval
-        interval = 1000/fps
-        # print(fps)
-
-        # times = times[1::32]
-        # states = states[1::32]
-        # external_forces = external_forces[1::32]
-
-        # num_frames = len(times)
-        # print(f"number of frames after: {num_frames}")
-        # time_interval = times[-1] - times[0]
-        # fps = num_frames / time_interval
-        # interval = 1000/fps
-        # print(fps)
-
-        # times = times[1::2]
-        # states = states[1::2]
-        # external_forces = external_forces[1::2]
-
-        # num_frames = len(times)
-        # time_interval = times[-1] - times[0]
-        # fps = num_frames / time_interval
-        # interval = 1000/fps
-        # print(fps)
-
-        # times = times[1::2]
-        # states = states[1::2]
-        # external_forces = external_forces[1::2]
-
-        # num_frames = len(times)
-        # time_interval = times[-1] - times[0]
-        # fps = num_frames / time_interval
-        # interval = 1000/fps
-        # print(fps)
-
-        # times = times[1::2]
-        # states = states[1::2]
-        # external_forces = external_forces[1::2]
-
-        # num_frames = len(times)
-        # time_interval = times[-1] - times[0]
-        # fps = num_frames / time_interval
-        # interval = 1000/fps
-        # print(fps)
-
-        # times = times[1::2]
-        # states = states[1::2]
-        # external_forces = external_forces[1::2]
-
-        # num_frames = len(times)
-        # time_interval = times[-1] - times[0]
-        # fps = num_frames / time_interval
-        # interval = 1000/fps
-        # print(fps)
+        times, states, external_forces, fps, interval = DoublePendulumAnmiator._trim_data(times, states, external_forces)
 
         anim = animation.FuncAnimation(
             fig,
@@ -742,48 +703,24 @@ class DoublePendulumAnmiator:
 
         plt.close()
 
+    @staticmethod
+    def _trim_data(times, states, forces):
+        """
+        Trims the data to match FPS (65).
+        """
+        num_frames = len(times)
+        print(f"{times[0]} - {times[-1]} frames: {num_frames}")
+        time_interval = times[-1] - times[0]
+        fps = num_frames / time_interval
 
-# # https://stackoverflow.com/questions/5967500/how-to-correctly-sort-a-string-with-a-number-inside
-# def atoi(text):
-#     return int(text) if text.isdigit() else text
+        while fps > 65:
+            times = times[1::2]
+            states = states[1::2]
+            forces = forces[1::2]
 
-# def natural_keys(text):
-#     '''
-#     alist.sort(key=natural_keys) sorts in human order
-#     http://nedbatchelder.com/blog/200712/human_sorting.html
-#     (See Toothy's implementation in the comments)
-#     '''
-#     return [ atoi(c) for c in re.split(r'(\d+)', text) ]
+            num_frames = len(times)
+            time_interval = times[-1] - times[0]
+            fps = num_frames / time_interval
 
-
-
-
-# if __name__ == '__main__':
-#     pendulum_settings = { 
-#         "inner_pendulum_length" : 1.,
-#         "outer_pendulum_length" : 1.
-#         }
-
-#     plot_settings = {
-#         "force_bar_show" : True
-#     }
-
-#     root = "Logs/DoublePendulumOnCart/2021-05-06_07-25-38/Episodes/"
-#     files = [_ for _ in listdir(root) if _.endswith(".csv")]
-
-#     # Sort files
-#     files.sort(key=natural_keys)
-
-#     for file in files:
-#         episode = file.split("_")[1].split(".")[0]
-#         print(f"File: {file}, episode: {episode}")
-
-#         DoublePendulumAnmiator.animate_from_csv(
-#             f'{root}{file}',
-#             pendulum_settings,
-#             plot_settings=plot_settings,
-#             save=True,
-#             title=f"Episode {episode} - Inverted Double Pendulum on Cart",
-#             output_filename=f"{root}{episode}.gif",
-#             hide=True
-#         )
+        interval = 1000/fps
+        return (times, states, forces, fps, interval)

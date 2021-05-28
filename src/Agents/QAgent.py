@@ -60,6 +60,15 @@ class QAgent:
 
         self.experience = deque(maxlen=memory)
 
+        # Save parameters for logging during training
+        self.params = {
+                "memory": memory,
+                "features": self.idx,
+                "input_shape": network_parameters["input_shape"],
+                "layers": network_parameters["layers"]
+                }
+        #self.params.update(network_parameters)
+
     def train(
             self,
             max_episodes : int,
@@ -99,6 +108,23 @@ class QAgent:
             # evaluation_size = (number of simulations to run to evaluate the model)
             # exploration_rate_decay = (how much the exploration rate should change after each episode)
         """
+
+        # Log training parameters
+        params = {
+                "max_episodes": max_episodes,
+                "exploration_rate": exploration_rate,
+                "discount": discount,
+                "batch_size": batch_size,
+                "timesteps_per_episode": timesteps_per_episode,
+                "model_alignment_period": model_alignment_period,
+                "evaluate_model_period": evaluate_model_period,
+                "evaluation_size": evaluation_size,
+                "exploration_rate_decay": exploration_rate_decay,
+                "min_exploration_rate": min_exploration_rate,
+                "epochs": epochs
+        }
+        self.params.update(params)
+        self.Logger.log_params(self.params)
 
         # Load existing model for warm start
         if warm_start:

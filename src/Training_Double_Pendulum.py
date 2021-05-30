@@ -37,16 +37,16 @@ def custom_loss_function(y_true, y_pred):
     return K.square(K.sum(loss))
 
 def reward(state, t):
-    theta1, theta2, xdot, theta1dot, theta2dot = state
+    x, theta1, theta2, xdot, theta1dot, theta2dot = state
     #r_angle2 = (max_angle - abs(theta2))/max_angle
-    #r_angle1 = (max_angle - abs(theta1))/max_angle
+    #r_angle1 = (max_angle - abs(theta1))/max_angleS
     #xp = x + np.sin(theta1) + np.sin(theta2)
     #yp = np.cos(theta1) + np.cos(theta2)
     #dist_penalty = 0.01 * xp ** 2 + (yp - 2) ** 2
     #vel_penalty = 1e-3 * theta1dot**2 + 5e-3 * theta2dot**2
     #dist_penalty = xp ** 2 + (yp - 2) ** 2
     #vel_penalty = theta1dot**2 + theta2dot**2
-    angle_penalty = theta1**2 + theta2**2
+    angle_penalty = abs(theta1)/max_angle + abs(theta2)/max_angle
     vel_penalty = theta1dot**2 + theta2dot**2
     alive_bonus = 1
     r = alive_bonus - angle_penalty - vel_penalty
@@ -54,7 +54,7 @@ def reward(state, t):
     return r
 
 def terminated(state, t):
-    theta1, theta2, xdot, theta1dot, thteta2dot = state
+    x, theta1, theta2, xdot, theta1dot, thteta2dot = state
 
     return abs(theta1) > max_angle or abs(theta2) > max_angle
     #yp = np.cos(theta1) + np.cos(theta2)
@@ -66,20 +66,20 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-2,0,2],
+        action_space=[-1,0,1],
         lamb=0.01)
 
 # Setup Neural network parameters.
 initial_learning_rate = 0.0001
 lr_schedule = ExponentialDecay(
     initial_learning_rate,
-    decay_steps=1000,
+    decay_steps=10000,
     decay_rate=1,
     staircase=True)
 optimizer = Adam(learning_rate=lr_schedule)
 
 layers = []
-for _ in range(15):
+for _ in range(20):
     layers.append((30,'relu'))
 layers.append((len(environment.action_space),'linear'))
 network_parameters = {
@@ -101,7 +101,7 @@ agent = QAgent(environment,
 
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
-        max_episodes=500,
+        max_episodes=1000,
         timesteps_per_episode=500,
         warm_start=warm_start,
         evaluate_model_period=10,

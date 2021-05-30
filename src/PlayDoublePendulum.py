@@ -5,6 +5,7 @@ import tensorflow as tf
 with tf.device("cpu:0"):
     from Agents import Controller
     from Environments import DoublePendulumOnCartSimulator
+    from Utilities.Animator import DoublePendulumAnmiator
 
     action_space = [-1,0,1]
     filepath = "Models/DoublePendulumOnCart/q_network"
@@ -12,7 +13,7 @@ with tf.device("cpu:0"):
     controller = Controller.load_controller(action_space, filepath, idx)
 
     max_angle = 0*np.pi/180
-    initial_state = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    initial_state = np.array([0.0,0.01,0.0,0.0,0.0,0.0])
 
     problem_parameters = {
             "cart_mass": 1.0,
@@ -28,8 +29,29 @@ with tf.device("cpu:0"):
 
     problem = DoublePendulumOnCartSimulator(problem_parameters, initial_state)
 
-    t = np.linspace(0,5,250)
+    t = np.linspace(0,5,500)
     problem.solve(t, controller=controller.act)
+
+    # Pendulum settings.
+    pendulum_settings = {
+        "inner_pendulum_length" : 1.,
+        "outer_pendulum_length" : 1.
+        }
+
+    # Plot settings.
+    plot_settings = {
+        "force_bar_show" : True,
+        "force_action_space" : [-1,0,1],
+    }
+
+    DoublePendulumAnmiator.animate_simulation(
+        problem,
+        pendulum_settings,
+        plot_settings=plot_settings,
+        save=False,
+        title=f"Episode {0} - Inverted Double Pendulum on Cart",
+        hide=False
+    )
 
     #problem.animate()
 
@@ -57,6 +79,3 @@ with tf.device("cpu:0"):
 #
 # t = np.linspace(0,2,200)
 # problem.solve(t)
-
-
-problem.animate()

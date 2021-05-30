@@ -72,6 +72,18 @@ class QAgent:
                 }
         self.params.update(self.q_network.optimizer.get_config())
 
+        # Generate timestamped directory for saved networks
+        parent_dir = os.getcwd()
+        path = os.path.join(parent_dir,"Models")
+        if not os.path.exists(path):
+            os.mkdir(path)
+        path = os.path.join(path,self.environment.name)
+        if not os.path.exists(path):
+            os.mkdir(path)
+        path = os.path.join(path, self.Logger.timestamp)
+        os.mkdir(path)
+        self.model_path = path
+
     def train(
             self,
             max_episodes : int,
@@ -388,13 +400,13 @@ class QAgent:
 
     def _save_model(self):
         print("Saving Model")
-        parent_dir = os.getcwd()
-        dir = self.environment.name
-        path = os.path.join(parent_dir,"Models")
-        if not os.path.exists(path):
-            print(f"Creating 'Models' directory at: {dir}")
-            os.mkdir(path)
-        filepath = os.path.join(path,os.path.join(dir,"q_network"))
+        # parent_dir = os.getcwd()
+        # dir = self.environment.name
+        # path = os.path.join(parent_dir,"Models")
+        # if not os.path.exists(path):
+        #     print(f"Creating 'Models' directory at: {dir}")
+        #     os.mkdir(path)
+        filepath = os.path.join(self.model_path,"q_network")
 
         # TODO: Fix path for windows.
         #filepath = f"./Models/{self.environment.name}/q_network"

@@ -34,10 +34,12 @@ class Logger:
         # Generate plot for scores
         df = pd.read_csv(self.evals_dir)
         ax = df.plot(x="Episode", y="Score_Mean",color="b")
+        df["Moving_Score_Mean"] = df["Score_Mean"].rolling(window=3).mean().fillna(0)
+        df.plot(x="Episode", y="Moving_Score_Mean", ax=ax)
         # Compute boundaries from std
-        df["Score_upper"] = df["Score_Mean"] + df["Score_std"]
-        df["Score_lower"] = df["Score_Mean"] - df["Score_std"]
-        df.plot(x="Episode", y=["Score_upper","Score_lower"],style="r--",ax=ax)
+        #df["Score_upper"] = df["Score_Mean"] + df["Score_std"]
+        #df["Score_lower"] = df["Score_Mean"] - df["Score_std"]
+        #df.plot(x="Episode", y=["Score_upper","Score_lower"],style="r--",ax=ax)
         #df.plot(x="Episode", y="Score_Median",color="g",ax=ax)
         fig = ax.get_figure()
         fig_dir = os.path.join(os.path.dirname(self.evals_dir),"Scores.png")
@@ -46,6 +48,8 @@ class Logger:
 
         # Generate plot for times
         ax = df.plot(x="Episode", y="Time_Mean")
+        df["Moving_Time_Mean"] = df["Time_Mean"].rolling(window=3).mean().fillna(0)
+        df.plot(x="Episode", y="Moving_Time_Mean", ax=ax)
         fig = ax.get_figure()
         fig_dir = os.path.join(os.path.dirname(self.evals_dir),"Times.png")
         fig.savefig(fig_dir)
@@ -112,6 +116,17 @@ class Logger:
             plt.close()
 
 
+    def log_params(self, params):
+        """
+        Print training parameters to a txt file
+        """
+        filename = "params.txt"
+        path = os.path.join(self.dir,filename)
+        with open(path, 'w', newline='') as file:
+            for key, val in params.items():
+                file.write(f"{key}: {val}\n")
+
+
 
 
     def _init_directory(self):
@@ -137,7 +152,8 @@ class Logger:
         print(f"Creating '{timestamp}' directory at: {prob_dir}")
         os.mkdir(timedir)
         self.dir = timedir
-
+        self.timestamp = timestamp
+        
         # Create directory for evaluation scores
         eval_dir = os.path.join(timedir, "Evaluation")
         print(f"Creating 'Evaluation' directory at: {timedir}")

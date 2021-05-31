@@ -63,9 +63,9 @@ def custom_loss_function(y_true, y_pred):
     return K.square(K.sum(loss))
 
 network_parameters = {
-    "input_shape" : (4,),                                       # Network input shape.
+    "input_shape" : (4,),                                                      # Network input shape.
     "layers" : [(20, 'relu'), (40, 'relu'), (len(environment.get_action_space()), 'linear')],     # [(nodes, activation function)]
-    "optimizer" : optimizer,                                    # optimizer
+    "optimizer" : optimizer,                                                   # optimizer
     "loss_function" : custom_loss_function,                                    # loss function ('mse', etc.)
     "initializer" : tf.keras.initializers.he_uniform()
 }
@@ -74,7 +74,7 @@ network_parameters = {
 agent = QAgent(environment, network_parameters, memory=2000)
 
 # Train agent - produces a controller that can be used to control the system.
-training_episodes = 150
+training_episodes = 30
 controller = agent.train(
     max_episodes=training_episodes,
     timesteps_per_episode=200,
@@ -95,5 +95,5 @@ state = environment.reset()
 t = np.linspace(0, 10, 50)
 environment.solve(t, controller=controller.act)
 
-environment.animate()
-environment.problem.animate(save=True,filename="resultPendulum.gif")
+# environment.animate()
+# environment.problem.animate(save=True,filename="resultPendulum.gif", hide=True)

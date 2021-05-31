@@ -116,8 +116,8 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         title = f"Episode: {episode}"
         self.problem.animate(save=True, filename=filename, title=title, hide=True)
 
-    def animate(self):
-        self.problem.animate()
+    # def animate(self):
+    #     self.problem.animate()
 
 if __name__ == "__main__":
     def random_action_policy(x):

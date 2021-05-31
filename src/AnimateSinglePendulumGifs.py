@@ -8,7 +8,8 @@ import imageio
 import moviepy.editor as mp
 
 # Folder containing gifs to animate.
-root = "Logs/PendulumOnCart/2021-05-25_10-31-07/Episodes/"
+# root = "Logs/PendulumOnCart/2021-05-25_10-31-07/Episodes/"
+root = "Logs/PendulumOnCart/2021-05-31_16-25-01/Episodes/"
 
 # Pendulum settings.
 pendulum_settings = { 
@@ -18,7 +19,7 @@ pendulum_settings = {
 # Plot settings.
 plot_settings = {
     "force_bar_show" : True,
-    "force_action_space" : [40],
+    "force_action_space" : [10],
     "show_termination_boundary" : True,
     "termination_angle" : 10 * np.pi/180,
 }

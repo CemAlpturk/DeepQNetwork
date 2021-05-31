@@ -399,8 +399,8 @@ Notice that the number of simulation steps $M_i$ for each simulation varies as a
 A satisfactory evaluation value can be used as a termination condition for the training to avoid overtraining.
 This mechanism has not been implemented.
 The training will continue until the max iterations have been reached.
-
-
+The model is saved if it has a better evaluation performance than the previous best model.
+This is to avoid overtraining the model.
 
 \section{Results}
 A simpler problem was used to confirm the implementation.

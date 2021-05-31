@@ -48,14 +48,14 @@
 
 \begin{abstract}
     Controlling an inverted double pendulum on a cart is an inherently difficult problem.
-    The system is chaotic meaning that the dynamics cannot be predicted over a longer time span.
     A way to control such a system is to use the current state to determine an action that moves the cart appropriately to balance the double pendulum.
     One such way is by reinforcement learning.
     The approach in this project uses a model free controller trained with Deep Q-learning to control the double pendulum.
     Benefits of Deep Q-learning over regular Q-learning is that the controller can be used for situations that are not presented during training.
     This has been confirmed in the results for the single pendulum model, an easier problem to control that was used to confirm the implementation of the learning algorithm.
-    The double pendulum is more difficult with its chaotic nature and the limitation that the cart with a single degree of freedom is trying to control multiple states.
-    Results show that the double pendulum can be balanced for up-to three seconds with a network of $10$ layers and $30$ nodes in each layer.
+    Balancing the double pendulum is a more difficult problem due to its chaotic nature and the controller being limited to a single degree of freedom.
+%    The double pendulum is more difficult with its chaotic nature and the limitation that the cart with a single degree of freedom is trying to control multiple states.
+    Results show that the double pendulum can be balanced for up-to three seconds with a network of $10$ layers and $30$ nodes in each layer, while the uncontrolled system falls over in $0.5$ seconds.
     The agent was trained for a limited number of episodes limiting the amount of experience and knowledge it could gather about the problem.
     We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for far longer using Deep Q-Learning.
     % The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
@@ -78,6 +78,8 @@
 The goal of this project is to teach an agent to control a double pendulum on a cart to be standing upright, in its equilibrium point, using reinforcement learning.
 A double pendulum is a highly chaotic system, where its behavior heavily depends on its initial conditions.
 Controlling the system with a cart limited to a single degree of freedom is a difficult but solvable problem \cite{Classic_Control_Theory}.
+Applying control theory requires in-depth knowledge of the system dynamics.
+However, with reinforcement learning one can achieve similar results without having any knowledge about the system.
 %Figure \ref{fig:double_pendulum_chaotic} shows a simulation with 4 double pendulums with nearly identical initial conditions.
 %After some time their behaviors become so different that it becomes nearly impossible to make a prediction about the future.
 %This illustrates the chaotic behavior of this system.
@@ -95,15 +97,18 @@ Although this is an academic problem, the results could be applied to any type o
 
 \subsection{Reinforcement Learning}
 %\kant[1] % This generates the dummy text
-The main idea of reinforcement learning is to learn to make decisions based on past experiences.
+The main idea of reinforcement learning is to learn to make decisions based on past experiences \cite{Sutton_Barto}.
 In this case this means to train an agent to perform the best action possible in order to control the pendulums.
 For each action taken by the agent, the environment returns a new state and a reward for that action.
 The reward is calculated based on how close the system is to its equilibrium point.
-The goal of training the agent is to optimize gained reward for each action taken.
-
+The goal of training the agent is to optimize the total sum of rewards until a terminal state is reached.
+This project implements the Deep Q-Learning \cite{Deep_Q_Learning_First} method for training the agent.
 
 
 \section{Modeling}
+In order to train the agent it needs to interact with the system.
+Since a physical system was unavailable it was decided to represent the system virtually by simulating it.
+%Note that the agent itself treats the system as a black box and has no knowledge about the system dynamics.
 The system consists of a cart that can move in the horizontal direction and two pendulums that are coupled to each other such that there is no collision between any parts.
 Since this project is not about modeling the double pendulum, but rather about controlling it, the equations of motion have been borrowed from \cite{Double_Pendulum_Equations}.
 The states of the system are represented by,
@@ -126,10 +131,10 @@ q & \theta_1 & \theta_2
 % ^T
 %\end{equation}
 \begin{itemize}
-\item $q$ is the position of the cart on the horizontal axis.
+\item $q$ is the position of the cart on the horizontal direction.
 \item $\theta_1$ is the angle of the inner pendulum with respect to the vertical axis in the clockwise direction.
 \item $\theta_2$ is the angle of the outer pendulum with respect to the vertical axis in the clockwise direction.
-\item $\dot{q}$ is the velocity of the cart in the horizontal axis.
+\item $\dot{q}$ is the velocity of the cart in the horizontal direction.
 \item $\dot{\theta_1}$ is the angular velocity of the inner pendulum.
 \item $\dot{\theta_2}$ is the angular velocity of the outer pendulum.
 \end{itemize}
@@ -201,7 +206,7 @@ l_1l_2m_2(\dot{\theta_1})^2 \sin (\theta_1 - \theta_2) + g l_2 m_2 \sin \theta_2
 \section{System Design}
 A couple of reinforcement learning methods are Q-learning and Deep Q-learning.
 \subsection{Q-learning}
-Q-learning is a model free method \cite{original_q_learning} where the agent has no information about the system it is trying to control, thus it can be said that it is a black box model.
+Q-learning is a model free method \cite{original_q_learning} where the agent has no information about the system dynamics it is trying to control, thus it can be said that it is a black box model.
 The agent stores all its experiences in a Q-table that contains the quality of a state-action combination.
 \begin{equation}
 Q : S \times A  \to \mathbb{R}
@@ -240,8 +245,10 @@ Q^{new}(s_t,a_t) \leftarrow (1 - \alpha)Q(s_t,a_t) + \alpha (r_t + \gamma \max_i
 After performing action $a_t$ given the state $s_t$, the agent receives the new state $s_{t+1}$ and the reward $r_t$. The value $Q(s_t,a_t)$ is updated by Equation \eqref{eq:qlearning}. $\alpha$ is the learning rate and $\gamma$ is the discount factor. Since the reward for a certain action might not come instantly, the discount factor tries to compensate for a delayed reward by estimating the reward that the agent will receive if it takes the best action $a_{t+1}$ for the state $s_{t+1}$. Low values of $\gamma$ will cause the agent to only consider near future rewards, while a $\gamma$ value close to 1 will consider future rewards.
 
 
-This method requires a discrete set of actions and states. For the double pendulum problem, this can be achieved by discretizing the states and actions.
-However since this is a chaotic system, it would require a fine discretization resulting in a massive Q-table. Although this can work in theory, there are practical implementation limitations such as limited memory size.
+This method requires a discrete set of actions and states.
+For the double pendulum problem, this can be achieved by discretizing the states and actions.
+However since this is a chaotic system, it would require a fine discretization resulting in a massive Q-table.
+Although this can work in theory, there are practical implementation limitations such as limited memory size.
 This problem can be resolved by using the Deep Q-learning method.
 
 \subsection{Deep Q-learning}
@@ -266,7 +273,7 @@ The neural network is trained by a method called experience replay that is based
 During experience replay, a random batch is taken from the memory and is used to train the network.
 The reason for taking random batches from memory and not sequential data, is to reduce the correlation between the data points.
 The simulation ends when it reaches a termination condition that is defined in the environment.
-For the double pendulum case the termination condition is when the outer pendulum angle becomes larger than a defined maximum value.
+For the double pendulum case the termination condition is when either of the pendula angles become larger than a defined maximum value.
 One full simulation from start to termination is called an episode.
 The stored experience is used to fit the neural network once there is enough experience stored in the memory. 
 \begin{equation}
@@ -304,11 +311,12 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 	\end{algorithmic}
 \end{algorithm}
 The actual value $y_m$ replaces the corresponding predicted Q-value from $NN_{target}(\mathbf{s}_m)$.
- Since we only have the reward for one action in a given state, we replace the targets for the untaken actions with a prediction from the Q-network. This will result in a loss of 0 for these untaken actions, thus not affecting the training.
- This way the network is trained only by the state-action pair that has been taken.
- This will however cause the implementation to be slower since a prediction has to be made before each weight update.
- This was solved by implementing a custom loss function in \texttt{Keras} where the loss only depends on the Q-value of the taken action.
-
+Since we only have the reward for one action in a given state, we replace the targets for the untaken actions with a prediction from the Q-network.
+This will result in a loss of 0 for these untaken actions, thus not affecting the training.
+Thus the network is trained only by the state-action pair that has been taken.
+This will however cause the implementation to be slower since a prediction has to be made before each weight update.
+%This was solved by implementing a custom loss function in \texttt{Keras} where the loss only depends on the Q-value of the taken action.
+A custom loss function in \texttt{Keras} was implemented where the loss only depends on the Q-value of the taken action to solve this issue.
 % \comment{Predict q-values for actions for current state}
 % \comment{Pick largest q value and map it to the action}
 % \comment{Simulate system one step}
@@ -343,7 +351,7 @@ The actual value $y_m$ replaces the corresponding predicted Q-value from $NN_{ta
 
 \section{Implementation}
 The project was implemented in \texttt{Python}.
-A separate class was created for each component \texttt{Agent}, \texttt{Environment}, \texttt{Simulator} and \texttt{Controller}.
+A separate class was created for each component \texttt{Agent}, \texttt{Environment}, \texttt{Simulator} and \texttt{Controller}, as seen in Figure \ref{fig:code_architecture}.
 The goal of the project is to produce a \texttt{Controller} object that can control the \texttt{Simulator}.
 \texttt{Environment} class contains the problem specifics such as \texttt{reward} and \texttt{termination} functions, and links the \texttt{Agent} with the \texttt{Simulator} containing the physical model dynamics.
 \texttt{Agent} contains the learning algorithm that trains and produces the \texttt{Controller}.
@@ -357,8 +365,10 @@ By using this structure it is easy to change for example the learning algorithm 
 
 \subsection{Simulator}
 The \texttt{Simulator} is responsible for the physical dynamics of the problem and for simulating the problem for given external inputs and time.
-Equations are on the form of RHS-equations and are solved using \texttt{odeint} function in \texttt{Scipy.integrate} package.
+System dynamics are computed using \texttt{odeint} function in \texttt{Scipy.integrate} package.
 For the double pendulum case, the simulator solves Equation \eqref{eq_rhs_double_pendulum} for $\ddot{y}$ to produce the next state using the ODE solver.
+
+%For the double pendulum case, the simulator solves Equation \eqref{eq_rhs_double_pendulum} for $\ddot{y}$ to produce the next state using the \texttt{odeint} function.
 
 \subsection{Environment}
 The reward function and termination condition is implemented in the \texttt{Environment} class.
@@ -373,8 +383,8 @@ This way when the reward or the termination needs to be changed it can be done w
 \begin{figure}[htp]
 	\centering
 	\includegraphics[width=0.9\columnwidth]{figures/CodeStructure.png}
-	\label{fig:code_architecture}
 	\caption{Code architecture.}
+	\label{fig:code_architecture}
 \end{figure}
 
 \subsection{Evaluation}
@@ -394,12 +404,11 @@ The training will continue until the max iterations have been reached.
 
 \section{Results}
 A simpler problem was used to confirm the implementation.
-The simpler problem being to balance a single inverted pendulum on a cart.
+The simpler problem being to balance an inverted single pendulum on a cart.
 The implementation architecture was used to simply replace the environment with one suitable for the single pendulum problem.
 % Once satisfied with the algorithm implementation the double pendulum problem was run.
 
-\subsection{Balancing Single Inverted Pendulum}
-The single pendulum problem is non-chaotic.
+\subsection{Balancing Inverted Single Pendulum}
 Equations from \cite{Correct_Equations} were used to model the problem.
 System was terminated when the pendulum angle was greater than $\pm 10$ degrees.
 Equation \eqref{eqn:reward_single_pendulum} states the reward function.
@@ -412,7 +421,7 @@ where $\theta_{max} = 10$ degrees.
 The value was chosen by trial and error, where $10$ degrees gave the best overall performance.
 
 Table \ref{table:params_q_network} shows the neural network setup for the single pendulum problem.
-The weights of the network were initialized with uniform HE-initialization, which is an optimized weight initialization method when using ReLU activation functions \cite{He_initialization}.
+The weights of the network were initialized with uniform HE-initialization, which is an optimized weight initialization method when using Rectified Linear Unit (ReLU) activation functions \cite{He_initialization}.
 \begin{table}[H]
     \centering
     \begin{tabular}{|
@@ -577,7 +586,7 @@ Table \ref{table:params_double_pendulum} shows the training parameters for the d
 %We believe that the reason for this could be that the hyper parameters are not optimal or we are not giving the algorithm enough time to train even though the training takes several hours.
 Figure \ref{fig:double_pendulum_score} shows the agents score over $500$ episodes. 
 During training the agent was able to balance the pendulum up to three seconds.
-A comparison between the agents performance, baseline and a random controller is also illustrated in the figure.
+A comparison between the agent's performance, baseline and a random controller is also illustrated in the figure.
 Although the trained agent cannot balance the pendulums for a long time, it performs much better than the others.
 \begin{figure}[H]
 	\centering
@@ -676,17 +685,17 @@ The double pendulum is a highly chaotic system and with the cart limited to a si
 In situations where the agent receives two states that are very close to each other, the applied action may result in very different outcomes which makes the learning of the expected reward for that action very difficult.
 % add difference between wide and deep networks
 We have found that deeper networks perform better than wider ones for this problem.
-This may be due to wider networks having less non-linearity compared to deeper ones since deep networks have more coupled activations.
+This may be due to wider networks having less non-linearity compared to deeper ones.
 
 After playing around with the exploration rate $\epsilon$, we have found that a dynamic exploration rate performs better for this problem, rather than a static one.
 Higher exploration rate forces the agent to take actions that it normally would avoid causing it to explore the action space more.
 For Q-learning, this is a desired thing since the purpose is to fill and update the Q-table.
-However a high exploration rate leads to the agent exploring things that it should avoid, rather than finding the best action to perform.
+However, a high exploration rate leads to the agent exploring things that it should avoid, rather than finding the best action to perform.
 In Q-learning, this is not an issue since the Q-values of the state-action pairs do not directly affect each other.
-However for Deep Q-learning, every weight update affects all Q-values for the state-action pairs.
+However, for Deep Q-learning, every weight update affects all Q-values for the state-action pairs.
 In the case where the learning rate is too low, the agent will almost always prefer to take the same actions which can cause overfitting in the network.
 This is why we preferred to train the agent with a dynamic exploration rate, where the agent performs randomly in the beginning and over time becomes more deterministic.
-However we still have a minimum $\epsilon$, to allow the agent to explore during the later episodes of training.
+However, we still have a minimum $\epsilon$, to allow the agent to explore during the later episodes of training.
 This prevents the agent from overfitting to states close to the equilibrium point.
 For the same reason, we preferred to use a strict termination condition. 
 Since the agents purpose is to control the pendulums around the equilibrium, there is little to no advantage in allowing the pendulum to move too far from the equilibrium point.
@@ -700,17 +709,21 @@ As seen in Table \ref{table:def_params_time_double} tuning hyperparameters is a 
 Due to the time the training takes, evaluating the performance of a different set of hyperparameters is challenging.
 Since the training process highly depends on the hyperparameters, the time it takes for one episode can be vastly different for different hyperparameters.
 Aside from the time it takes to get the results, evaluating the effect of the hyperparameters is not straight forward.
-Even when using the same set of hyperparameters we can get different results.
+Even when using the same set of hyperparameters, we can get different results.
 Trying to estimate the effect of a new hyperparameter is problematic.
 Due to these reasons, a trial and error approach was more effective.
 We believe that with the right hyperparameters, the double pendulum can be controlled for longer.
 
 The duration that the agent survives for an episode does not directly correlate with the agents performance.
 Different hyperparameters, reward functions and termination conditions affect the duration the agent is able to survive, which makes evaluating hyperparameters problematic.
-As seen in Table \ref{table:def_params_time} and \ref{table:other_params_time}, the agent was trained with a more flexlible termination condition, which allowed it to survive longer in an episode, however it takes more episodes for the Q-values to converge since the state-action space is much larger than before which takes more training time.
+As seen in Table \ref{table:def_params_time} and \ref{table:other_params_time}, the agent was trained with a more flexible termination condition, which allowed it to survive longer in an episode, however it takes more episodes for the Q-values to converge since the state-action space is much larger than before which takes more training time.
 The simulation time for episode $50$ in Table \ref{table:def_params_time} cannot be directly compared with the corresponding value in Table \ref{table:other_params_time}.
 
-We have tried other model-free methods such as Linear Q-learning \cite{Linear_Q_Learning} and Double Deep Q-learning \cite{Deep_Double_Q_Learning}, but they did not achieve better performance than our Deep Q-learning \cite{Deep_Q_Learning_First} implementation.
+
+Other model-free methods such as Linear Q-learning \cite{Linear_Q_Learning} and Double Deep Q-learning \cite{Deep_Double_Q_Learning} can be implemented and perhaps give similar or better results.
+This can be considered for future work.
+
+%, but they did not achieve better performance than our Deep Q-learning \cite{Deep_Q_Learning_First} implementation.
 
 % pendulum specific
 % Double pendulum specific

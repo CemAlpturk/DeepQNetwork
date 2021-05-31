@@ -123,8 +123,9 @@ class Logger:
         filename = "params.txt"
         path = os.path.join(self.dir,filename)
         with open(path, 'w', newline='') as file:
-            for key, val in params.items():
-                file.write(f"{key}: {val}\n")
+            print(params, file=file)
+            # for key, val in params.items():
+            #     file.write(f"{key}: {val}\n")
 
 
 

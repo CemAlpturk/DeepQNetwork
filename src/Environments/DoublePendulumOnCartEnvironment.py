@@ -31,9 +31,9 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
                     "pendulum_2_mass": 0.1,
                     "pendulum_1_length": 1.0,
                     "pendulum_2_length": 1.0,
-                    "cart_friction": 0.01,
-                    "pendulum_1_friction": 0.01,
-                    "pendulum_2_friction": 0.01
+                    "cart_friction": 0.00,
+                    "pendulum_1_friction": 0.00,
+                    "pendulum_2_friction": 0.00
             }
         initial_state = np.array([0, 0, 0, 0, 0, 0])
         problem = DoublePendulumOnCartSimulator(problem_parameters, initial_state)

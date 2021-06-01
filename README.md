@@ -6,10 +6,12 @@ This is a project in course FRTN70 at LTH, 2021.
 Project is conducted by `Cem Alptürk` and `Pukashawar Pannu`.
 
 ## Goal - Balance Inverted Double Pendulum on Cart
-The goal of the project is to teach a controller to balance a double inverted pendulum on a cart using reinforcement learning.
-This is chaotic problem.
+The goal of the project is to teach a controller to balance an inverted double pendulum on a cart using reinforcement learning.
+This is chaotic problem and the controller is limited to a single degree of freedom for balancing the pendulums.
 
 <center><img src="double_animation_chaos.gif"></center>
+
+
 <center><i>4 double pendulums simualted with very small differences in initial conditions.</i></center>
 
 ## Get Started

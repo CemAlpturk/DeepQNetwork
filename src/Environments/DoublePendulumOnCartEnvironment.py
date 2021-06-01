@@ -106,7 +106,7 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         if random:
             #initial_state = [np.random.uniform(-0.05,0.05) for _ in range(self.state_size)]
             initial_state = np.zeros(self.state_size)
-            initial_state[1:3] = np.random.uniform(-self.lamb,self.lamb,2)
+            initial_state[1:3] = np.random.uniform(-self.lamb, self.lamb, 2)
             return self.problem.reset(initial_state)
         else:
             return self.problem.reset()

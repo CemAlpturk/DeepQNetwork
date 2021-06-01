@@ -7,6 +7,7 @@ from Utilities.Animator import SinglePendulumAnimator
 import imageio
 import moviepy.editor as mp
 import ast
+from pygifsicle import optimize
 
 # Folder containing gifs to animate.
 # base_root = "Logs/PendulumOnCart/2021-05-31_16-25-01/"
@@ -84,6 +85,9 @@ for file in gif_files:
     loaded_gif.close()
 
 new_gif.close()
+
+# Optimize gif
+optimize(f'{root_episode}total.gif', f'{root_episode}total_optimized.gif')
 
 # Convert gif to mp4.
 clip = mp.VideoFileClip(f"{root_episode}total.gif")

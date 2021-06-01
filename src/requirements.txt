@@ -5,5 +5,5 @@ pandas==1.2.3
 sklearn==0.24.2
 numpy==1.18.5
 moviepy==1.0.3
-ffmpeg-python
-pygifsicle
+ffmpeg-python==0.2.0
+pygifsicle==1.0.4

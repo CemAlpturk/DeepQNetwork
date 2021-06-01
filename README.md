@@ -12,7 +12,7 @@ This is chaotic problem and the controller is limited to a single degree of free
 <center><img src="double_animation_chaos.gif"></center>
 
 
-<center><i>4 double pendulums simualted with very small differences in initial conditions.</i></center>
+<center><i>4 double pendulums simulated with very small differences in initial conditions.</i></center>
 
 ## Get Started
 Project has been developed using `Python 3`.

@@ -66,11 +66,11 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-5,-3-1,0,1,3,5],
+        action_space=[-3-1,0,1,3],
         lamb=0.01)
 
 # Setup Neural network parameters.
-initial_learning_rate = 0.00005
+initial_learning_rate = 0.0001
 lr_schedule = ExponentialDecay(
     initial_learning_rate,
     decay_steps=10000,

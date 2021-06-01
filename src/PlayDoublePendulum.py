@@ -7,13 +7,13 @@ with tf.device("cpu:0"):
     from Environments import DoublePendulumOnCartSimulator
     from Utilities.Animator import DoublePendulumAnmiator
 
-    action_space = [-1,0,1]
-    filepath = "Models/DoublePendulumOnCart/q_network"
+    action_space = [-3,-1,0,1,3]
+    filepath = "Logs/DoublePendulumOnCart/2021-06-01_08-52-36/q_network"
     idx = [False,True,True,True,True,True]
     controller = Controller.load_controller(action_space, filepath, idx)
 
     max_angle = 0*np.pi/180
-    initial_state = np.array([0.0,0.01,0.0,0.0,0.0,0.0])
+    initial_state = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
 
     problem_parameters = {
             "cart_mass": 1.0,
@@ -29,7 +29,7 @@ with tf.device("cpu:0"):
 
     problem = DoublePendulumOnCartSimulator(problem_parameters, initial_state)
 
-    t = np.linspace(0,5,500)
+    t = np.linspace(0,10,500)
     problem.solve(t, controller=controller.act)
 
     # Pendulum settings.
@@ -41,14 +41,15 @@ with tf.device("cpu:0"):
     # Plot settings.
     plot_settings = {
         "force_bar_show" : True,
-        "force_action_space" : [-1,0,1],
+        "force_action_space" : action_space,
     }
 
     DoublePendulumAnmiator.animate_simulation(
         problem,
         pendulum_settings,
         plot_settings=plot_settings,
-        save=False,
+        save=True,
+        output_filename="double.gif",
         title=f"Episode {0} - Inverted Double Pendulum on Cart",
         hide=False
     )

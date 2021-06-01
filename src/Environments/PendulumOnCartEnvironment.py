@@ -75,11 +75,11 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         else:
             return self.problem.reset()
 
-    def animate(self):
-        """
-        TODO: Complete summary.
-        """
-        self.problem.animate()
+    # def animate(self):
+    #     """
+    #     TODO: Complete summary.
+    #     """
+    #     self.problem.animate()
 
     def save(self, episode):
         """
@@ -147,4 +147,4 @@ if __name__ == "__main__":
         print(f"Step = {i}, Action = {action}, Reward = {reward}, Terminated = {terminated}")
         state = next_state
 
-    env.animate()
+    # env.animate()

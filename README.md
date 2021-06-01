@@ -5,7 +5,7 @@ This is a project in course FRTN70 at LTH, 2021.
 
 Project is conducted by `Cem Alptürk` and `Pukashawar Pannu`.
 
-## Goal - Balance Double Inverted Pendulum on Cart
+## Goal - Balance Inverted Double Pendulum on Cart
 The goal of the project is to teach a controller to balance a double inverted pendulum on a cart using reinforcement learning.
 This is chaotic problem.
 
@@ -16,10 +16,10 @@ This is chaotic problem.
 Project has been developed using `Python 3`.
 Dependencies can be installed using `pip`:
 
-TODO: Add actual `requirements.txt` file.
-
 ```bash
-pip install -r src/requirements.txt
+# Tensorflow 2.0 requires a pip version > 19.0
+pip3 install --upgrade pip
+pip3 install -r src/requirements.txt
 ```
 
 ## TODO - Short description about reinforcement learning?
@@ -39,6 +39,7 @@ The idea is that a trained algorithm produces a finished controller that can be 
 Code for training a controller for the double pendulum on a cart problem is found in `src/`.
 With all dependencies installed it should be enough to run the `src/Training_Double_Pendulum.py` script.
 The script produces training statistics and a trained controller that can be used to simulate a new pendulum scenario with the controller.
+
 
 ### Initial Instructions
 Make sure that it is very easy to understand how to both compile and get the source code to run on your platform, including complete setup and build instructions of dependencies, such as openCV. These instructions are preferably written in the README file in the root folder of the project, using markdown. Include a picture and a short description of your finished project in this file as well).

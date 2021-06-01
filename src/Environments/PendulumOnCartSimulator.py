@@ -45,164 +45,164 @@ class PendulumOnCartSimulator(OdeProblemBase):
             f"\t\tPendulum angular velocity: {self.initial_state[3]}\n"
             "\t]")
 
-    def animate(
-        self,
-        save=False,
-        filename=None,
-        title="Pendulum on a Cart",
-        hide=False,
-        animate_force=False,
-        max_angle=None):
-        """
-        TODO: Complete summary.
-        """
-        # TODO: Add error handling in case someone invokes animate before sovle!!
-        # Create animation plot.
-        xlim_max = 5
-        fig = plt.figure()
-        ax = fig.add_subplot(
-            111,
-            aspect = 'equal',
-            xlim = (-xlim_max, xlim_max),
-            ylim = (-2, 2),
-            title = title)
+    # def animate(
+    #     self,
+    #     save=False,
+    #     filename=None,
+    #     title="Pendulum on a Cart",
+    #     hide=False,
+    #     animate_force=False,
+    #     max_angle=None):
+    #     """
+    #     TODO: Complete summary.
+    #     """
+    #     # TODO: Add error handling in case someone invokes animate before sovle!!
+    #     # Create animation plot.
+    #     xlim_max = 5
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(
+    #         111,
+    #         aspect = 'equal',
+    #         xlim = (-xlim_max, xlim_max),
+    #         ylim = (-2, 2),
+    #         title = title)
 
-        ax.grid()
-        origin = [0.0, 0.0]
+    #     ax.grid()
+    #     origin = [0.0, 0.0]
 
-        # Create the cart.
-        cart_borders = [0.0 - 0.25, 0.0 - 0.25]
-        cart = patches.Rectangle(
-            cart_borders,
-            0.5,
-            0.5,
-            facecolor='none',
-            edgecolor='k')
+    #     # Create the cart.
+    #     cart_borders = [0.0 - 0.25, 0.0 - 0.25]
+    #     cart = patches.Rectangle(
+    #         cart_borders,
+    #         0.5,
+    #         0.5,
+    #         facecolor='none',
+    #         edgecolor='k')
 
-        # Create animation components for applied force.
-        if animate_force:
-            force_bar_border = [0.0, -2.0]
-            force_bar = patches.Rectangle(
-                force_bar_border,
-                1.0,
-                1.0,
-                facecolor='r',
-                alpha=0.5)
-            force_divider = patches.Rectangle(
-                [0.0, -2.0],
-                0.1,
-                1.0,
-                facecolor='k')
+    #     # Create animation components for applied force.
+    #     if animate_force:
+    #         force_bar_border = [0.0, -2.0]
+    #         force_bar = patches.Rectangle(
+    #             force_bar_border,
+    #             1.0,
+    #             1.0,
+    #             facecolor='r',
+    #             alpha=0.5)
+    #         force_divider = patches.Rectangle(
+    #             [0.0, -2.0],
+    #             0.1,
+    #             1.0,
+    #             facecolor='k')
 
-            max_applied_force = np.max(np.abs(self.external_forces))
+    #         max_applied_force = np.max(np.abs(self.external_forces))
 
-        # Pendulum arm
-        theta0 = self.initial_state[2]
-        initial_pendulum_bob_location = [
-            self.pendulum_length * np.sin(theta0),
-            self.pendulum_length * np.cos(theta0)]
+    #     # Pendulum arm
+    #     theta0 = self.initial_state[2]
+    #     initial_pendulum_bob_location = [
+    #         self.pendulum_length * np.sin(theta0),
+    #         self.pendulum_length * np.cos(theta0)]
 
-        pendulumArm = lines.Line2D(
-            origin,
-            initial_pendulum_bob_location,
-            color='r',
-            marker='o')
+    #     pendulumArm = lines.Line2D(
+    #         origin,
+    #         initial_pendulum_bob_location,
+    #         color='r',
+    #         marker='o')
 
-        # Add boundary (needs to be relative to the cart.)
-        x_boundary = np.sin(max_angle)
-        print(x_boundary)
-        left_boundary = lines.Line2D(
-            [-x_boundary, 0.0],
-            [1.5, 0.0],
-            color='r',
-            marker='',
-            ls="--",
-            alpha=0.5)
+    #     # Add boundary (needs to be relative to the cart.)
+    #     x_boundary = np.sin(max_angle)
+    #     print(x_boundary)
+    #     left_boundary = lines.Line2D(
+    #         [-x_boundary, 0.0],
+    #         [1.5, 0.0],
+    #         color='r',
+    #         marker='',
+    #         ls="--",
+    #         alpha=0.5)
 
-        right_boundary = lines.Line2D(
-            [0.0, x_boundary],
-            [0.0, 1.5],
-            color='r',
-            marker="",
-            ls="--",
-            alpha=0.5)
+    #     right_boundary = lines.Line2D(
+    #         [0.0, x_boundary],
+    #         [0.0, 1.5],
+    #         color='r',
+    #         marker="",
+    #         ls="--",
+    #         alpha=0.5)
 
-        # Time:
-        time_text = ax.text(-4., 1.6,'', fontsize=15)
-        def init():
-            ax.add_patch(cart)
-            ax.add_line(pendulumArm)
-            time_text.set_text('Time 0.0')
+    #     # Time:
+    #     time_text = ax.text(-4., 1.6,'', fontsize=15)
+    #     def init():
+    #         ax.add_patch(cart)
+    #         ax.add_line(pendulumArm)
+    #         time_text.set_text('Time 0.0')
 
-            ax.add_line(left_boundary)
-            ax.add_line(right_boundary)
+    #         ax.add_line(left_boundary)
+    #         ax.add_line(right_boundary)
 
-            # Only add the force animation if set to: True.
-            if animate_force:
-                ax.add_patch(force_bar)
-                ax.add_patch(force_divider)
-                return force_divider, force_bar, left_boundary, right_boundary, cart, pendulumArm, time_text
+    #         # Only add the force animation if set to: True.
+    #         if animate_force:
+    #             ax.add_patch(force_bar)
+    #             ax.add_patch(force_divider)
+    #             return force_divider, force_bar, left_boundary, right_boundary, cart, pendulumArm, time_text
             
-            return cart, left_boundary, right_boundary, pendulumArm, time_text
+    #         return cart, left_boundary, right_boundary, pendulumArm, time_text
 
-        def animate(i):
-            cart_xpos, cart_vel, theta, theta_dot = self.states[i]
+    #     def animate(i):
+    #         cart_xpos, cart_vel, theta, theta_dot = self.states[i]
 
-            # Cart
-            cart_coordinate = [cart_xpos - 0.25, -0.25]
-            cart.set_xy(cart_coordinate)
+    #         # Cart
+    #         cart_coordinate = [cart_xpos - 0.25, -0.25]
+    #         cart.set_xy(cart_coordinate)
 
-            # Pendulum
-            x_pendulum_bob = cart_xpos + self.pendulum_length*np.sin(theta) # important! bob position is relative to cart xpos
-            y_pendulum_bob = self.pendulum_length*np.cos(theta)
-            xpos = [cart_xpos, x_pendulum_bob]
-            ypos = [0.0, y_pendulum_bob]
+    #         # Pendulum
+    #         x_pendulum_bob = cart_xpos + self.pendulum_length*np.sin(theta) # important! bob position is relative to cart xpos
+    #         y_pendulum_bob = self.pendulum_length*np.cos(theta)
+    #         xpos = [cart_xpos, x_pendulum_bob]
+    #         ypos = [0.0, y_pendulum_bob]
 
-            pendulumArm.set_xdata(xpos)
-            pendulumArm.set_ydata(ypos)
+    #         pendulumArm.set_xdata(xpos)
+    #         pendulumArm.set_ydata(ypos)
 
-            # Update time
-            time_text.set_text(f"Time: {self.time[i]:2.2f}")
+    #         # Update time
+    #         time_text.set_text(f"Time: {self.time[i]:2.2f}")
 
-            # Update termination boundary (the y-data doesn't change).
-            # boundary_x = np.sin(max_angle) + cart_xpos
-            left_boundary.set_xdata([-x_boundary + cart_xpos, cart_xpos])
-            right_boundary.set_xdata([cart_xpos, x_boundary + cart_xpos])
+    #         # Update termination boundary (the y-data doesn't change).
+    #         # boundary_x = np.sin(max_angle) + cart_xpos
+    #         left_boundary.set_xdata([-x_boundary + cart_xpos, cart_xpos])
+    #         right_boundary.set_xdata([cart_xpos, x_boundary + cart_xpos])
 
-            # Only update force animation if set to: True.
-            if animate_force:
-                # Update the force_bar.
-                # Scale so that max force_bar is mapped to 4 (for the plot)
-                scaled_force = xlim_max * self.external_forces[i] / max_applied_force
-                force_bar.set_width(scaled_force) 
+    #         # Only update force animation if set to: True.
+    #         if animate_force:
+    #             # Update the force_bar.
+    #             # Scale so that max force_bar is mapped to 4 (for the plot)
+    #             scaled_force = xlim_max * self.external_forces[i] / max_applied_force
+    #             force_bar.set_width(scaled_force) 
 
-                # Set the applied force amount to the label.
-                ax.set_xlabel(f'Applied force: {self.external_forces[i]}')
+    #             # Set the applied force amount to the label.
+    #             ax.set_xlabel(f'Applied force: {self.external_forces[i]}')
 
-                return force_divider, force_bar, left_boundary, right_boundary, cart, pendulumArm, time_text
+    #             return force_divider, force_bar, left_boundary, right_boundary, cart, pendulumArm, time_text
 
-            return cart, left_boundary, right_boundary, pendulumArm, time_text
+    #         return cart, left_boundary, right_boundary, pendulumArm, time_text
 
-        num_frames = len(self.time)
-        time_interval = self.time[-1] - self.time[0]
-        fps = num_frames / time_interval
-        interval = 1000/fps
+    #     num_frames = len(self.time)
+    #     time_interval = self.time[-1] - self.time[0]
+    #     fps = num_frames / time_interval
+    #     interval = 1000/fps
 
-        anim = animation.FuncAnimation(
-            fig,
-            animate,
-            interval=interval,
-            frames=len(self.states),
-            init_func=init,
-            blit=True)
+    #     anim = animation.FuncAnimation(
+    #         fig,
+    #         animate,
+    #         interval=interval,
+    #         frames=len(self.states),
+    #         init_func=init,
+    #         blit=True)
 
-        if save:
-            writergif = animation.PillowWriter(fps=fps)
-            anim.save(filename, writer=writergif)
-            plt.close(fig)
+    #     if save:
+    #         writergif = animation.PillowWriter(fps=fps)
+    #         anim.save(filename, writer=writergif)
+    #         plt.close(fig)
 
-        if not hide:
-            plt.show()
+    #     if not hide:
+    #         plt.show()
 
     def _rhs(self, state, t, u):
         """

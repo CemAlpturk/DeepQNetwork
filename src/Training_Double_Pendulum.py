@@ -113,6 +113,7 @@ controller = agent.train(
         timesteps_per_episode=500,
         warm_start=warm_start,
         evaluate_model_period=10,
+        evaluation_size=10,
         model_alignment_period=1,
         save_animation_period=25,
         batch_size=32,

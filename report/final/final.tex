@@ -301,7 +301,7 @@ After a number of episodes the weights of $NN_Q$ are mapped to $NN_{target}$ to 
 				\State $s_{t+1}, r_t, T_t \gets \text{Step}(ActionSpace[a])$ % \Comment{Simulate system one step}
 				\State $Exp \gets \begin{pmatrix} s_t, & a_t, & r_t & T_t & s_{t+1} \end{pmatrix}$
 				\State $\begin{pmatrix} \mathbf{s}, & \mathbf{a}, & \mathbf{r} & \mathbf{T} & \mathbf{s}_{t+1} \end{pmatrix}$ $\gets Exp$  \Comment{Exp minibatch}
-				\State $y_m = \begin{cases} r_m \\ r_m + \gamma \max ( NN_{target}(\mathbf{s}_{t+1, m}) ) \end{cases}$
+				\State $y_m = \begin{cases} r_m & \text{terminal} \\ r_m + \gamma \max ( NN_{target}(\mathbf{s}_{t+1, m}) ) & \text{otherwise} \end{cases}$
 				%\State $Targets_{m,j} \gets \begin{cases} y_m, & \text{if} \quad j = a  \\ NN_Q(\mathbf{s}_m)_j \end{cases}$
 				\State  $Loss \gets (y_m - NN_Q(\mathbf{s}_{t+1,m})_{a_m})^2$
 				\State Perform gradient descent on Loss

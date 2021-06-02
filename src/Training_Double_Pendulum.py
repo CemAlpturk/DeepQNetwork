@@ -66,11 +66,11 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-3-1,0,1,3],
+        action_space=[-1,0,1],
         lamb=0.01)
 
 # Setup Neural network parameters.
-initial_learning_rate = 0.0001
+initial_learning_rate = 0.00005
 lr_schedule = ExponentialDecay(
     initial_learning_rate,
     decay_steps=10000,
@@ -111,7 +111,7 @@ controller = agent.train(
         discount=0.9,
         exploration_rate=0.9,
         exploration_rate_decay=0.995,
-        min_exploration_rate=0.1,
+        min_exploration_rate=0.01,
         save_model_period=10,
         epochs=1,
         log_q_values=True)

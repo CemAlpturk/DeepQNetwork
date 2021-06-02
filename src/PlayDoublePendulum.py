@@ -7,13 +7,13 @@ with tf.device("cpu:0"):
     from Environments import DoublePendulumOnCartSimulator
     from Utilities.Animator import DoublePendulumAnmiator
 
-    action_space = [-3,-1,0,1,3]
-    filepath = "Logs/DoublePendulumOnCart/2021-06-01_08-52-36/q_network"
+    action_space = [-1,0,1]
+    filepath = "Logs/DoublePendulumOnCart/2021-06-02_09-04-46/q_network"
     idx = [False,True,True,True,True,True]
     controller = Controller.load_controller(action_space, filepath, idx)
 
     max_angle = 0*np.pi/180
-    initial_state = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    initial_state = np.array([0.0,0.0,0.01,0.0,0.0,0.0])
 
     problem_parameters = {
             "cart_mass": 1.0,

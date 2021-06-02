@@ -2,19 +2,25 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import tensorflow as tf
+
+import imageio
+import moviepy.editor as mp
+import ast
+from pygifsicle import optimize
+
 with tf.device("cpu:0"):
     from Agents import Controller
     from Environments import DoublePendulumOnCartSimulator
-    from Utilities.Animator import DoublePendulumAnmiator
+    from Utilities.Animator import DoublePendulumAnimator
 
     # action_space = [-3, -1, 0, 1, 3]
-    action_space = [-40, -10, -5, -1, 0, 1, 5, 10, 40]
-    filepath = "Logs/DoublePendulumOnCart/2021-06-01_14-29-16/q_network"
+    action_space = [-40, -10, -5, 1, 0, 1, 5, 10, 40]
+    filepath = "Final_models/DoublePendulum/2021-06-01_14-29-16/q_network"
     idx = [False,True,True,True,True,True]
     controller = Controller.load_controller(action_space, filepath, idx)
 
-    max_angle = 10*np.pi/180
-    outer_angle = 5*np.pi/180
+    max_angle = 0*np.pi/180
+    outer_angle = 0*np.pi/180
     initial_state = np.array([0.0, max_angle, outer_angle, 0.0, 0.0, 0.0])
 
     problem_parameters = {
@@ -31,7 +37,7 @@ with tf.device("cpu:0"):
 
     problem = DoublePendulumOnCartSimulator(problem_parameters, initial_state)
 
-    t = np.linspace(0, 10, 500)
+    t = np.linspace(0, 5, 250)
     problem.solve(t, controller=controller.act)
 
     # Pendulum settings.
@@ -44,18 +50,23 @@ with tf.device("cpu:0"):
     plot_settings = {
         "force_bar_show" : True,
         "force_action_space" : action_space,
+        "show_termination_boundary": True,
+        "termination_angle_inner_pendulum": 15*np.pi/180,
+        "termination_angle_outer_pendulum": 15*np.pi/180,
     }
 
-    DoublePendulumAnmiator.animate_simulation(
+    DoublePendulumAnimator.animate_simulation(
         problem,
         pendulum_settings,
         plot_settings=plot_settings,
         save=True,
-        output_filename="double.gif",
-        title=f"Episode {0} - Inverted Double Pendulum on Cart",
+        output_filename="DoublePendulum_equilibrium.gif",
+        title=f"Trained Agent",
         hide=True
     )
 
+    clip = mp.VideoFileClip("DoublePendulum_equilibrium.gif")
+    clip.write_videofile("DoublePendulum_equilibrium.mp4")
     #problem.animate()
 
 

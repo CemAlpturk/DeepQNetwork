@@ -55,9 +55,9 @@
     This has been confirmed in the results for the single pendulum model, an easier problem to control that was used to confirm the implementation of the learning algorithm.
     Balancing the double pendulum is a more difficult problem due to its chaotic nature and the controller being limited to a single degree of freedom.
 %    The double pendulum is more difficult with its chaotic nature and the limitation that the cart with a single degree of freedom is trying to control multiple states.
-    Results show that the double pendulum can be balanced indefinitely for certain initial conditions.
+    Results show that the double pendulum can be balanced for up-to three seconds with a network of $10$ layers and $30$ nodes in each layer, while the uncontrolled system falls over in $0.5$ seconds.
     The agent was trained for a limited number of episodes limiting the amount of experience and knowledge it could gather about the problem.
-    We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for broader initial conditions.
+    We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for far longer using Deep Q-Learning.
     % The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
 \end{abstract}
 
@@ -491,7 +491,7 @@ This can be resolved by training the agent for more episodes.
 
 \begin{figure}[htp]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_20.png}
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_35.png}
 	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 20$ degrees.}
 	\label{fig:single_pendulum_outside_training_domain}
 \end{figure}

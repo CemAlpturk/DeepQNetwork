@@ -52,8 +52,8 @@ class SinglePendulumAnimator:
         # TODO: Add input argument checking
         #       Require that the pendulum settings contain 'Pendulum_Length'
         #       Require that max_angle is provided if animate_Termination_boundary=True (Maybe it's enough to check if it's true/false)
-        #       Require that an action space is provided if 'animate_force = True' 
-        #           (unless the current way of guessing the max is to be used 
+        #       Require that an action space is provided if 'animate_force = True'
+        #           (unless the current way of guessing the max is to be used
         #               (problem when no force is applied throughout the entire simulation))
 
         # TODO: Validate pendulum settings.
@@ -62,7 +62,7 @@ class SinglePendulumAnimator:
         # Read data.
         data = pd.read_csv(
             data_filename,
-            usecols=['States', 'Force', 'Reward', 'Time']) 
+            usecols=['States', 'Force', 'Reward', 'Time'])
 
         # Extract data to separate components.
         forces = data['Force'][:].to_numpy(dtype=object)
@@ -74,6 +74,37 @@ class SinglePendulumAnimator:
         states = [np.array(list(map(float, x[2:-2].split()))) for x in raw_states[:]]
 
         # Animate the single pendulum.
+        SinglePendulumAnimator._animate(
+            states,
+            times,
+            pendulum_settings,
+            forces,
+            save,
+            output_filename,
+            title,
+            hide,
+            plt_settings)
+
+    @staticmethod
+    def animate_simulation(
+            simulation,
+            pendulum_settings,
+            plot_settings=None,
+            save=False,
+            output_filename=None,
+            title="Pendulum on Cart",
+            hide=False):
+        """
+        Animates a simulation.
+
+        TODO: Fix summary.
+        """
+        states = simulation.states
+        times = simulation.time
+        forces = simulation.external_forces
+
+        plt_settings = SinglePendulumAnimator._get_plot_settings(plot_settings)
+
         SinglePendulumAnimator._animate(
             states,
             times,
@@ -261,7 +292,7 @@ class SinglePendulumAnimator:
             if plot_settings["force_bar_show"]:
                 # Update the force_bar.
                 scaled_force = xlim_max * external_forces[i] / force_scaler
-                force_bar.set_width(scaled_force) 
+                force_bar.set_width(scaled_force)
 
                 # Set the applied force amount to the label.
                 ax.set_xlabel(f'Applied force: {external_forces[i]}')
@@ -341,7 +372,7 @@ class SinglePendulumAnimator:
         return cart
 
 
-class DoublePendulumAnmiator:
+class DoublePendulumAnimator:
     """
     Anmiates a inverted double pendulum on a cart.
     """
@@ -388,7 +419,7 @@ class DoublePendulumAnmiator:
         """
         data = pd.read_csv(
             filename,
-            usecols=['States', 'Force', 'Reward', 'Time']) 
+            usecols=['States', 'Force', 'Reward', 'Time'])
 
         forces = data['Force'][:].to_numpy(dtype=object)
         raw_states = data['States'][:].to_numpy(dtype=object)
@@ -398,10 +429,10 @@ class DoublePendulumAnmiator:
         # Convert the string to numpy array
         states = [np.array(list(map(float, x[2:-2].split()))) for x in raw_states[:]]
 
-        plt_settings = DoublePendulumAnmiator._get_plot_settings(plot_settings)
+        plt_settings = DoublePendulumAnimator._get_plot_settings(plot_settings)
 
 
-        DoublePendulumAnmiator._animate(
+        DoublePendulumAnimator._animate(
             states,
             times,
             forces,
@@ -429,9 +460,9 @@ class DoublePendulumAnmiator:
         times = simulation.time
         forces = simulation.external_forces
 
-        plt_settings = DoublePendulumAnmiator._get_plot_settings(plot_settings)
+        plt_settings = DoublePendulumAnimator._get_plot_settings(plot_settings)
 
-        DoublePendulumAnmiator._animate(
+        DoublePendulumAnimator._animate(
             states,
             times,
             forces,
@@ -452,9 +483,8 @@ class DoublePendulumAnmiator:
         the user.
         """
         if custom_plot_settings == None:
-            return DoublePendulumAnmiator._default_plot_settings
-
-        plot_settings = DoublePendulumAnmiator._default_plot_settings
+            return DoublePendulumAnimator._default_plot_settings
+        plot_settings = DoublePendulumAnimator._default_plot_settings
         for key in custom_plot_settings:
             plot_settings[key] = custom_plot_settings[key]
 
@@ -614,7 +644,7 @@ class DoublePendulumAnmiator:
             if plot_settings["force_bar_show"]:
                 ax.add_patch(force_bar)
                 ax.add_patch(force_divider)
-                
+
             if plot_settings["force_bar_show"] and plot_settings["show_termination_boundary"]:
                 return force_divider, force_bar, left_boundary_inner_pendulum, right_boundary_inner_pendulum, left_boundary_outer_pendulum, right_boundary_outer_pendulum, cart, pendulumArm1, pendulumArm2, time_text
             elif plot_settings["force_bar_show"]:
@@ -683,7 +713,7 @@ class DoublePendulumAnmiator:
 
             return cart, pendulumArm1, pendulumArm2, time_text
 
-        times, states, external_forces, fps, interval = DoublePendulumAnmiator._trim_data(times, states, external_forces)
+        times, states, external_forces, fps, interval = DoublePendulumAnimator._trim_data(times, states, external_forces)
 
         anim = animation.FuncAnimation(
             fig,

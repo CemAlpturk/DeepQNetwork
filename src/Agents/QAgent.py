@@ -94,7 +94,7 @@ class QAgent:
             warm_start=False,
             model_alignment_period=100,
             save_animation_period=100,
-            save_model_period=100,
+            save_model_period=10,
             evaluate_model_period=50,
             evaluation_size=10,
             exploration_rate_decay=0.99,
@@ -147,7 +147,7 @@ class QAgent:
             if not check:
                 print("Using default network") # TODO: temp solution
 
-        max_reward = 0
+        max_reward = -100
         for episode in range(1, max_episodes + 1):
             t1 = time.time()
             total_reward = 0
@@ -225,9 +225,11 @@ class QAgent:
             if episode % evaluate_model_period == 0:
                 eval_score = self._evaluate(evaluation_size, max_steps=timesteps_per_episode,episode=episode)
 
-            if eval_score > max_reward:
-                self._save_model()
-                max_reward = eval_score
+                if eval_score > max_reward:
+                    self._save_model("best")
+                    max_reward = eval_score
+
+                self._save_model("latest")
 
         # Create Controller object
         controller = Controller(self.environment.get_action_space(), self.q_network, self.idx)
@@ -394,19 +396,18 @@ class QAgent:
         # Log the recorded play
         self.Logger.log_episode(states,u,rewards,term,t,episode)
 
-
         self.Logger.log_eval(episode, average_reward, average_time, median_reward, median_time, std_reward, std_time)
         return average_reward
 
-    def _save_model(self):
-        print("Saving Model")
+    def _save_model(self, prefix : str):
+        print(f"Saving Model: '{prefix}'")
         # parent_dir = os.getcwd()
         # dir = self.environment.name
         # path = os.path.join(parent_dir,"Models")
         # if not os.path.exists(path):
         #     print(f"Creating 'Models' directory at: {dir}")
         #     os.mkdir(path)
-        filepath = os.path.join(self.Logger.dir,"q_network")
+        filepath = os.path.join(self.Logger.dir,f"{prefix}/q_network")
 
         # TODO: Fix path for windows.
         #filepath = f"./Models/{self.environment.name}/q_network"

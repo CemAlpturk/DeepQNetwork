@@ -11,7 +11,7 @@ from pygifsicle import optimize
 
 # Folder containing gifs to animate.
 # base_root = "Logs/PendulumOnCart/2021-05-31_16-25-01/"
-base_root = "Logs/PendulumOnCart/2021-05-31_19-24-02/"
+base_root = "Logs/PendulumOnCart/2021-06-01_17-16-58/"
 root_episode = f"{base_root}Episodes/"
 
 

@@ -25,7 +25,7 @@ if len(sys.argv) > 1:
     else:
         print("usage: Training_Pendulum.py --warm")
 
-max_angle = 5*np.pi/180
+max_angle = 15*np.pi/180
 
 def custom_loss_function(y_true, y_pred):
     """
@@ -37,6 +37,9 @@ def custom_loss_function(y_true, y_pred):
     return K.square(K.sum(loss))
 
 def reward(state, t):
+    if terminated(state, t):
+        return -10
+
     x, theta1, theta2, xdot, theta1dot, theta2dot = state
     #r_angle2 = (max_angle - abs(theta2))/max_angle
     #r_angle1 = (max_angle - abs(theta1))/max_angleS
@@ -51,7 +54,7 @@ def reward(state, t):
     alive_bonus = 1
     r = alive_bonus - angle_penalty - vel_penalty
     #r = r_angle1**2 + r_angle2**2 -vel_penalty
-    return r
+    return max(0, r)
 
 def terminated(state, t):
     x, theta1, theta2, xdot, theta1dot, thteta2dot = state
@@ -66,8 +69,8 @@ environment = DoublePendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-1,0,1],
-        lamb=0.01)
+        action_space=[-40, -10, -5, -1, 0, 1, 5, 10, 40],
+        lamb=10*np.pi/180)
 
 # Setup Neural network parameters.
 initial_learning_rate = 0.00005
@@ -78,15 +81,20 @@ lr_schedule = ExponentialDecay(
     staircase=True)
 optimizer = Adam(learning_rate=lr_schedule)
 
+nodes = [30, 20, 40, 30, 30, 40, 30, 60, 60, 100, 40, 30, 70, 70, 70, 30, 30, 30, 30, 30]
 layers = []
-for _ in range(20):
-    layers.append((30,'relu'))
+# for _ in range(20):
+#     layers.append((30,'relu'))
+
+for index in range(len(nodes)):
+    layers.append((nodes[index], 'relu'))
+
 layers.append((len(environment.action_space),'linear'))
 network_parameters = {
-    "input_shape" : (6,),                                       # Network input shape.
-    "layers" : layers,                                          # [(nodes, activation function)]
-    "optimizer" : optimizer,                                    # optimizer
-    "loss_function" : custom_loss_function,                                    # loss function ('mse', etc.)
+    "input_shape" : (6,),                                # Network input shape.
+    "layers" : layers,                                   # [(nodes, activation function)]
+    "optimizer" : optimizer,                             # optimizer
+    "loss_function" : custom_loss_function,              # loss function ('mse', etc.)
     "initializer" : tf.keras.initializers.he_uniform()
 }
 
@@ -101,14 +109,14 @@ agent = QAgent(environment,
 
 # Train agent - produces a controller that can be used to control the system.
 controller = agent.train(
-        max_episodes=1000,
+        max_episodes=10000,
         timesteps_per_episode=500,
         warm_start=warm_start,
         evaluate_model_period=10,
         model_alignment_period=1,
         save_animation_period=25,
         batch_size=32,
-        discount=0.9,
+        discount=0.99,
         exploration_rate=0.9,
         exploration_rate_decay=0.995,
         min_exploration_rate=0.01,
@@ -116,11 +124,11 @@ controller = agent.train(
         epochs=1,
         log_q_values=True)
 
-# Simulate problem using the trained controller.
-state = environment.reset()
+# # Simulate problem using the trained controller.
+# state = environment.reset()
 
-t = np.linspace(0, 10, 500)
-environment.solve(t, controller=controller.act)
+# t = np.linspace(0, 10, 500)
+# environment.solve(t, controller=controller.act)
 
 # environment.animate()
 # environment.problem.animate(save=True,filename="resultDoublePendulum.gif")

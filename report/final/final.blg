@@ -1,0 +1,15 @@
+[0] Config.pm:311> INFO - This is Biber 2.16
+[0] Config.pm:314> INFO - Logfile is 'final.blg'
+[198] biber-MSWIN64:340> INFO - === 
+[258] Biber.pm:415> INFO - Reading 'final.bcf'
+[435] Biber.pm:952> INFO - Found 10 citekeys in bib section 0
+[457] Biber.pm:4340> INFO - Processing section 0
+[474] Biber.pm:4531> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
+[560] bibtex.pm:1689> INFO - LaTeX decoding ...
+[594] bibtex.pm:1494> INFO - Found BibTeX data source 'bibliography.bib'
+[731] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[732] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[732] Biber.pm:4168> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[732] Biber.pm:4174> INFO - No sort tailoring available for locale 'en-US'
+[753] bbl.pm:654> INFO - Writing 'final.bbl' with encoding 'UTF-8'
+[762] bbl.pm:757> INFO - Output to final.bbl

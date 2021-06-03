@@ -1,0 +1,419 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{Correct_Equations}{article}{}
+      \name{author}{1}{}{%
+        {{hash=5fdfdf51acc0c37130406a2e3493c96a}{%
+           family={Florian},
+           familyi={F\bibinitperiod},
+           given={Răzvan},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{5fdfdf51acc0c37130406a2e3493c96a}
+      \strng{fullhash}{5fdfdf51acc0c37130406a2e3493c96a}
+      \strng{bibnamehash}{5fdfdf51acc0c37130406a2e3493c96a}
+      \strng{authorbibnamehash}{5fdfdf51acc0c37130406a2e3493c96a}
+      \strng{authornamehash}{5fdfdf51acc0c37130406a2e3493c96a}
+      \strng{authorfullhash}{5fdfdf51acc0c37130406a2e3493c96a}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{08}
+      \field{title}{Correct equations for the dynamics of the cart-pole system}
+      \field{year}{2005}
+    \endentry
+    \entry{Deep_Double_Q_Learning}{article}{}
+      \name{author}{3}{}{%
+        {{hash=f5a8983bab24d2cd5670100e485fc883}{%
+           family={Hasselt},
+           familyi={H\bibinitperiod},
+           given={Hado},
+           giveni={H\bibinitperiod},
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+        {{hash=4131bd14e5ca890278ecd351e356dc34}{%
+           family={Guez},
+           familyi={G\bibinitperiod},
+           given={Arthur},
+           giveni={A\bibinitperiod}}}%
+        {{hash=89dbd30410c2085cd059f32c57d4593e}{%
+           family={Silver},
+           familyi={S\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{a665efce46f880c07855c38cd56bd189}
+      \strng{fullhash}{2bcc40866d8b979d51a84d2f43f45202}
+      \strng{bibnamehash}{2bcc40866d8b979d51a84d2f43f45202}
+      \strng{authorbibnamehash}{2bcc40866d8b979d51a84d2f43f45202}
+      \strng{authornamehash}{a665efce46f880c07855c38cd56bd189}
+      \strng{authorfullhash}{2bcc40866d8b979d51a84d2f43f45202}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arXiv}
+      \field{journaltitle}{CoRR}
+      \field{title}{Deep Reinforcement Learning with Double Q-learning}
+      \field{volume}{abs/1509.06461}
+      \field{year}{2015}
+      \verb{eprint}
+      \verb 1509.06461
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1509.06461
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1509.06461
+      \endverb
+    \endentry
+    \entry{He_initialization}{article}{}
+      \name{author}{4}{}{%
+        {{hash=6b4b60e909e78633945f3f9c9dc83e01}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Kaiming},
+           giveni={K\bibinitperiod}}}%
+        {{hash=5e72bc22dbcf0984c6d113d280e36990}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Xiangyu},
+           giveni={X\bibinitperiod}}}%
+        {{hash=bb295293acacd54387339079ebbe4ead}{%
+           family={Ren},
+           familyi={R\bibinitperiod},
+           given={Shaoqing},
+           giveni={S\bibinitperiod}}}%
+        {{hash=f85751488058842b5777c7b4074077b5}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Jian},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{6edb98fe38401d2fe4a026f5ce6e8451}
+      \strng{fullhash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{bibnamehash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{authorbibnamehash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \strng{authornamehash}{6edb98fe38401d2fe4a026f5ce6e8451}
+      \strng{authorfullhash}{42c4b52dc3a62cebabbc11c73e1afb53}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE International Conference on Computer Vision (ICCV 2015)}
+      \field{month}{02}
+      \field{title}{Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification}
+      \field{volume}{1502}
+      \field{year}{2015}
+      \verb{doi}
+      \verb 10.1109/ICCV.2015.123
+      \endverb
+    \endentry
+    \entry{Deep_Q_Learning_Target_Network}{article}{}
+      \name{author}{12}{}{%
+        {{hash=c637e4ed3fcc395fa56d8aab57126d4d}{%
+           family={Hester},
+           familyi={H\bibinitperiod},
+           given={Todd},
+           giveni={T\bibinitperiod}}}%
+        {{hash=d684edae80c246821b946dce6e37481d}{%
+           family={Vecerik},
+           familyi={V\bibinitperiod},
+           given={Matej},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fa8a4817aef70fffae62a48b98481ef7}{%
+           family={Pietquin},
+           familyi={P\bibinitperiod},
+           given={Olivier},
+           giveni={O\bibinitperiod}}}%
+        {{hash=3075d0e02c0833f6e5fe1addb880898f}{%
+           family={Lanctot},
+           familyi={L\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+        {{hash=a56e72b23778a835bdade7d0511e43a3}{%
+           family={Schaul},
+           familyi={S\bibinitperiod},
+           given={Tom},
+           giveni={T\bibinitperiod}}}%
+        {{hash=f31963abd2aa43dd3aafc40aa1252a05}{%
+           family={Piot},
+           familyi={P\bibinitperiod},
+           given={Bilal},
+           giveni={B\bibinitperiod}}}%
+        {{hash=d539f3ade39715758d6a6c4f82c5e970}{%
+           family={Sendonaris},
+           familyi={S\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+        {{hash=1e75a9df444c5ef79ce4db4c8dd76ddc}{%
+           family={Dulac-Arnold},
+           familyi={D\bibinithyphendelim A\bibinitperiod},
+           given={Gabriel},
+           giveni={G\bibinitperiod}}}%
+        {{hash=d78832306745d08c2a95154ee3e0a1b7}{%
+           family={Osband},
+           familyi={O\bibinitperiod},
+           given={Ian},
+           giveni={I\bibinitperiod}}}%
+        {{hash=333bf32d39a38f126d82c78d782e93ba}{%
+           family={Agapiou},
+           familyi={A\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod}}}%
+        {{hash=1e6f3e1c991bb021be51f9201ec49b83}{%
+           family={Leibo},
+           familyi={L\bibinitperiod},
+           given={Joel},
+           giveni={J\bibinitperiod}}}%
+        {{hash=670a5857297893dc153211fd8a8ec921}{%
+           family={Gruslys},
+           familyi={G\bibinitperiod},
+           given={Audrunas},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{d821956ab7afff2b47d4509f11b4b3f8}
+      \strng{fullhash}{a4ba10496b5690425fe371ea2dc2caf0}
+      \strng{bibnamehash}{a4ba10496b5690425fe371ea2dc2caf0}
+      \strng{authorbibnamehash}{a4ba10496b5690425fe371ea2dc2caf0}
+      \strng{authornamehash}{d821956ab7afff2b47d4509f11b4b3f8}
+      \strng{authorfullhash}{a4ba10496b5690425fe371ea2dc2caf0}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{04}
+      \field{title}{Learning from Demonstrations for Real World Reinforcement Learning}
+      \field{year}{2017}
+    \endentry
+    \entry{Deep_Q_Learning_First}{article}{}
+      \name{author}{7}{}{%
+        {{hash=f7d23cfe4ca0e6bf7a8c251bfa78aca6}{%
+           family={Mnih},
+           familyi={M\bibinitperiod},
+           given={Volodymyr},
+           giveni={V\bibinitperiod}}}%
+        {{hash=481308b301166b521c74fde6566e97e6}{%
+           family={Kavukcuoglu},
+           familyi={K\bibinitperiod},
+           given={Koray},
+           giveni={K\bibinitperiod}}}%
+        {{hash=89dbd30410c2085cd059f32c57d4593e}{%
+           family={Silver},
+           familyi={S\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=dfca94b0427da7f9088af596e23b46c0}{%
+           family={Graves},
+           familyi={G\bibinitperiod},
+           given={Alex},
+           giveni={A\bibinitperiod}}}%
+        {{hash=af540e84ef1ecdaa70b1f7c90f59fd7d}{%
+           family={Antonoglou},
+           familyi={A\bibinitperiod},
+           given={Ioannis},
+           giveni={I\bibinitperiod}}}%
+        {{hash=d7805381550fb5f8360345f7f72c0b49}{%
+           family={Wierstra},
+           familyi={W\bibinitperiod},
+           given={Daan},
+           giveni={D\bibinitperiod}}}%
+        {{hash=9449802bcb467309c0ebced658096818}{%
+           family={Riedmiller},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{aff24b211b34cdd515b2fd148ce0c920}
+      \strng{fullhash}{2860d669102abb5e113bf4232d6d5997}
+      \strng{bibnamehash}{2860d669102abb5e113bf4232d6d5997}
+      \strng{authorbibnamehash}{2860d669102abb5e113bf4232d6d5997}
+      \strng{authornamehash}{aff24b211b34cdd515b2fd148ce0c920}
+      \strng{authorfullhash}{2860d669102abb5e113bf4232d6d5997}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{12}
+      \field{title}{Playing Atari with Deep Reinforcement Learning}
+      \field{year}{2013}
+    \endentry
+    \entry{Classic_Control_Theory}{unknown}{}
+      \name{author}{1}{}{%
+        {{hash=c8abd492bf93522bb94a1030772d56d0}{%
+           family={Moysis},
+           familyi={M\bibinitperiod},
+           given={Lazaros},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{c8abd492bf93522bb94a1030772d56d0}
+      \strng{fullhash}{c8abd492bf93522bb94a1030772d56d0}
+      \strng{bibnamehash}{c8abd492bf93522bb94a1030772d56d0}
+      \strng{authorbibnamehash}{c8abd492bf93522bb94a1030772d56d0}
+      \strng{authornamehash}{c8abd492bf93522bb94a1030772d56d0}
+      \strng{authorfullhash}{c8abd492bf93522bb94a1030772d56d0}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{04}
+      \field{title}{Balancing a double inverted pendulum using optimal control and Laguerre functions}
+      \field{year}{2016}
+      \verb{doi}
+      \verb 10.13140/RG.2.1.2948.6486
+      \endverb
+    \endentry
+    \entry{Double_Pendulum_Equations}{article}{}
+      \name{author}{2}{}{%
+        {{hash=e979d715754b9209b5f30afd680d87f8}{%
+           family={Neusser},
+           familyi={N\bibinitperiod},
+           given={Zdeněk},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=c2b5c5a24c3d7e09337e858c6dd55d66}{%
+           family={Valasek},
+           familyi={V\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{61a492f2ea3b2fc7ec55b0776513773f}
+      \strng{fullhash}{61a492f2ea3b2fc7ec55b0776513773f}
+      \strng{bibnamehash}{61a492f2ea3b2fc7ec55b0776513773f}
+      \strng{authorbibnamehash}{61a492f2ea3b2fc7ec55b0776513773f}
+      \strng{authornamehash}{61a492f2ea3b2fc7ec55b0776513773f}
+      \strng{authorfullhash}{61a492f2ea3b2fc7ec55b0776513773f}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Acta Polytechnica}
+      \field{month}{12}
+      \field{title}{Control of the double inverted pendulum on a cart using the natural motion}
+      \field{volume}{53}
+      \field{year}{2013}
+      \verb{doi}
+      \verb 10.14311/AP.2013.53.0883
+      \endverb
+    \endentry
+    \entry{Sutton_Barto}{book}{}
+      \name{author}{2}{}{%
+        {{hash=bc6e425c1b76847410cdb89808f942ac}{%
+           family={S.\bibnamedelimi Sutton},
+           familyi={S\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Richard},
+           giveni={R\bibinitperiod}}}%
+        {{hash=37e7b327682ad4c11506a2792f30711c}{%
+           family={G.\bibnamedelimi Barto},
+           familyi={G\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{4b342028722100d4447a2d0190174690}
+      \strng{fullhash}{4b342028722100d4447a2d0190174690}
+      \strng{bibnamehash}{4b342028722100d4447a2d0190174690}
+      \strng{authorbibnamehash}{4b342028722100d4447a2d0190174690}
+      \strng{authornamehash}{4b342028722100d4447a2d0190174690}
+      \strng{authorfullhash}{4b342028722100d4447a2d0190174690}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Reinforcement Learning: An Introduction Second Edition}
+      \field{year}{2018}
+    \endentry
+    \entry{original_q_learning}{article}{}
+      \name{author}{2}{}{%
+        {{hash=4be5a785fe12afeb6203c5bac4c2a4cb}{%
+           family={Watkins},
+           familyi={W\bibinitperiod},
+           given={Christopher},
+           giveni={C\bibinitperiod}}}%
+        {{hash=ef0afbe0b4e15059c963e026fe213c34}{%
+           family={Dayan},
+           familyi={D\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{7bdabb3ac2b71c3434a2415c09919eaa}
+      \strng{fullhash}{7bdabb3ac2b71c3434a2415c09919eaa}
+      \strng{bibnamehash}{7bdabb3ac2b71c3434a2415c09919eaa}
+      \strng{authorbibnamehash}{7bdabb3ac2b71c3434a2415c09919eaa}
+      \strng{authornamehash}{7bdabb3ac2b71c3434a2415c09919eaa}
+      \strng{authorfullhash}{7bdabb3ac2b71c3434a2415c09919eaa}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Machine Learning}
+      \field{month}{05}
+      \field{title}{Technical Note: Q-Learning}
+      \field{volume}{8}
+      \field{year}{1992}
+      \field{pages}{279\bibrangedash 292}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1007/BF00992698
+      \endverb
+    \endentry
+    \entry{Linear_Q_Learning}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=61a21d8aba7853cbf9f3f099c48b174f}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Yu},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=9481ab136dda244fda47aaa193e32512}{%
+           family={Luo},
+           familyi={L\bibinitperiod},
+           given={Siwei},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d82421773f433e01a990719d735c3c9e}{%
+           family={Lv},
+           familyi={L\bibinitperiod},
+           given={Ziang},
+           giveni={Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{093c0843dff23c24d27f8942ea1f6996}
+      \strng{fullhash}{ae8c7f47229cf7b80d615f64b4846b0e}
+      \strng{bibnamehash}{ae8c7f47229cf7b80d615f64b4846b0e}
+      \strng{authorbibnamehash}{ae8c7f47229cf7b80d615f64b4846b0e}
+      \strng{authornamehash}{093c0843dff23c24d27f8942ea1f6996}
+      \strng{authorfullhash}{ae8c7f47229cf7b80d615f64b4846b0e}
+      \field{sortinit}{Z}
+      \field{sortinithash}{96892c0b0a36bb8557c40c49813d48b3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings - International Conference on Pattern Recognition}
+      \field{month}{01}
+      \field{title}{Control Double Inverted Pendulum by Reinforcement Learning with Double CMAC Network}
+      \field{volume}{4}
+      \field{year}{2006}
+      \field{pages}{639\bibrangedash 642}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/ICPR.2006.416
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

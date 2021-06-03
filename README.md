@@ -3,15 +3,14 @@
 This is a project in course FRTN70 at LTH, 2021.
 
 
-Project is conducted by `Cem Alptürk` and `Pukashawar Pannu`.
+Project is conducted by `Cem Alptürk` and `Pukashawar Pannu`.  
+Project supervisor `Emil Vladu`.
 
 ## Goal - Balance Inverted Double Pendulum on Cart
 The goal of the project is to teach a controller to balance an inverted double pendulum on a cart using reinforcement learning.
 This is chaotic problem and the controller is limited to a single degree of freedom for balancing the pendulums.
 
-<center><img src="double_animation_chaos.gif"></center>
-
-
+<center><img src="video/DoublePendulum_trained.gif"></center>
 <center><i>4 double pendulums simulated with very small differences in initial conditions.</i></center>
 
 ## Get Started
@@ -43,11 +42,17 @@ With all dependencies installed it should be enough to run the `src/Training_Dou
 The script produces training statistics and a trained controller that can be used to simulate a new pendulum scenario with the controller.
 
 
-### Initial Instructions
-Make sure that it is very easy to understand how to both compile and get the source code to run on your platform, including complete setup and build instructions of dependencies, such as openCV. These instructions are preferably written in the README file in the root folder of the project, using markdown. Include a picture and a short description of your finished project in this file as well).
 
-It is not possible to commit empty folders to git. If you still want to commit an empty folder, a quite common technique to add files called .gitkeep in the empty folders.
+## Video
 
-Try to keep your git-repository clean. As a rule-of-thumb, do not check in files that can be generated from the code in the repository, e.g., compiled binaries. In principle, neither pdf-files which are generated from the TeX-code should be checked in. However, do check in final versions of your reports, presentations and all other documentation - these are the same documents that go into the shared git repo.
-
-To help you to avoid checking in files that are not needed, the .gitignore contains rules for which files that will not be added to git by default. If you explicitly add a specific file, it will be added regardless of the rules in the .gitignore file.
+<center>
+<figure class="video_container">
+  <video 
+        controls="true"
+        allowfullscreen="true"
+        poster="report/final/figures/double_pendulum.png"
+        height="480" >
+    <source src="video/Video.mp4" type="video/mp4">
+  </video>
+</figure>
+</center>

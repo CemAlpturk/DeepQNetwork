@@ -10,8 +10,11 @@ Project supervisor `Emil Vladu`.
 The goal of the project is to teach a controller to balance an inverted double pendulum on a cart using reinforcement learning.
 This is chaotic problem and the controller is limited to a single degree of freedom for balancing the pendulums.
 
-<center><img src="video/DoublePendulum_trained.gif"></center>
-<center><i>4 double pendulums simulated with very small differences in initial conditions.</i></center>
+<!-- <center><img src="video/DoublePendulum_trained.gif"></center>
+<center><i>4 double pendulums simulated with very small differences in initial conditions.</i></center> -->
+
+
+![Agent controlling double pendulum](video/DoublePendulum_trained.gif)*Agent controlling double pendulum from initial conditions theta_1 = theta_2 = -20 degrees*
 
 ## Get Started
 Project has been developed using `Python 3`.
@@ -43,16 +46,46 @@ The script produces training statistics and a trained controller that can be use
 
 
 
-## Video
+## Video mp4
 
-<center>
 <figure class="video_container">
   <video 
         controls="true"
         allowfullscreen="true"
-        poster="report/final/figures/double_pendulum.png"
         height="480" >
     <source src="video/Video.mp4" type="video/mp4">
   </video>
 </figure>
-</center>
+
+
+## Video mov (ogg)
+<figure class="video_container">
+  <video 
+        controls="true"
+        allowfullscreen="true"
+        height="480" >
+    <source src="video/Video.mov" type="video/ogg">
+  </video>
+</figure>
+
+## Video mov (mp4)
+<figure class="video_container">
+  <video 
+        controls="true"
+        allowfullscreen="true"
+        height="480" >
+    <source src="video/Video.mov" type="video/mp4">
+  </video>
+</figure>
+
+## Video mov (webm)
+<figure class="video_container">
+  <video 
+        controls="true"
+        allowfullscreen="true"
+        height="480" >
+    <source src="video/Video.mov" type="video/webm">
+  </video>
+</figure>
+
+

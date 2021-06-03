@@ -1,4 +1,4 @@
 import moviepy.editor as mp
 
-clip = mp.VideoFileClip("output.gif")
-clip.write_videofile("merged.mp4")
+clip = mp.VideoFileClip("../video/Video.mp4")
+clip.write_videofile("../video/Video.mov")

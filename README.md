@@ -47,7 +47,11 @@ The script produces training statistics and a trained controller that can be use
 
 <center>
 <figure class="video_container">
-  <video controls="true" allowfullscreen="true" poster="report/final/figures/double_pendulum.png">
+  <video 
+        controls="true"
+        allowfullscreen="true"
+        poster="report/final/figures/double_pendulum.png"
+        height="480" >
     <source src="video/Video.mp4" type="video/mp4">
   </video>
 </figure>

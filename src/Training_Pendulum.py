@@ -70,21 +70,23 @@ network_parameters = {
     "initializer" : tf.keras.initializers.he_uniform()
 }
 
+use_features = [False,True,True,True]
 # Create agent.
-agent = QAgent(environment, network_parameters, memory=2000)
+agent = QAgent(environment, network_parameters, memory=2000, use_features=use_features)
 
 # Train agent - produces a controller that can be used to control the system.
-training_episodes = 30
+training_episodes = 200
 controller = agent.train(
     max_episodes=training_episodes,
     timesteps_per_episode=200,
     batch_size=32,
     warm_start=warm_start,
     evaluate_model_period=10,
+    evaluation_size=10,
     exploration_rate=0.5,
     exploration_rate_decay=0.99,
     model_alignment_period=10,
-    discount=0.1,
+    discount=0.9,
     save_model_period=10,
     log_q_values=True)
 

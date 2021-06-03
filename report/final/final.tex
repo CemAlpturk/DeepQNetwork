@@ -55,9 +55,9 @@
     This has been confirmed in the results for the single pendulum model, an easier problem to control that was used to confirm the implementation of the learning algorithm.
     Balancing the double pendulum is a more difficult problem due to its chaotic nature and the controller being limited to a single degree of freedom.
 %    The double pendulum is more difficult with its chaotic nature and the limitation that the cart with a single degree of freedom is trying to control multiple states.
-    Results show that the double pendulum can be balanced indefinitely for certain initial conditions.
+    Results show that the double pendulum can be balanced for up-to three seconds with a network of $10$ layers and $30$ nodes in each layer, while the uncontrolled system falls over in $0.5$ seconds.
     The agent was trained for a limited number of episodes limiting the amount of experience and knowledge it could gather about the problem.
-    We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for broader initial conditions.
+    We believe that by tuning hyperparameters, network size and training one could train an agent to balance the double pendulum for far longer using Deep Q-Learning.
     % The abstract should be a 200--250 word compact description of your project. What was the objective? Which methods did you use? What was the (main) result?
 \end{abstract}
 
@@ -428,7 +428,7 @@ The weights of the network were initialized with uniform HE-initialization, whic
     >{\columncolor[HTML]{CBCEFB}}c |c|c|}
     \hline
     \cellcolor[HTML]{9AFF99}\textbf{Layer} & \cellcolor[HTML]{9AFF99}\textbf{Number of Neurons} & \cellcolor[HTML]{9AFF99}\textbf{Activation} \\ \hline
-    \textbf{Input}                         & 4                                                  & -                                           \\ \hline
+    \textbf{Input}                         & 3                                                  & -                                           \\ \hline
     \textbf{Hidden 1}                      & 20                                                 & ReLU                                        \\ \hline
     \textbf{Hidden 2}                      & 40                                                 & ReLU                                        \\ \hline
     \textbf{Output}                        & 3                                                  & Linear                                      \\ \hline
@@ -464,7 +464,7 @@ The initial condition for each episode is randomized preventing the system from 
 
 \begin{figure}[htp]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/SinglePendulum_eval.png}
+	\includegraphics[width=0.9\columnwidth]{figures/SinglePendulum_evaluation_time.png}
 	\caption{Evaluated controller score for every $10$ episodes. The evaluation is measured as the average score of $10$ full controlled simulations. Maximum number of steps for each evaluation iteration was $200$, capping the maximum possible reward to $200$.}
 	\label{fig:single_pendulum_eval}
 \end{figure}
@@ -491,7 +491,7 @@ This can be resolved by training the agent for more episodes.
 
 \begin{figure}[htp]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_20.png}
+	\includegraphics[width=0.9\columnwidth]{figures/Pendulum_angle_35.png}
 	\caption{Changes in pendulum angle $\theta$ over time for controlled simulation of single pendulum on cart problem. The initial condition was $\theta = 20$ degrees.}
 	\label{fig:single_pendulum_outside_training_domain}
 \end{figure}
@@ -512,7 +512,7 @@ Figure \ref{fig:pendulum_gamma_01} and \ref{fig:pendulum_gamma_09} shows the ave
 Figure \ref{fig:single_pendulum_eval_01} shows the training result for $\gamma=0.1$, while the other hyperparameters remained the same. It can be seen that the score converges faster since the Q-values converge faster. This is due to the algorithm only taking the instant and near future rewards in to consideration, thus being short sighted. However the overall performance showed that, with $\gamma=0.1$ the agent was unable to generalize and even had issues with initial conditions that were close to $\theta_{max}$. This can also be seen in the dip during the end of the training in Figure \ref{fig:single_pendulum_eval_01}.
 \begin{figure}[htp]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/pendulum_gamma_01.png}
+	\includegraphics[width=0.9\columnwidth]{figures/SinglePendulum_gamma_01_evaluation_time.png}
 	\caption{Evaluation of the controller with the same conditions in Table \ref{table:params_pendulum}, except that $\gamma=0.1$. The drop at the end may be caused due to outlier initial conditions during evaluation.}
 	\label{fig:single_pendulum_eval_01}
 \end{figure}
@@ -590,7 +590,7 @@ A comparison between the agent's performance, baseline and a random controller i
 Although the trained agent cannot balance the pendulums for a long time, it performs much better than the others.
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.9\columnwidth]{figures/Double_pendulum_eval.png}
+	\includegraphics[width=0.9\columnwidth]{figures/Doublependulum_evaluation_time.png}
 	\caption{Evaluated controller score for every 10 episodes. The evaluation is measured as the average score of 10 full controlled simulations. The baseline is measured by evaluating 200 simulations without a controller which lasted on average for $0.5$ seconds. A controller that performs actions randomly achieves an average score of $32$, estimated the same way as the baseline.}
 	\label{fig:double_pendulum_score}
 \end{figure}

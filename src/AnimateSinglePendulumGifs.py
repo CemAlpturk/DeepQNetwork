@@ -11,7 +11,7 @@ from pygifsicle import optimize
 
 # Folder containing gifs to animate.
 # base_root = "Logs/PendulumOnCart/2021-05-31_16-25-01/"
-base_root = "Logs/PendulumOnCart/2021-06-01_17-16-58/"
+base_root = "Final_models/SinglePendulum/2021-06-02_14-01-50/"
 root_episode = f"{base_root}Episodes/"
 
 
@@ -51,10 +51,12 @@ csv_files.sort(key=natural_keys)
 
 # Animate simulations.
 # The .gif files are stored next to the .csv files.
+list = [10,20,30,50,100]
 for file in csv_files:
     episode = file.split("_")[1].split(".")[0]
+    if int(episode) not in list:
+        continue
     print(f"File: {file}, episode: {episode}")
-
     SinglePendulumAnimator.animate_from_csv(
         f'{root_episode}{file}',
         pendulum_settings,

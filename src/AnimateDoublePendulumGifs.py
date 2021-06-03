@@ -1,15 +1,16 @@
 
 from os import listdir
 import re
+import numpy as np
 
-from Utilities.Animator import DoublePendulumAnmiator
+from Utilities.Animator import DoublePendulumAnimator
 import imageio
 import moviepy.editor as mp
 import ast
 from pygifsicle import optimize
 
 # Folder containing gifs to animate.
-base_root = "Logs/DoublePendulumOnCart/2021-06-01_14-11-53/"
+base_root = "Final_models/DoublePendulum/2021-06-01_14-29-16/"
 root_episode = f"{base_root}Episodes/"
 
 # Pendulum settings.
@@ -29,6 +30,9 @@ settings = ast.literal_eval(raw_settings)
 plot_settings = {
     "force_bar_show" : True,
     "force_action_space" : settings["action_space"],
+    "show_termination_boundary": True,
+    "termination_angle_inner_pendulum": 15*np.pi/180,
+    "termination_angle_outer_pendulum": 15*np.pi/180,
 }
 
 # Sort files based on episode number.
@@ -49,11 +53,14 @@ csv_files.sort(key=natural_keys)
 
 # Animate simulations.
 # The .gif files are stored next to the .csv files.
+list = [10,20,50,100,150,200,250,500,750,1000,1500,2000,2230]
 for file in csv_files:
     episode = file.split("_")[1].split(".")[0]
+    if int(episode) not in list:
+        continue
     print(f"File: {file}, episode: {episode}")
 
-    DoublePendulumAnmiator.animate_from_csv(
+    DoublePendulumAnimator.animate_from_csv(
         f'{root_episode}{file}',
         pendulum_settings,
         plot_settings=plot_settings,

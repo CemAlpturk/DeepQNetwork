@@ -39,10 +39,8 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         problem = DoublePendulumOnCartSimulator(problem_parameters, initial_state)
         super().__init__(problem, action_space, step_size, "DoublePendulumOnCart")
 
-        # Punishment for termination
-        # TODO: Not used - should it be used or removed?
-        self.termination_reward = -1
-        self.lamb = lamb
+
+        self.lamb = lamb    # Range for random initial conditions
         if custom_reward_function is not None:
             self._reward = custom_reward_function
         else:
@@ -55,38 +53,30 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
 
     def reward(self, state, t):
         """
+        Pipeline for reward function
         """
         return self._reward(state, t)
 
     def terminated(self, state, t):
         """
-        TODO
+        Pipeline for termination function
         """
         return self._terminated(state, t)
 
     def _default_reward_function(self, state, t):
         """
-        Computes a reward based on the current state of the system.
-
-        TODO: Add summary
+        Returns a reward of 1 for each episode the agent survives
         """
-        # Calculate reward
-        x, theta1, theta2, xdot, theta1dot, thteta2dot = state
-        # r_angle1 = (self.max_angle - abs(theta1))/self.max_angle - 0.5
-        r_angle2 = (self.max_angle - abs(theta2))/self.max_angle
-        # r_pos = (self.max_cart_pos - abs(x))/self.max_cart_pos - 0.5
-        #r_angle1 = np.cos(theta1*10)
-        #r_angle2 = np.cos(theta2*10)
-        r_pos = 0
-        reward = r_angle2  + r_angle2 + r_pos
 
-        return reward
+        return 1
 
     def _default_terminated_function(self, state, t):
         """
         Checks whether the system has entered a termination state.
 
-        TODO: Add summary
+        Terminates if either of the pendulum angles are outside the training
+        boundary of 20 degrees or if the cart moves further away from
+        the origin.
         """
         max_angle = 20*np.pi/180
         max_cart_pos = 2.5
@@ -103,22 +93,25 @@ class DoublePendulumOnCartEnvironment(EnvironmentBase):
         By setting random to True, new initial conditions are generated randomly
         """
 
-        if random:
-            #initial_state = [np.random.uniform(-0.05,0.05) for _ in range(self.state_size)]
+        if random:  # Generate new initial conditions
             initial_state = np.zeros(self.state_size)
+            # randomly select initial conditions for both angles in specified range
             initial_state[1:3] = np.random.uniform(-self.lamb, self.lamb, 2)
             return self.problem.reset(initial_state)
         else:
             return self.problem.reset()
 
     def save(self, episode):
+        """
+        Saves a gif of the last played episode to given location
+        TODO: Do we need to keep this?
+        """
         filename = f"./results/DoublePendulumOnCart/Episode_{episode}.gif"
         title = f"Episode: {episode}"
         self.problem.animate(save=True, filename=filename, title=title, hide=True)
 
-    # def animate(self):
-    #     self.problem.animate()
 
+# TODO: This will not work due to the import issue, remove?
 if __name__ == "__main__":
     def random_action_policy(x):
         """

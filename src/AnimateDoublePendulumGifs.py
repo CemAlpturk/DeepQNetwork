@@ -3,7 +3,7 @@ from os import listdir
 import re
 import numpy as np
 
-from Utilities.Animator import DoublePendulumAnimator
+from Utilities.Animators import DoublePendulumAnimator
 import imageio
 import moviepy.editor as mp
 import ast

@@ -31,6 +31,7 @@ class EnvironmentBase(ABC):
 
     def solve(self, t, controller=None):
         """
+        Solves the dynamic equations for given time points t
         """
         return self.problem.solve(t, controller=controller)
 
@@ -42,12 +43,13 @@ class EnvironmentBase(ABC):
 
     def get_action_space(self):
         """
+        Returns the action space of the environment
         """
         return self.action_space
 
     def get_random_action(self):
         """
-        TODO: Complete summary.
+        Returns a random action from the action space
         """
         return random.choice(range(len(self.action_space)))
 
@@ -72,6 +74,7 @@ class EnvironmentBase(ABC):
         """
         pass
 
+    # TODO: Is it needed?
     @abstractmethod
     def save(self, episode):
         pass

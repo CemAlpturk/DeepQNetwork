@@ -36,9 +36,7 @@ class PendulumOnCartEnvironment(EnvironmentBase):
 
         super().__init__(problem, action_space, step_size,"PendulumOnCart")
 
-        # Punishment for termination
-        # TODO: Not used - use or remove?
-        self.termination_reward = -1
+        # Random range for the initial conditions
         self.lamb = lamb
 
         if custom_reward_function is not None:
@@ -53,12 +51,13 @@ class PendulumOnCartEnvironment(EnvironmentBase):
 
     def reward(self, state, t):
         """
+        Returns the reward for the given state and time
         """
         return self._reward(state, t)
 
     def terminated(self, state, t):
         """
-        TODO
+        Returns termination flag for the given state and time
         """
         return self._terminated(state, t)
 
@@ -68,22 +67,17 @@ class PendulumOnCartEnvironment(EnvironmentBase):
         By setting random to True, new initial conditions are generated randomly
         """
         if random:
-            #initial_state = [np.random.uniform(-0.05,0.05) for _ in range(self.state_size)]
             initial_state = np.zeros(self.state_size)
+            # Randomly select initial state for the angle from given range
             initial_state[2] = np.random.uniform(-self.lamb, self.lamb)
             return self.problem.reset(initial_state)
         else:
             return self.problem.reset()
 
-    # def animate(self):
-    #     """
-    #     TODO: Complete summary.
-    #     """
-    #     self.problem.animate()
 
     def save(self, episode):
         """
-        TODO: Complete Summary
+        TODO: Complete Summary, Is needed?
         """
         #filename = f"./results/PendulumOnCart/Episode_{episode}.gif"
         filepath = os.path.join(os.gecwd(),"results","PendulumOnCart",f"Episode_{episode}.gif")

@@ -1,3 +1,8 @@
+"""
+Utility script for listing installed versions of some packages
+used in the project.
+"""
+
 import numpy as np
 import matplotlib as mat
 import pandas as pd

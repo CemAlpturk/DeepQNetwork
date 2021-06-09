@@ -1,20 +1,20 @@
-# FRTN70 - Project in Systems, Control and Learning!
+# FRTN70 — Project in Systems, Control and Learning!
 
 This is a project in course FRTN70 at LTH, 2021.
-
 
 Project is conducted by `Cem Alptürk` and `Pukashawar Pannu`.  
 Project supervisor `Emil Vladu`.
 
-## Goal - Balance Inverted Double Pendulum on Cart
+## Goal
 The goal of the project is to teach a controller to balance an inverted double pendulum on a cart using reinforcement learning.
 This is chaotic problem and the controller is limited to a single degree of freedom for balancing the pendulums.
 
-<!-- <center><img src="video/DoublePendulum_trained.gif"></center>
-<center><i>4 double pendulums simulated with very small differences in initial conditions.</i></center> -->
-
-
-![Agent controlling double pendulum](video/DoublePendulum_trained.gif)*Agent controlling double pendulum from initial conditions theta_1 = theta_2 = -20 degrees*
+<div align="center">
+  <figure>
+    <img src="video/DoublePendulum_trained.gif">
+    <figcaption>Trained agent controlling inverted double pendulum with initial conditions $\theta_1 = \theta_2 = -20^{\circ}$</figcaption>
+  </figure>
+</div>
 
 ## Get Started
 Project has been developed using `Python 3`.
@@ -25,8 +25,6 @@ Dependencies can be installed using `pip`:
 pip3 install --upgrade pip
 pip3 install -r src/requirements.txt
 ```
-
-## TODO - Short description about reinforcement learning?
 
 ### Code Structure
 The code has been separated in modules to simplify separation of logic.

@@ -10,7 +10,7 @@ import ast
 from pygifsicle import optimize
 
 # Folder containing gifs to animate.
-base_root = "Final_models/DoublePendulum/2021-06-01_14-29-16/"
+base_root = "Final_models/DoublePendulum/2021-06-02_12-43-09/"
 root_episode = f"{base_root}Episodes/"
 
 # Pendulum settings.
@@ -53,7 +53,7 @@ csv_files.sort(key=natural_keys)
 
 # Animate simulations.
 # The .gif files are stored next to the .csv files.
-list = [10,20,50,100,150,200,250,500,750,1000,1500,2000,2230]
+list = [10,20,50,100,150,200,250,500,750,1000,1500,2000,2030]
 for file in csv_files:
     episode = file.split("_")[1].split(".")[0]
     if int(episode) not in list:

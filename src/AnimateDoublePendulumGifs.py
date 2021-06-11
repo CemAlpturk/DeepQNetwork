@@ -10,7 +10,8 @@ import ast
 from pygifsicle import optimize
 
 # Folder containing gifs to animate.
-base_root = "Final_models/DoublePendulum/2021-06-01_14-29-16/"
+# base_root = "Final_models/DoublePendulum/2021-06-01_14-29-16/"
+base_root = "Logs/DoublePendulumOnCart/2021-06-11_06-53-59/"
 root_episode = f"{base_root}Episodes/"
 
 # Pendulum settings.

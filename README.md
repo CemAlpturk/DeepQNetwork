@@ -116,7 +116,5 @@ Code for training a controller for the double pendulum on a cart problem is foun
 With all dependencies installed it should be enough to run the `src/Training_Double_Pendulum.py` script.
 The script produces training statistics and a trained controller that can be used to simulate a new pendulum scenario with the controller.
 
-
-
 ## Video
 Video for training and final models simulated from different initial conditions for both the single and double pendulum problems can be found here ([.mp4](./video/Video.mp4) / [.mov](./video/Video.mov))

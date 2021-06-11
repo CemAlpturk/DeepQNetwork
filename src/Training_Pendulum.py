@@ -6,9 +6,9 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras import backend as K
 
-
 from Environments import PendulumOnCartEnvironment
 from Agents import DoubleQAgent, QAgent
+from Utilities.Animators import SinglePendulumAnimator
 
 warm_start = False
 # Check arguments
@@ -121,11 +121,8 @@ controller = agent.train(
     log_q_values=True)
 
 # Simulate problem using the trained controller.
-max_time_steps = 100
-state = environment.reset()
+# TODO: Keep this or should it be encouraged to use ´Play´ script?
+# state = environment.reset()
 
-t = np.linspace(0, 10, 50)
-environment.solve(t, controller=controller.act)
-
-# environment.animate()
-# environment.problem.animate(save=True,filename="resultPendulum.gif", hide=True)
+# t = np.linspace(0, 10, 50)
+# environment.solve(t, controller=controller.act)

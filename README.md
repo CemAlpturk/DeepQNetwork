@@ -96,6 +96,8 @@ docker run -it -v <repo-path-on-host>:/<destination-in-container> <image-name> b
 docker run -it -v "c:\repo:/repo" frtn70_env bash
 ```
 
+The interactive docker container gives the user a prompt and with the volume set up the entire repository will be available in `/repo` inside the container.
+
 Two scripts have been added to simplify the `docker run` command.
 One `.sh` script for Linux users and one `.ps1` script for Windows users.
 The scripts should figure out the full path to the repository and set up the volume for the run command.

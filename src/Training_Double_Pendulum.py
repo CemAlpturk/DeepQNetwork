@@ -25,6 +25,9 @@ if len(sys.argv) > 1:
     else:
         print("usage: Training_Pendulum.py --warm")
 
+# Represents the maximum angle the pendulum is allowed
+# to swing before it is considered out-of-bounds and
+# the episode is terminated.
 max_angle = 15*np.pi/180
 
 def custom_loss_function(y_true, y_pred):
@@ -37,6 +40,21 @@ def custom_loss_function(y_true, y_pred):
     return K.square(K.sum(loss))
 
 def reward(state, t):
+    """
+    Reward function.
+    Computes a reward based on the state of the system.
+
+    reward = (max_angle - abs(theta)) / max_angle
+
+    Args:
+        states: array with the states of the system
+                [x, xdot, theta, theta_dot]
+
+        t:      time
+
+    Returns:
+        float:  the computed reward.
+    """
     if terminated(state, t):
         return -10
 
@@ -57,11 +75,24 @@ def reward(state, t):
     return max(0, r)
 
 def terminated(state, t):
-    x, theta1, theta2, xdot, theta1dot, thteta2dot = state
+    """
+    Termination function that determines whether the
+    state of the system is a terminal state or not.
 
+    State is terminal if either angles (theta1) (theta2)
+    exceed the maximum angle (max_angle).
+
+    Args:
+        states: array with the states of the system
+                [x, xdot, theta, theta_dot]
+
+        t:      time
+
+    Returns:
+        bool:  True if the state is terminal, otherwise False.
+    """
+    x, theta1, theta2, xdot, theta1dot, thteta2dot = state
     return abs(theta1) > max_angle or abs(theta2) > max_angle
-    #yp = np.cos(theta1) + np.cos(theta2)
-    #return yp <= 1.9
 
 # Setup the environment (connects the problem to the q-agent).
 step_size = 0.02
@@ -83,9 +114,6 @@ optimizer = Adam(learning_rate=lr_schedule)
 
 nodes = [30, 20, 40, 30, 30, 40, 30, 60, 60, 100, 40, 30, 70, 70, 70, 30, 30, 30, 30, 30]
 layers = []
-# for _ in range(20):
-#     layers.append((30,'relu'))
-
 for index in range(len(nodes)):
     layers.append((nodes[index], 'relu'))
 
@@ -98,6 +126,10 @@ network_parameters = {
     "initializer" : tf.keras.initializers.he_uniform()
 }
 
+# States can be ignored from the input.
+# Example: Ignoring the cart position can be achieved by: 'use_features = [False, True, ..., True]'
+# This can be useful for simplifying problems where it is known that some states won't
+# contribute to solving the problem.
 use_features = [True]*6
 use_features[0] = False
 

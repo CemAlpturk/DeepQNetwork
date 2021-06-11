@@ -50,11 +50,6 @@ class QAgent:
 
         self.Logger = Logger(environment.name)
 
-        # self.file_name = "scores.csv"
-        # file = open(self.file_name, "w")
-        # file.close()
-        # self.eval = []
-
         self.episode_loss = []
         self.episode_q_values = np.zeros(len(environment.action_space))
 
@@ -71,18 +66,6 @@ class QAgent:
                 "lamb": environment.lamb,
                 }
         self.params.update(self.q_network.optimizer.get_config())
-
-        # Generate timestamped directory for saved networks
-        # parent_dir = os.getcwd()
-        # path = os.path.join(parent_dir,"Models")
-        # if not os.path.exists(path):
-        #     os.mkdir(path)
-        # path = os.path.join(path,self.environment.name)
-        # if not os.path.exists(path):
-        #     os.mkdir(path)
-        # path = os.path.join(path, self.Logger.timestamp)
-        # os.mkdir(path)
-        # self.model_path = path
 
     def train(
             self,
@@ -401,16 +384,7 @@ class QAgent:
 
     def _save_model(self, prefix : str):
         print(f"Saving Model: '{prefix}'")
-        # parent_dir = os.getcwd()
-        # dir = self.environment.name
-        # path = os.path.join(parent_dir,"Models")
-        # if not os.path.exists(path):
-        #     print(f"Creating 'Models' directory at: {dir}")
-        #     os.mkdir(path)
         filepath = os.path.join(self.Logger.dir,f"{prefix}/q_network")
-
-        # TODO: Fix path for windows.
-        #filepath = f"./Models/{self.environment.name}/q_network"
         self.q_network.save(filepath)
 
     def _load_model(self):

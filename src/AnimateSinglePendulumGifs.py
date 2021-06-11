@@ -3,17 +3,15 @@ from os import listdir
 import re
 import numpy as np
 
-from Utilities.Animator import SinglePendulumAnimator
+from Utilities.Animators import SinglePendulumAnimator
 import imageio
 import moviepy.editor as mp
 import ast
 from pygifsicle import optimize
 
-# Folder containing gifs to animate.
-# base_root = "Logs/PendulumOnCart/2021-05-31_16-25-01/"
+# Folder containing data for the episodes in .csv files.
 base_root = "Final_models/SinglePendulum/2021-06-02_14-01-50/"
 root_episode = f"{base_root}Episodes/"
-
 
 # Read settings.
 with open(f"{base_root}params.txt") as f:

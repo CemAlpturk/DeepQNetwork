@@ -3,14 +3,19 @@ from os import listdir
 import re
 import numpy as np
 
-from Utilities.Animator import DoublePendulumAnimator
+from Utilities.Animators import DoublePendulumAnimator
 import imageio
 import moviepy.editor as mp
 import ast
 from pygifsicle import optimize
 
 # Folder containing gifs to animate.
+<<<<<<< HEAD
 base_root = "Final_models/DoublePendulum/2021-06-02_12-43-09/"
+=======
+# base_root = "Final_models/DoublePendulum/2021-06-01_14-29-16/"
+base_root = "Logs/DoublePendulumOnCart/2021-06-11_06-53-59/"
+>>>>>>> bbad9bdf7d8852ada8184bc79b183561375d3a74
 root_episode = f"{base_root}Episodes/"
 
 # Pendulum settings.

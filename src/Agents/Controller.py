@@ -62,9 +62,3 @@ class Controller():
         model = keras.models.load_model(file_path, compile=False)
         #model.compile()
         return Controller(action_space, model, idx)
-
-
-if __name__ == "__main__":
-    c = Controller.load_controller([-10, 0, 10], "test.txt")
-    print("Successfully loaded controller")
-    c.model.summary()

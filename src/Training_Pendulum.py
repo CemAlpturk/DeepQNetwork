@@ -6,10 +6,9 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras import backend as K
 
-
 from Environments import PendulumOnCartEnvironment
 from Agents import DoubleQAgent, QAgent
-
+from Utilities.Animators import SinglePendulumAnimator
 
 warm_start = False
 # Check arguments
@@ -19,22 +18,49 @@ if len(sys.argv) > 1:
     else:
         print("usage: Training_Pendulum.py --warm")
 
-
-
+# Represents the maximum angle the pendulum is allowed
+# to swing before it is considered out-of-bounds and
+# the episode is terminated.
 max_angle = 10*np.pi/180
 
 def reward(state, t):
-    x, xdot, theta, thetadot = state
+    """
+    Reward function.
+    Computes a reward based on the state of the system.
+
+    reward = (max_angle - abs(theta)) / max_angle
+
+    Args:
+        states: array with the states of the system
+                [x, xdot, theta, theta_dot]
+
+        t:      time
+
+    Returns:
+        float:  the computed reward.
+    """
+    x, xdot, theta, theta_dot = state
     r_angle = (max_angle - abs(theta))/max_angle
-    # alive_bonus = 10
-    # px = x + np.cos(theta)
-    # py = np.sin(theta)
-    # pos_penalty = px**2 + (1-py)**2
-    # vel_penalty = thetadot**2
-    # return alive_bonus - pos_penalty - vel_penalty
     return r_angle
 
 def terminated(state, t):
+    """
+    Termination function that determines whether the
+    state of the system is a terminal state or not.
+
+    State is terminal if the pendulum angle (theta)
+    exceeds the maximum angle (max_angle) in either
+    direction.
+
+    Args:
+        states: array with the states of the system
+                [x, xdot, theta, theta_dot]
+
+        t:      time
+
+    Returns:
+        bool:  True if the state is terminal, otherwise False.
+    """
     x, xdot, theta, thetadot = state
 
     return abs(theta) > max_angle
@@ -46,11 +72,10 @@ environment = PendulumOnCartEnvironment(
         step_size=step_size,
         custom_reward_function=reward,
         custom_termination_function=terminated,
-        action_space=[-10,0,10],
+        action_space=[-10, 0, 10],
         lamb = max_angle*0.1)
 
 # Setup Neural network parameters
-
 optimizer = Adam(lr=0.001)
 
 def custom_loss_function(y_true, y_pred):
@@ -70,7 +95,12 @@ network_parameters = {
     "initializer" : tf.keras.initializers.he_uniform()
 }
 
-use_features = [False,True,True,True]
+# States can be ignored from the input.
+# Example: Ignoring the cart position can be achieved by: 'use_features = [False, True, True, True]'
+# This can be useful for simplifying problems where it is known that some states won't
+# contribute to solving the problem.
+use_features = [False, True, True, True]
+
 # Create agent.
 agent = QAgent(environment, network_parameters, memory=2000, use_features=use_features)
 
@@ -91,11 +121,8 @@ controller = agent.train(
     log_q_values=True)
 
 # Simulate problem using the trained controller.
-max_time_steps = 100
-state = environment.reset()
+# TODO: Keep this or should it be encouraged to use ´Play´ script?
+# state = environment.reset()
 
-t = np.linspace(0, 10, 50)
-environment.solve(t, controller=controller.act)
-
-# environment.animate()
-# environment.problem.animate(save=True,filename="resultPendulum.gif", hide=True)
+# t = np.linspace(0, 10, 50)
+# environment.solve(t, controller=controller.act)

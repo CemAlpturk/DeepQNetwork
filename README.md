@@ -112,6 +112,37 @@ The idea is that a trained algorithm produces a finished controller that can be 
 
 ```python
 # TODO: Add a short example for how to use an agent
+import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
+
+from Environments import DoublePendulumOnCartEnvironment
+from Agents import QAgent
+
+# Create Environment with default parameters
+environment = DoublePendulumOnCartEnvironment()
+
+# Create optimizer
+optimizer = Adam()
+
+# Specify network structure
+# The last layer will have the same number of neurons as actions
+layers = [(10,'relu'),(20,'relu'),(5,'linear')]
+
+network_parameters = {
+    "input_shape" : (6,),   # Number of states
+    "layers": layers,       # Network structure
+    "optimizer": optimizer,
+    "loss_function": "mse",
+    "initializer": tf.keras.initializers.he_uniform()   # Initialization strategy for the weights
+}
+
+# Create Agent
+agent = QAgent(environment,network_parameters)
+
+# Train the agent with default parameters and get the resulting controller 
+controller = agent.train(max_episodes=200)
+
+
 ```
 
 Code for training a controller for the double pendulum on a cart problem is found in `src/`.

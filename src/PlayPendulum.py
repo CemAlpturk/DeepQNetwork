@@ -9,14 +9,14 @@ from pygifsicle import optimize
 with tf.device("cpu:0"):
     from Agents import Controller
     from Environments import PendulumOnCartSimulator
-    from Utilities.Animator import SinglePendulumAnimator
+    from Utilities.Animators import SinglePendulumAnimator
 
     action_space = [-10,0,10]
     filepath = "Logs/PendulumOnCart/2021-06-02_14-01-50/q_network"
     idx = [False,True,True,True]
     controller = Controller.load_controller(action_space, filepath, idx)
 
-    max_angle = 0*np.pi/180
+    max_angle = 35*np.pi/180
     initial_state = np.array([0.0,0.0,max_angle,0.0])
 
     problem_parameters = {
@@ -31,14 +31,17 @@ with tf.device("cpu:0"):
     t = np.linspace(0,5,250)
     problem.solve(t, controller=controller.act)
 
-    #
-    # angle = [x[2]*(180/np.pi) for x in problem.states]
-    # t = problem.time
-    # plt.plot(t,angle)
-    # plt.xlabel("Time [seconds]")
-    # plt.ylabel("Angle [degrees]")
-    # plt.title("Trained Controller")
-    # plt.show()
+
+    angle = [x[2]*(180/np.pi) for x in problem.states]
+    t = problem.time
+    plt.plot(t,angle)
+    plt.axhline(y=10,linestyle="--",c="r")
+    plt.axhline(y=-10,linestyle="--",c="r")
+    plt.xlabel("Time [Seconds]")
+    plt.ylabel("Angle [Degrees]")
+    plt.title("Trained Controller")
+    plt.legend([r"$\theta$","Training boundary"])
+    plt.show()
 
     # Pendulum settings.
     pendulum_settings = {

@@ -16,6 +16,12 @@ This is chaotic problem and the controller is limited to a single degree of free
   </figure>
 </div>
 
+## Report
+A written report is available with detailed problem and method descriptions.
+The report also contains experiments for inverted single and double pendulums.
+
+* [Balancing an Inverted Double Pendulum with Reinforcement Learning](./report/final/final.pdf)
+
 ## Get Started
 Project has been developed using `Python 3`.
 Dependencies can be installed using `pip`:
